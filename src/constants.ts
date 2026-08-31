@@ -1,0 +1,2 @@
+export const DEFAULT_CANVAS_WIDTH = 1000
+export const DEFAULT_CANVAS_HEIGHT = 1000

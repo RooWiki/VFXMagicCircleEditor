@@ -12,8 +12,8 @@
 | Phase | Name                                                    | Status        |
 | ----- | ------------------------------------------------------- | ------------- |
 | 0     | Product Specification and Architecture                  | **COMPLETED** |
-| 1     | Technical Project Setup                                 | PENDING       |
-| 2     | Data Model and State Foundation                         | PENDING       |
+| 1     | Technical Project Setup                                 | **COMPLETED** |
+| 2     | Data Model and State Foundation                         | **COMPLETED** |
 | 3     | Editor Shell                                            | PENDING       |
 | 4     | SVG Canvas and Viewport Navigation                      | PENDING       |
 | 5     | First Ring Layer                                        | PENDING       |
@@ -163,11 +163,11 @@ Initialize the React + TypeScript + Vite project with the agreed stack. Establis
 
 ## Phase 2 — Data Model and State Foundation
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 
-Implement the TypeScript types, Zod schema and Zustand stores for all state domains. No UI is required. This phase establishes the data contract that all subsequent phases depend on.
+Implement the TypeScript domain types, factory functions, immutable project state store and minimal selection store. No UI is required. This phase establishes the data contract that all subsequent phases depend on.
 
 ### Dependencies
 
@@ -177,38 +177,36 @@ Implement the TypeScript types, Zod schema and Zustand stores for all state doma
 
 - Implement TypeScript types in `src/types/layer.ts`: `Transform`, `BaseLayer`, `RingLayer`, `RadialLinesLayer`, `Layer` discriminated union.
 - Implement TypeScript types in `src/types/project.ts`: `ProjectFile`, `ProjectMeta`, `CanvasConfig`.
-- Implement TypeScript types in `src/types/animation.ts`: `LayerAnimationConfig` (for future use — type only, no runtime logic).
-- Implement the Zod schema in `src/schema/project.ts` exactly as described in [PROJECT_FORMAT.md § 9](PROJECT_FORMAT.md#9-validation-rules).
-- Implement the project store in `src/store/project.ts` with actions: `addLayer`, `updateLayer`, `removeLayer`, `reorderLayers`, `setProjectMeta`, `setCanvasConfig`.
-- Implement the editor store in `src/store/editor.ts` with fields: `selectedLayerId`, `activeTool`, `gridVisible`, `guidesVisible`, `previewBackground`, and actions: `selectLayer`, `setActiveTool`, `toggleGrid`, `toggleGuides`, `setPreviewBackground`.
-- Implement the viewport store in `src/store/viewport.ts` with fields: `zoom`, `panX`, `panY`, and actions: `setZoom`, `setPan`, `resetViewport`.
-- Implement the history store in `src/store/history.ts` with fields: `snapshots`, `pointer`, `canUndo`, `canRedo`, and actions: `pushSnapshot`, `undo`, `redo`.
-- Implement the animation store in `src/store/animation.ts` as a stub (fields only, no logic).
 - Implement `src/utils/id.ts` as a `crypto.randomUUID()` wrapper.
-- Implement `src/constants.ts` with `DEFAULT_CANVAS_WIDTH`, `DEFAULT_CANVAS_HEIGHT`, `MAX_HISTORY_DEPTH`.
+- Implement `src/utils/factories.ts` with `createRingLayer`, `createRadialLinesLayer` and `createDefaultProject` factory functions.
+- Implement `src/utils/selectors.ts` with `isRingLayer`, `isRadialLinesLayer` type guards and `getLayerById` selector.
+- Implement the project store in `src/store/project.ts` with explicit-whitelist type-safe actions: `addLayer`, `updateRingLayer`, `updateRadialLinesLayer`, `updateLayerTransform`, `renameLayer`, `removeLayer`, `duplicateLayer`, `reorderLayers`, `toggleLayerVisibility`, `toggleLayerLock`, `setProjectMeta`, `setCanvasConfig`, `setProject`, `resetProject`.
+- Implement the editor store in `src/store/editor.ts` with selection-only state (`selectedLayerIds: string[]`) and actions: `selectLayer`, `setSelection`, `addToSelection`, `removeFromSelection`, `clearSelection`, `pruneSelection`.
+- Implement `src/constants.ts` with `DEFAULT_CANVAS_WIDTH` and `DEFAULT_CANVAS_HEIGHT`.
 
 ### Explicit Exclusions
 
 - No React UI components.
 - No SVG rendering.
-- No local storage integration yet (that is Phase 10).
-- No animation logic (stub only).
+- No Zod runtime validation or project-file schema (Phase 10).
+- No history, undo or redo store (Phase 8).
+- No viewport, animation or preferences stores (Phases 4, 14, and future).
+- No local storage integration (Phase 10).
 - No generator implementation.
 
 ### Acceptance Criteria
 
 - All TypeScript types compile without errors in strict mode.
-- The Zod schema validates the example project from PROJECT_FORMAT.md successfully.
-- The Zod schema rejects the invalid variants described in the unit tests.
 - All store actions work as expected in unit tests.
-- History push/undo/redo cycle works correctly in unit tests.
-- The 50-entry history cap is enforced.
+- The project store maintains correct immutability semantics for all operations.
+- Type-specific artwork updates (`updateRingLayer`, `updateRadialLinesLayer`) are rejected at compile time for cross-type properties.
+- Locked-layer update semantics are correct: artwork and transform updates are no-ops; visibility, lock and rename operations proceed.
+- The editor store correctly prunes stale selection IDs without mutating input.
 
 ### Required Automated Tests
 
-- `src/schema/project.test.ts`: valid project parses successfully; missing `__magic_circle__` fails; unknown layer type with known layers loads remaining layers; `innerRadius >= outerRadius` triggers cross-field validation failure.
-- `src/store/project.test.ts`: `addLayer` appends to the array; `removeLayer` removes the correct entry; `updateLayer` patches only the specified fields; `reorderLayers` moves layer to correct index.
-- `src/store/history.test.ts`: `pushSnapshot` adds to stack; `undo` restores previous snapshot; `redo` restores next snapshot; pushing past 50 entries drops the oldest.
+- `src/store/project.test.ts`: `addLayer` appends to the array; `removeLayer` removes the correct entry; `updateRingLayer`/`updateRadialLinesLayer` patch only approved type-specific fields; `updateLayerTransform` merges partial transform without discarding unspecified fields; `renameLayer` applies on locked layers; `reorderLayers` moves layer to the correct index; locked layers reject artwork and transform updates; `duplicateLayer` inserts above the original with a new ID.
+- `src/store/editor.test.ts`: `pruneSelection` removes stale IDs and preserves valid IDs; duplicate IDs are prevented; selection order is deterministic; pruning does not mutate the supplied array.
 - `src/utils/id.test.ts`: generated IDs are strings; two consecutive calls produce different values.
 
 ### Required Manual Tests
@@ -217,7 +215,10 @@ None — this phase has no UI.
 
 ### Expected Deliverables
 
-- All files under `src/types/`, `src/store/`, `src/schema/`, `src/utils/`, `src/constants.ts`.
+- `src/types/layer.ts`, `src/types/project.ts`
+- `src/store/project.ts`, `src/store/editor.ts`
+- `src/utils/id.ts`, `src/utils/factories.ts`, `src/utils/selectors.ts`
+- `src/constants.ts`
 - Passing unit tests for all of the above.
 
 ---
@@ -544,6 +545,8 @@ Finalize the history system, implement keyboard shortcuts, numeric precision con
 
 ### Main Implementation Tasks
 
+- Add `MAX_HISTORY_DEPTH = 50` to `src/constants.ts`.
+- Implement `src/store/history.ts` with fields: `snapshots`, `pointer`, `canUndo`, `canRedo`, and actions: `pushSnapshot`, `undo`, `redo`. Enforce the cap using `MAX_HISTORY_DEPTH`.
 - Implement undo (`Ctrl+Z`) and redo (`Ctrl+Shift+Z` or `Ctrl+Y`) keyboard shortcuts globally.
 - Implement duplicate shortcut (`Ctrl+D`).
 - Implement delete shortcut (`Delete` / `Backspace`).
@@ -563,6 +566,8 @@ Finalize the history system, implement keyboard shortcuts, numeric precision con
 
 ### Acceptance Criteria
 
+- The history store compiles and passes unit tests.
+- The `MAX_HISTORY_DEPTH` cap is enforced: the oldest snapshot is discarded when the stack is full.
 - `Ctrl+Z` undoes the last action. `Ctrl+Shift+Z` redoes it.
 - Undo and redo buttons are disabled when there is nothing to undo or redo.
 - Nudge with arrow keys moves the selected layer by 1 unit. Shift+arrow moves by 10 units.
@@ -572,7 +577,7 @@ Finalize the history system, implement keyboard shortcuts, numeric precision con
 
 ### Required Automated Tests
 
-- `src/store/history.test.ts`: undo reverts to previous state; redo after undo restores.
+- `src/store/history.test.ts`: `pushSnapshot` adds to stack; `undo` restores previous snapshot; `redo` restores next snapshot; pushing past `MAX_HISTORY_DEPTH` entries drops the oldest; undo reverts to previous state; redo after undo restores.
 - Vitest: inspector input commits to history on blur; does not commit on every keystroke.
 
 ### Required Manual Tests
@@ -583,6 +588,7 @@ Finalize the history system, implement keyboard shortcuts, numeric precision con
 
 ### Expected Deliverables
 
+- `src/store/history.ts` with push/undo/redo and depth cap.
 - Complete keyboard shortcut implementation.
 - Finalized inspector with validated inputs.
 - Undo/redo system fully integrated.
