@@ -42,6 +42,7 @@ interface ProjectActions {
   reorderLayers: (fromIndex: number, toIndex: number) => void
   toggleLayerVisibility: (id: string) => void
   toggleLayerLock: (id: string) => void
+  centerLayer: (id: string) => void
 }
 
 export type ProjectStore = ProjectState & ProjectActions
@@ -184,4 +185,18 @@ export const useProjectStore = create<ProjectStore>((set) => ({
         layers: state.project.layers.map((l) => (l.id === id ? { ...l, locked: !l.locked } : l)),
       },
     })),
+
+  centerLayer: (id) =>
+    set((state) => {
+      const layer = state.project.layers.find((l) => l.id === id)
+      if (!layer || layer.locked) return state
+      return {
+        project: {
+          ...state.project,
+          layers: state.project.layers.map((l) =>
+            l.id === id ? { ...l, transform: { ...l.transform, x: 0, y: 0 } } : l
+          ),
+        },
+      }
+    }),
 }))

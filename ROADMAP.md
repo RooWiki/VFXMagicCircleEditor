@@ -18,7 +18,7 @@
 | 4     | SVG Canvas and Viewport Navigation                      | **COMPLETED** |
 | 5     | First Ring Layer                                        | **COMPLETED** |
 | 6     | Direct Canvas Transformations                           | **COMPLETED** |
-| 7     | Complete Layer System                                   | PENDING       |
+| 7     | Complete Layer System                                   | **COMPLETED** |
 | 8     | History, Precision Tools and Shortcuts                  | PENDING       |
 | 9     | Radial-Lines Layer                                      | PENDING       |
 | 10    | Project Persistence and Import                          | PENDING       |
@@ -472,7 +472,9 @@ Make layers interactive on the canvas: selection, move, rotate and scale by drag
 
 ## Phase 7 — Complete Layer System
 
-**Status: PENDING**
+**Status: COMPLETED**
+
+> **History note:** Phase 7 implements deterministic atomic project mutations. History integration (undo/redo) is intentionally deferred to Phase 8 (`src/store/history.ts`). Phase 7 actions are not currently undoable.
 
 ### Objective
 

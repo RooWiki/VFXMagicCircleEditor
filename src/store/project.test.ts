@@ -463,6 +463,75 @@ describe('toggleLayerLock', () => {
   })
 })
 
+describe('centerLayer', () => {
+  it('sets transform.x and transform.y to 0', () => {
+    const ring = createRingLayer({
+      transform: { x: 100, y: 200, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    useProjectStore.getState().addLayer(ring)
+    useProjectStore.getState().centerLayer(ring.id)
+    const t = getLayers()[0].transform
+    expect(t.x).toBe(0)
+    expect(t.y).toBe(0)
+  })
+
+  it('preserves other transform fields', () => {
+    const ring = createRingLayer({
+      transform: { x: 50, y: 50, rotation: 45, scaleX: 2, scaleY: 3 },
+    })
+    useProjectStore.getState().addLayer(ring)
+    useProjectStore.getState().centerLayer(ring.id)
+    const t = getLayers()[0].transform
+    expect(t.rotation).toBe(45)
+    expect(t.scaleX).toBe(2)
+    expect(t.scaleY).toBe(3)
+  })
+
+  it('is a no-op when the layer is locked', () => {
+    const ring = createRingLayer({
+      locked: true,
+      transform: { x: 99, y: 99, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    useProjectStore.getState().addLayer(ring)
+    useProjectStore.getState().centerLayer(ring.id)
+    const t = getLayers()[0].transform
+    expect(t.x).toBe(99)
+    expect(t.y).toBe(99)
+  })
+
+  it('unlocking allows centering', () => {
+    const ring = createRingLayer({
+      locked: true,
+      transform: { x: 50, y: 50, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    useProjectStore.getState().addLayer(ring)
+    useProjectStore.getState().centerLayer(ring.id)
+    expect(getLayers()[0].transform.x).toBe(50)
+    useProjectStore.getState().toggleLayerLock(ring.id)
+    useProjectStore.getState().centerLayer(ring.id)
+    expect(getLayers()[0].transform.x).toBe(0)
+    expect(getLayers()[0].transform.y).toBe(0)
+  })
+
+  it('is a no-op for a nonexistent ID', () => {
+    const ring = createRingLayer({ transform: { x: 50, y: 50, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.getState().addLayer(ring)
+    const before = getLayers()[0].transform
+    useProjectStore.getState().centerLayer('nonexistent')
+    expect(getLayers()[0].transform).toBe(before)
+  })
+
+  it('does not affect other layers', () => {
+    const a = createRingLayer({ transform: { x: 100, y: 100, rotation: 0, scaleX: 1, scaleY: 1 } })
+    const b = createRingLayer({ transform: { x: 200, y: 300, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.getState().addLayer(a)
+    useProjectStore.getState().addLayer(b)
+    useProjectStore.getState().centerLayer(a.id)
+    expect(getLayers()[1].transform.x).toBe(200)
+    expect(getLayers()[1].transform.y).toBe(300)
+  })
+})
+
 describe('immutability', () => {
   it('addLayer does not mutate the previous layers array', () => {
     const before = getLayers()

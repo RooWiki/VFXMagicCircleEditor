@@ -165,7 +165,7 @@ describe('right sidebar tabs', () => {
 describe('layers panel', () => {
   it('shows the empty state when there are no layers', () => {
     render(<EditorShell />)
-    expect(screen.getByText('No layers yet')).toBeInTheDocument()
+    expect(screen.getByText('No layers yet. Add a Ring or Radial Lines.')).toBeInTheDocument()
   })
 })
 
@@ -286,6 +286,262 @@ describe('status bar', () => {
   it('displays the layer count', () => {
     render(<EditorShell />)
     expect(screen.getByLabelText('Layer count')).toHaveTextContent('0 layers')
+  })
+})
+
+describe('layers panel — action bar', () => {
+  it('Duplicate button is disabled when no layer is selected', () => {
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Duplicate selected layer' })).toBeDisabled()
+  })
+
+  it('Delete button is disabled when no layer is selected', () => {
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Delete selected layer' })).toBeDisabled()
+  })
+
+  it('Center button is disabled when no layer is selected', () => {
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Center selected layer on canvas' })).toBeDisabled()
+  })
+
+  it('Duplicate, Delete, Center buttons are enabled when a layer is selected', () => {
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Duplicate selected layer' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Delete selected layer' })).not.toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: 'Center selected layer on canvas' })
+    ).not.toBeDisabled()
+  })
+
+  it('clicking Delete removes the selected layer', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Delete selected layer' }))
+    expect(useProjectStore.getState().project.layers).toHaveLength(0)
+  })
+
+  it('clicking Delete clears selection', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Delete selected layer' }))
+    expect(useEditorStore.getState().selectedLayerIds).toHaveLength(0)
+  })
+
+  it('clicking Duplicate adds a layer', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Duplicate selected layer' }))
+    expect(useProjectStore.getState().project.layers).toHaveLength(2)
+  })
+
+  it('clicking Duplicate selects the new layer', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Duplicate selected layer' }))
+    const layers = useProjectStore.getState().project.layers
+    const newId = layers.find((l) => l.id !== layer.id)?.id
+    expect(useEditorStore.getState().selectedLayerIds).toContain(newId)
+  })
+
+  it('clicking Center sets transform.x and transform.y to 0', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({
+      transform: { x: 150, y: 200, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Center selected layer on canvas' }))
+    const t = useProjectStore.getState().project.layers[0].transform
+    expect(t.x).toBe(0)
+    expect(t.y).toBe(0)
+  })
+
+  it('clicking Center preserves rotation and scale', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({
+      transform: { x: 100, y: 100, rotation: 45, scaleX: 2, scaleY: 3 },
+    })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Center selected layer on canvas' }))
+    const t = useProjectStore.getState().project.layers[0].transform
+    expect(t.rotation).toBe(45)
+    expect(t.scaleX).toBe(2)
+    expect(t.scaleY).toBe(3)
+  })
+})
+
+describe('layers panel — Center and lock interaction', () => {
+  it('Center button is disabled when selected layer is locked', () => {
+    const layer = createRingLayer({ locked: true })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Center selected layer on canvas' })).toBeDisabled()
+  })
+
+  it('Center button is enabled when selected layer is unlocked', () => {
+    const layer = createRingLayer({ locked: false })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    expect(
+      screen.getByRole('button', { name: 'Center selected layer on canvas' })
+    ).not.toBeDisabled()
+  })
+
+  it('unlocking a layer re-enables the Center button', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring', locked: true })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Center selected layer on canvas' })).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: 'Unlock Ring' }))
+    expect(
+      screen.getByRole('button', { name: 'Center selected layer on canvas' })
+    ).not.toBeDisabled()
+  })
+
+  it('locked layer transform is not changed by centerLayer store action', () => {
+    const layer = createRingLayer({
+      locked: true,
+      transform: { x: 77, y: 88, rotation: 30, scaleX: 2, scaleY: 2 },
+    })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useProjectStore.getState().centerLayer(layer.id)
+    const t = useProjectStore.getState().project.layers[0].transform
+    expect(t.x).toBe(77)
+    expect(t.y).toBe(88)
+    expect(t.rotation).toBe(30)
+    expect(t.scaleX).toBe(2)
+    expect(t.scaleY).toBe(2)
+  })
+})
+
+describe('layers panel — inline rename', () => {
+  it('double-clicking a layer name shows a rename input', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'My Ring' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer My Ring' }))
+    expect(screen.getByTestId('layer-rename-input')).toBeInTheDocument()
+  })
+
+  it('rename input is pre-filled with the current name', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'My Ring' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer My Ring' }))
+    const input = screen.getByTestId('layer-rename-input') as HTMLInputElement
+    expect(input.value).toBe('My Ring')
+  })
+
+  it('pressing Enter commits the new name', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Old Name' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer Old Name' }))
+    const input = screen.getByTestId('layer-rename-input')
+    await user.clear(input)
+    await user.type(input, 'New Name')
+    await user.keyboard('{Enter}')
+    expect(useProjectStore.getState().project.layers[0].name).toBe('New Name')
+  })
+
+  it('pressing Escape cancels without renaming', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Original' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer Original' }))
+    const input = screen.getByTestId('layer-rename-input')
+    await user.clear(input)
+    await user.type(input, 'Discarded')
+    await user.keyboard('{Escape}')
+    expect(useProjectStore.getState().project.layers[0].name).toBe('Original')
+  })
+
+  it('empty name on Enter does not rename', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Keep This' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer Keep This' }))
+    const input = screen.getByTestId('layer-rename-input')
+    await user.clear(input)
+    await user.keyboard('{Enter}')
+    expect(useProjectStore.getState().project.layers[0].name).toBe('Keep This')
+  })
+})
+
+describe('EditorShell — Delete key handler', () => {
+  it('pressing Delete with a selected layer removes it', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Delete}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(0)
+  })
+
+  it('pressing Delete with no selection is a no-op', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<EditorShell />)
+    await user.keyboard('{Delete}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(1)
+  })
+
+  it('pressing Delete clears selection', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Delete}')
+    expect(useEditorStore.getState().selectedLayerIds).toHaveLength(0)
+  })
+
+  it('pressing Delete while renaming does not delete the layer', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'My Ring' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer My Ring' }))
+    await user.keyboard('{Delete}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(1)
   })
 })
 
