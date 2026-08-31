@@ -15,7 +15,7 @@
 | 1     | Technical Project Setup                                 | **COMPLETED** |
 | 2     | Data Model and State Foundation                         | **COMPLETED** |
 | 3     | Editor Shell                                            | **COMPLETED** |
-| 4     | SVG Canvas and Viewport Navigation                      | PENDING       |
+| 4     | SVG Canvas and Viewport Navigation                      | **COMPLETED** |
 | 5     | First Ring Layer                                        | PENDING       |
 | 6     | Direct Canvas Transformations                           | PENDING       |
 | 7     | Complete Layer System                                   | PENDING       |
@@ -286,7 +286,7 @@ Build the main editor layout: the top toolbar area, the left layer panel, the ce
 
 ## Phase 4 — SVG Canvas and Viewport Navigation
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 

@@ -1,2 +1,7 @@
 export const DEFAULT_CANVAS_WIDTH = 1000
 export const DEFAULT_CANVAS_HEIGHT = 1000
+
+export const VIEWPORT_ZOOM_MIN = 0.05
+export const VIEWPORT_ZOOM_MAX = 8
+export const VIEWPORT_FIT_PADDING = 48
+export const VIEWPORT_WHEEL_SENSITIVITY = 0.001

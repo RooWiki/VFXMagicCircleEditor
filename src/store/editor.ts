@@ -4,8 +4,15 @@ import { create } from 'zustand'
 // Callers are responsible for invoking pruneSelection after project mutations
 // that remove or replace layers (e.g. removeLayer, resetProject).
 
+export type ActiveTool = 'select' | 'hand'
+export type PreviewBackground = 'dark' | 'light' | 'transparent'
+
 interface EditorState {
   selectedLayerIds: string[]
+  activeTool: ActiveTool
+  gridVisible: boolean
+  guidesVisible: boolean
+  previewBackground: PreviewBackground
 }
 
 interface EditorActions {
@@ -15,12 +22,20 @@ interface EditorActions {
   removeFromSelection: (id: string) => void
   clearSelection: () => void
   pruneSelection: (validLayerIds: readonly string[]) => void
+  setActiveTool: (tool: ActiveTool) => void
+  setGridVisible: (visible: boolean) => void
+  setGuidesVisible: (visible: boolean) => void
+  setPreviewBackground: (bg: PreviewBackground) => void
 }
 
 export type EditorStore = EditorState & EditorActions
 
 export const useEditorStore = create<EditorStore>((set) => ({
   selectedLayerIds: [],
+  activeTool: 'select',
+  gridVisible: false,
+  guidesVisible: false,
+  previewBackground: 'dark',
 
   selectLayer: (id) => set({ selectedLayerIds: id !== null ? [id] : [] }),
 
@@ -50,4 +65,12 @@ export const useEditorStore = create<EditorStore>((set) => ({
       if (pruned.length === state.selectedLayerIds.length) return state
       return { selectedLayerIds: pruned }
     }),
+
+  setActiveTool: (tool) => set({ activeTool: tool }),
+
+  setGridVisible: (visible) => set({ gridVisible: visible }),
+
+  setGuidesVisible: (visible) => set({ guidesVisible: visible }),
+
+  setPreviewBackground: (bg) => set({ previewBackground: bg }),
 }))

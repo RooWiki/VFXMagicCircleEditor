@@ -6,7 +6,13 @@ const LAYER_B = 'bbbbbbbb-0000-4000-8000-000000000002'
 const LAYER_C = 'cccccccc-0000-4000-8000-000000000003'
 
 beforeEach(() => {
-  useEditorStore.setState({ selectedLayerIds: [] })
+  useEditorStore.setState({
+    selectedLayerIds: [],
+    activeTool: 'select',
+    gridVisible: false,
+    guidesVisible: false,
+    previewBackground: 'dark',
+  })
 })
 
 const getState = () => useEditorStore.getState()
@@ -177,5 +183,86 @@ describe('pruneSelection', () => {
     getState().setSelection([LAYER_A, LAYER_B])
     getState().pruneSelection([])
     expect(getState().selectedLayerIds).toHaveLength(0)
+  })
+})
+
+// ─── activeTool ────────────────────────────────────────────────────────────
+
+describe('activeTool', () => {
+  it('starts with select', () => {
+    expect(getState().activeTool).toBe('select')
+  })
+
+  it('setActiveTool changes to hand', () => {
+    getState().setActiveTool('hand')
+    expect(getState().activeTool).toBe('hand')
+  })
+
+  it('setActiveTool can switch back to select', () => {
+    getState().setActiveTool('hand')
+    getState().setActiveTool('select')
+    expect(getState().activeTool).toBe('select')
+  })
+})
+
+// ─── gridVisible ───────────────────────────────────────────────────────────
+
+describe('gridVisible', () => {
+  it('starts false', () => {
+    expect(getState().gridVisible).toBe(false)
+  })
+
+  it('setGridVisible(true) enables grid', () => {
+    getState().setGridVisible(true)
+    expect(getState().gridVisible).toBe(true)
+  })
+
+  it('setGridVisible(false) disables grid', () => {
+    getState().setGridVisible(true)
+    getState().setGridVisible(false)
+    expect(getState().gridVisible).toBe(false)
+  })
+})
+
+// ─── guidesVisible ─────────────────────────────────────────────────────────
+
+describe('guidesVisible', () => {
+  it('starts false', () => {
+    expect(getState().guidesVisible).toBe(false)
+  })
+
+  it('setGuidesVisible(true) enables guides', () => {
+    getState().setGuidesVisible(true)
+    expect(getState().guidesVisible).toBe(true)
+  })
+
+  it('setGuidesVisible(false) disables guides', () => {
+    getState().setGuidesVisible(true)
+    getState().setGuidesVisible(false)
+    expect(getState().guidesVisible).toBe(false)
+  })
+})
+
+// ─── previewBackground ─────────────────────────────────────────────────────
+
+describe('previewBackground', () => {
+  it('starts as dark', () => {
+    expect(getState().previewBackground).toBe('dark')
+  })
+
+  it('setPreviewBackground changes to light', () => {
+    getState().setPreviewBackground('light')
+    expect(getState().previewBackground).toBe('light')
+  })
+
+  it('setPreviewBackground changes to transparent', () => {
+    getState().setPreviewBackground('transparent')
+    expect(getState().previewBackground).toBe('transparent')
+  })
+
+  it('setPreviewBackground changes back to dark', () => {
+    getState().setPreviewBackground('light')
+    getState().setPreviewBackground('dark')
+    expect(getState().previewBackground).toBe('dark')
   })
 })

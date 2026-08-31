@@ -1,7 +1,9 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { useEditorStore } from '../store/editor'
 import { useProjectStore } from '../store/project'
+import { useViewportStore } from '../store/viewport'
 import { createDefaultProject } from '../utils/factories'
 import EditorShell from './EditorShell'
 
@@ -11,6 +13,20 @@ afterEach(() => {
 
 beforeEach(() => {
   useProjectStore.setState({ project: createDefaultProject() })
+  useViewportStore.setState({
+    centerX: 0,
+    centerY: 0,
+    zoom: 1,
+    viewportWidth: 0,
+    viewportHeight: 0,
+  })
+  useEditorStore.setState({
+    selectedLayerIds: [],
+    activeTool: 'select',
+    gridVisible: false,
+    guidesVisible: false,
+    previewBackground: 'dark',
+  })
 })
 
 describe('layout regions', () => {
@@ -88,13 +104,17 @@ describe('tool rail', () => {
     expect(screen.getByRole('button', { name: 'Fit View' })).toBeInTheDocument()
   })
 
-  it('all tool buttons are disabled', () => {
+  it('Select, Pan and Fit View are enabled in Phase 4', () => {
     render(<EditorShell />)
-    expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Select' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Pan' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Fit View' })).not.toBeDisabled()
+  })
+
+  it('Ring and Radial Lines tools remain disabled', () => {
+    render(<EditorShell />)
     expect(screen.getByRole('button', { name: 'Add Ring' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Pan' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Fit View' })).toBeDisabled()
   })
 })
 
@@ -164,8 +184,9 @@ describe('status bar', () => {
     expect(screen.getByRole('contentinfo')).toHaveTextContent('1000')
   })
 
-  it('displays a zoom placeholder', () => {
+  it('displays the zoom level as a percentage', () => {
     render(<EditorShell />)
+    // Initial zoom=1 → "100%" (zoom updates via ResizeObserver which is absent in jsdom)
     expect(screen.getByLabelText('Zoom level')).toHaveTextContent('100%')
   })
 

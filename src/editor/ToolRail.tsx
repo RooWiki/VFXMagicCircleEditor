@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react'
+import { useEditorStore, type ActiveTool } from '../store/editor'
+import { useProjectStore } from '../store/project'
+import { useViewportStore } from '../store/viewport'
 
 interface ToolButtonProps {
   label: string
@@ -6,9 +9,17 @@ interface ToolButtonProps {
   active?: boolean
   disabled?: boolean
   icon: ReactNode
+  onClick?: () => void
 }
 
-function ToolButton({ label, title, active = false, disabled = false, icon }: ToolButtonProps) {
+function ToolButton({
+  label,
+  title,
+  active = false,
+  disabled = false,
+  icon,
+  onClick,
+}: ToolButtonProps) {
   return (
     <button
       type="button"
@@ -16,6 +27,7 @@ function ToolButton({ label, title, active = false, disabled = false, icon }: To
       aria-pressed={active ? true : undefined}
       title={title}
       disabled={disabled}
+      onClick={onClick}
       className={[
         'flex items-center justify-center w-9 h-9 rounded mx-auto my-0.5',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
@@ -116,18 +128,34 @@ function FitViewIcon() {
   )
 }
 
+const TOOL_LABEL: Record<ActiveTool, string> = {
+  select: 'Select',
+  hand: 'Pan',
+}
+
 export default function ToolRail() {
+  const activeTool = useEditorStore((s) => s.activeTool)
+  const setActiveTool = useEditorStore((s) => s.setActiveTool)
+  const fitView = useViewportStore((s) => s.fitView)
+  const canvas = useProjectStore((s) => s.project.canvas)
+
+  const handleFitView = () => {
+    fitView(canvas.width, canvas.height)
+  }
+
+  const handleSelectTool = (tool: ActiveTool) => () => setActiveTool(tool)
+
   return (
     <nav
       aria-label="Tools"
       className="flex flex-col w-14 shrink-0 bg-neutral-900 border-r border-neutral-700 py-1.5"
     >
       <ToolButton
-        label="Select"
-        title="Select (coming in Phase 4)"
-        active
-        disabled
+        label={TOOL_LABEL.select}
+        title="Select"
+        active={activeTool === 'select'}
         icon={<SelectIcon />}
+        onClick={handleSelectTool('select')}
       />
 
       <div aria-hidden="true" className="mx-2 my-1.5 h-px bg-neutral-700" />
@@ -147,12 +175,18 @@ export default function ToolRail() {
 
       <div aria-hidden="true" className="mx-2 my-1.5 h-px bg-neutral-700" />
 
-      <ToolButton label="Pan" title="Pan (coming in Phase 4)" disabled icon={<PanIcon />} />
+      <ToolButton
+        label="Pan"
+        title="Pan / Hand tool (H)"
+        active={activeTool === 'hand'}
+        icon={<PanIcon />}
+        onClick={handleSelectTool('hand')}
+      />
       <ToolButton
         label="Fit View"
-        title="Fit View (coming in Phase 4)"
-        disabled
+        title="Fit canvas to viewport"
         icon={<FitViewIcon />}
+        onClick={handleFitView}
       />
     </nav>
   )
