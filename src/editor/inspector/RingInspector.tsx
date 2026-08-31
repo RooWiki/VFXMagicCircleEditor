@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useProjectStore } from '../../store/project'
 import type { RingLayer } from '../../types/layer'
 
@@ -16,6 +16,14 @@ interface NumericFieldProps {
 
 function NumericField({ label, value, onChange, min, max, step = 1, unit }: NumericFieldProps) {
   const [draft, setDraft] = useState(String(value))
+  const focusedRef = useRef(false)
+
+  // Sync draft when external value changes (e.g. canvas drag updates the store)
+  useEffect(() => {
+    if (!focusedRef.current) {
+      setDraft(String(value))
+    }
+  }, [value])
 
   const commit = (raw: string) => {
     const n = parseFloat(raw)
@@ -38,6 +46,9 @@ function NumericField({ label, value, onChange, min, max, step = 1, unit }: Nume
           min={min}
           max={max}
           aria-label={label}
+          onFocus={() => {
+            focusedRef.current = true
+          }}
           onChange={(e) => {
             const raw = e.target.value
             setDraft(raw)
@@ -50,7 +61,10 @@ function NumericField({ label, value, onChange, min, max, step = 1, unit }: Nume
               onChange(n)
             }
           }}
-          onBlur={(e) => commit(e.target.value)}
+          onBlur={(e) => {
+            focusedRef.current = false
+            commit(e.target.value)
+          }}
           className={[
             'w-full rounded bg-neutral-800 border border-neutral-700 px-2 py-1',
             'text-xs text-neutral-200 tabular-nums',

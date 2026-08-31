@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useEditorStore } from '../../store/editor'
 import { useProjectStore } from '../../store/project'
@@ -199,5 +199,107 @@ describe('ring layer rendering in artwork group', () => {
     const circle = g.querySelector('circle')
     expect(circle).not.toBeNull()
     expect(circle?.getAttribute('r')).toBe('250')
+  })
+})
+
+describe('SvgCanvas — selection overlay', () => {
+  it('shows no selection overlay when nothing is selected', () => {
+    const layer = createRingLayer()
+    useProjectStore.getState().addLayer(layer)
+    render(<SvgCanvas />)
+    expect(screen.queryByTestId('selection-overlay')).not.toBeInTheDocument()
+  })
+
+  it('shows selection overlay when a ring layer is selected', () => {
+    const layer = createRingLayer()
+    useProjectStore.getState().addLayer(layer)
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<SvgCanvas />)
+    expect(screen.getByTestId('selection-overlay')).toBeInTheDocument()
+  })
+
+  it('selection overlay has correct data-layer-id', () => {
+    const layer = createRingLayer()
+    useProjectStore.getState().addLayer(layer)
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<SvgCanvas />)
+    expect(screen.getByTestId('selection-overlay').getAttribute('data-layer-id')).toBe(layer.id)
+  })
+
+  it('clears selection overlay when selection is cleared', () => {
+    const layer = createRingLayer()
+    useProjectStore.getState().addLayer(layer)
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<SvgCanvas />)
+    expect(screen.getByTestId('selection-overlay')).toBeInTheDocument()
+
+    // Re-render with cleared selection
+    cleanup()
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<SvgCanvas />)
+    expect(screen.queryByTestId('selection-overlay')).not.toBeInTheDocument()
+  })
+
+  it('clicking artboard background deselects when select tool active', () => {
+    const layer = createRingLayer()
+    useProjectStore.getState().addLayer(layer)
+    useEditorStore.setState({ selectedLayerIds: [layer.id], activeTool: 'select' })
+    render(<SvgCanvas />)
+
+    const svg = screen.getByTestId('svg-viewport')
+    act(() => {
+      svg.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0 })
+      )
+    })
+
+    expect(useEditorStore.getState().selectedLayerIds).toHaveLength(0)
+  })
+
+  it('artboard click does not deselect when hand tool active', () => {
+    const layer = createRingLayer()
+    useProjectStore.getState().addLayer(layer)
+    useEditorStore.setState({ selectedLayerIds: [layer.id], activeTool: 'hand' })
+    render(<SvgCanvas />)
+
+    const svg = screen.getByTestId('svg-viewport')
+    act(() => {
+      svg.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0 })
+      )
+    })
+
+    // hand tool does a pan, not deselect — selection unchanged
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layer.id)
+  })
+
+  it('shows transform handles for selected unlocked ring', () => {
+    const layer = createRingLayer({ locked: false })
+    useProjectStore.getState().addLayer(layer)
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<SvgCanvas />)
+    expect(screen.getByTestId('rotation-handle')).toBeInTheDocument()
+    expect(screen.getByTestId('scale-handle-se')).toBeInTheDocument()
+  })
+
+  it('shows locked indicator but no handles for locked selected ring', () => {
+    const layer = createRingLayer({ locked: true })
+    useProjectStore.getState().addLayer(layer)
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<SvgCanvas />)
+    expect(screen.getByTestId('selection-overlay')).toBeInTheDocument()
+    expect(screen.queryByTestId('rotation-handle')).not.toBeInTheDocument()
+    expect(screen.getByTestId('locked-indicator')).toBeInTheDocument()
+  })
+
+  it('only selected ring has overlay (other rings do not)', () => {
+    const a = createRingLayer({ name: 'A' })
+    const b = createRingLayer({ name: 'B' })
+    useProjectStore.getState().addLayer(a)
+    useProjectStore.getState().addLayer(b)
+    useEditorStore.setState({ selectedLayerIds: [a.id] })
+    render(<SvgCanvas />)
+    const overlay = screen.getByTestId('selection-overlay')
+    expect(overlay.getAttribute('data-layer-id')).toBe(a.id)
   })
 })

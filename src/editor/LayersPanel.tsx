@@ -39,9 +39,48 @@ function EyeClosedIcon() {
   )
 }
 
+function LockClosedIcon() {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width="13"
+      height="13"
+      aria-hidden="true"
+    >
+      <rect x="3" y="8" width="10" height="7" rx="1.5" />
+      <path d="M5.5 8V6a2.5 2.5 0 0 1 5 0v2" />
+    </svg>
+  )
+}
+
+function LockOpenIcon() {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width="13"
+      height="13"
+      aria-hidden="true"
+    >
+      <rect x="3" y="8" width="10" height="7" rx="1.5" />
+      <path d="M5.5 8V5a2.5 2.5 0 0 1 5 0" />
+    </svg>
+  )
+}
+
 export default function LayersPanel() {
   const layers = useProjectStore((s) => s.project.layers)
   const toggleLayerVisibility = useProjectStore((s) => s.toggleLayerVisibility)
+  const toggleLayerLock = useProjectStore((s) => s.toggleLayerLock)
   const selectedLayerIds = useEditorStore((s) => s.selectedLayerIds)
   const selectLayer = useEditorStore((s) => s.selectLayer)
 
@@ -88,6 +127,22 @@ export default function LayersPanel() {
                 ].join(' ')}
               >
                 {layer.visible ? <EyeOpenIcon /> : <EyeClosedIcon />}
+              </button>
+
+              {/* Lock toggle */}
+              <button
+                type="button"
+                aria-label={`${layer.locked ? 'Unlock' : 'Lock'} ${layer.name}`}
+                title={layer.locked ? 'Unlock layer' : 'Lock layer'}
+                onClick={() => toggleLayerLock(layer.id)}
+                className={[
+                  'flex items-center justify-center w-5 h-5 shrink-0 rounded',
+                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
+                  layer.locked ? 'text-amber-400' : 'text-neutral-600',
+                  'hover:text-neutral-200',
+                ].join(' ')}
+              >
+                {layer.locked ? <LockClosedIcon /> : <LockOpenIcon />}
               </button>
 
               {/* Layer name — clicking selects the layer */}

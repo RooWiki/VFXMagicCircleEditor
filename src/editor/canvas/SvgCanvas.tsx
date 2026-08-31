@@ -5,6 +5,7 @@ import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
 import { calcViewBox, formatZoomPercent } from '../../utils/viewport'
 import RingLayerRenderer from './RingLayerRenderer'
+import SelectionOverlay from './SelectionOverlay'
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -19,9 +20,15 @@ function isEditableElement(el: Element | null): boolean {
   )
 }
 
-function cursorForState(activeTool: ActiveTool, isPanning: boolean, isSpaceHeld: boolean): string {
+function cursorForState(
+  activeTool: ActiveTool,
+  isPanning: boolean,
+  isSpaceHeld: boolean,
+  isGesturing: boolean
+): string {
   if (isPanning) return 'grabbing'
   if (activeTool === 'hand' || isSpaceHeld) return 'grab'
+  if (isGesturing) return 'move'
   return 'default'
 }
 
@@ -70,6 +77,8 @@ export default function SvgCanvas() {
   const canvas = useProjectStore((s) => s.project.canvas)
   const layers = useProjectStore((s) => s.project.layers)
   const layerCount = layers.length
+  const selectedLayerIds = useEditorStore((s) => s.selectedLayerIds)
+  const clearSelection = useEditorStore((s) => s.clearSelection)
 
   // DOM refs
   const containerRef = useRef<HTMLDivElement>(null)
@@ -79,16 +88,28 @@ export default function SvgCanvas() {
   const panStateRef = useRef<PanState | null>(null)
   const spaceHeldRef = useRef(false)
 
+  // Track whether any artwork gesture is active (for cursor)
+  const [isGesturing, setIsGesturing] = useState(false)
+
   // React-managed state for cursor-relevant flags
   const [isPanning, setIsPanning] = useState(false)
   const [isSpaceHeld, setIsSpaceHeld] = useState(false)
   const hasInitialFitRef = useRef(false)
+
+  // Expose isGesturing setter to overlay via a ref so it can toggle cursor
+  const setIsGesturingRef = useRef(setIsGesturing)
+  setIsGesturingRef.current = setIsGesturing
 
   // Derived SVG values
   const cw = canvas.width
   const ch = canvas.height
   const ax = -cw / 2
   const ay = -ch / 2
+
+  // Resolved selected layer for overlay
+  const selectedId = selectedLayerIds[0] ?? null
+  const selectedLayer =
+    selectedId !== null ? (layers.find((l) => l.id === selectedId) ?? null) : null
 
   // ── ResizeObserver ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -165,21 +186,41 @@ export default function SvgCanvas() {
     setIsPanning(false)
   }, [])
 
-  const handlePointerDown = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
-    const isMiddle = e.button === 1
-    const isPrimaryBtn = e.button === 0
-    const currentTool = useEditorStore.getState().activeTool
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<SVGSVGElement>) => {
+      const isMiddle = e.button === 1
+      const isPrimaryBtn = e.button === 0
+      const currentTool = useEditorStore.getState().activeTool
 
-    const shouldPan =
-      isMiddle || (isPrimaryBtn && currentTool === 'hand') || (isPrimaryBtn && spaceHeldRef.current)
+      const shouldPan =
+        isMiddle ||
+        (isPrimaryBtn && currentTool === 'hand') ||
+        (isPrimaryBtn && spaceHeldRef.current)
 
-    if (!shouldPan) return
+      if (shouldPan) {
+        e.preventDefault()
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId)
+        } catch {
+          /* jsdom */
+        }
+        panStateRef.current = { lastX: e.clientX, lastY: e.clientY, pointerId: e.pointerId }
+        setIsPanning(true)
+        return
+      }
 
-    e.preventDefault()
-    e.currentTarget.setPointerCapture(e.pointerId)
-    panStateRef.current = { lastX: e.clientX, lastY: e.clientY, pointerId: e.pointerId }
-    setIsPanning(true)
-  }, [])
+      // Select tool: deselect on artboard background click (target is the SVG or artboard rects)
+      if (isPrimaryBtn && currentTool === 'select' && !spaceHeldRef.current) {
+        // Only deselect if the event wasn't already consumed by an artwork/overlay element
+        // (those call stopPropagation). If we're here, it hit the SVG background.
+        const editorState = useEditorStore.getState()
+        if (editorState.selectedLayerIds.length > 0) {
+          clearSelection()
+        }
+      }
+    },
+    [clearSelection]
+  )
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
@@ -198,7 +239,11 @@ export default function SvgCanvas() {
   const handlePointerUp = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
       if (panStateRef.current?.pointerId === e.pointerId) {
-        e.currentTarget.releasePointerCapture(e.pointerId)
+        try {
+          e.currentTarget.releasePointerCapture(e.pointerId)
+        } catch {
+          /* jsdom */
+        }
         stopPan()
       }
     },
@@ -224,7 +269,7 @@ export default function SvgCanvas() {
   const vb = calcViewBox(centerX, centerY, zoom, viewportWidth, viewportHeight)
   const viewBoxStr = `${vb.x} ${vb.y} ${vb.width} ${vb.height}`
 
-  const cursor = cursorForState(activeTool, isPanning, isSpaceHeld)
+  const cursor = cursorForState(activeTool, isPanning, isSpaceHeld, isGesturing)
   const minorStroke = gridMinorStroke(previewBackground)
   const majorStroke = gridMajorStroke(previewBackground)
 
@@ -365,11 +410,21 @@ export default function SvgCanvas() {
         <g data-testid="artwork-group" id="artwork">
           {layers.map((layer) => {
             if (layer.type === 'ring') {
-              return <RingLayerRenderer key={layer.id} layer={layer} />
+              return <RingLayerRenderer key={layer.id} layer={layer} spaceHeldRef={spaceHeldRef} />
             }
             return null
           })}
         </g>
+
+        {/* ── Selection overlay — above artwork, not part of artwork ─────── */}
+        {selectedLayer?.type === 'ring' && selectedLayer.visible && (
+          <SelectionOverlay
+            key={selectedLayer.id}
+            layer={selectedLayer}
+            svgRef={svgRef}
+            spaceHeldRef={spaceHeldRef}
+          />
+        )}
 
         {/* ── Artboard border ─────────────────────────────────────────────── */}
         <rect

@@ -17,7 +17,7 @@
 | 3     | Editor Shell                                            | **COMPLETED** |
 | 4     | SVG Canvas and Viewport Navigation                      | **COMPLETED** |
 | 5     | First Ring Layer                                        | **COMPLETED** |
-| 6     | Direct Canvas Transformations                           | PENDING       |
+| 6     | Direct Canvas Transformations                           | **COMPLETED** |
 | 7     | Complete Layer System                                   | PENDING       |
 | 8     | History, Precision Tools and Shortcuts                  | PENDING       |
 | 9     | Radial-Lines Layer                                      | PENDING       |
@@ -409,7 +409,7 @@ Implement the complete Ring layer workflow: add, render, select and edit propert
 
 ## Phase 6 — Direct Canvas Transformations
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 

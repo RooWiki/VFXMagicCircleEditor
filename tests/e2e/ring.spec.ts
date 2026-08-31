@@ -11,7 +11,7 @@ async function addRing(page: Parameters<typeof test>[1]['page']) {
 
 async function getRingId(page: Parameters<typeof test>[1]['page'], index = 0) {
   const ids = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('[data-layer-id]')).map((el) =>
+    Array.from(document.querySelectorAll('[data-testid^="ring-layer-"]')).map((el) =>
       el.getAttribute('data-layer-id')
     )
   )
@@ -346,7 +346,7 @@ test('editing one ring does not mutate the other', async ({ page }) => {
   await addRing(page)
 
   const ids = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('[data-layer-id]')).map((el) =>
+    Array.from(document.querySelectorAll('[data-testid^="ring-layer-"]')).map((el) =>
       el.getAttribute('data-layer-id')
     )
   )
@@ -477,17 +477,15 @@ test('ring cannot be dragged on the canvas (no transform handles)', async ({ pag
   expect(transformAfter).toBe(transformBefore)
 })
 
-test('no selection highlight or transform handles exist', async ({ page }) => {
+test('adding a ring auto-selects it showing the selection overlay', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
 
-  // No selection overlay/handles should be present
-  const handleCount = await page.evaluate(() => {
-    return document.querySelectorAll(
-      '[data-testid="selection-overlay"], [data-testid="transform-handle"]'
-    ).length
+  // Phase 6: ring is auto-selected on add — selection overlay is present
+  const overlayCount = await page.evaluate(() => {
+    return document.querySelectorAll('[data-testid="selection-overlay"]').length
   })
-  expect(handleCount).toBe(0)
+  expect(overlayCount).toBe(1)
 })
 
 // ─── Radial Lines remains disabled ────────────────────────────────────────────

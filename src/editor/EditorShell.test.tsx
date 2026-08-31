@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useEditorStore } from '../store/editor'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
-import { createDefaultProject } from '../utils/factories'
+import { createDefaultProject, createRingLayer } from '../utils/factories'
 import EditorShell from './EditorShell'
 
 afterEach(() => {
@@ -166,6 +166,99 @@ describe('layers panel', () => {
   it('shows the empty state when there are no layers', () => {
     render(<EditorShell />)
     expect(screen.getByText('No layers yet')).toBeInTheDocument()
+  })
+})
+
+describe('layers panel — lock control', () => {
+  it('renders a lock button for each layer', () => {
+    const layer = createRingLayer({ name: 'Ring' })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layer] },
+    })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Lock Ring' })).toBeInTheDocument()
+  })
+
+  it('lock button label is "Lock {name}" when layer is unlocked', () => {
+    const layer = createRingLayer({ name: 'Ring', locked: false })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layer] },
+    })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Lock Ring' })).toBeInTheDocument()
+  })
+
+  it('lock button label is "Unlock {name}" when layer is locked', () => {
+    const layer = createRingLayer({ name: 'Ring', locked: true })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layer] },
+    })
+    render(<EditorShell />)
+    expect(screen.getByRole('button', { name: 'Unlock Ring' })).toBeInTheDocument()
+  })
+
+  it('clicking lock button sets layer.locked = true', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring', locked: false })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layer] },
+    })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Lock Ring' }))
+    const updated = useProjectStore.getState().project.layers.find((l) => l.id === layer.id)
+    expect(updated?.locked).toBe(true)
+  })
+
+  it('clicking lock button again unlocks the layer', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring', locked: true })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layer] },
+    })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Unlock Ring' }))
+    const updated = useProjectStore.getState().project.layers.find((l) => l.id === layer.id)
+    expect(updated?.locked).toBe(false)
+  })
+
+  it('locking one ring does not lock another', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'Ring A', locked: false })
+    const layerB = createRingLayer({ name: 'Ring B', locked: false })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layerA, layerB] },
+    })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Lock Ring A' }))
+    const stateA = useProjectStore.getState().project.layers.find((l) => l.id === layerA.id)
+    const stateB = useProjectStore.getState().project.layers.find((l) => l.id === layerB.id)
+    expect(stateA?.locked).toBe(true)
+    expect(stateB?.locked).toBe(false)
+  })
+
+  it('visibility toggle still works alongside lock control', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring', visible: true, locked: false })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layer] },
+    })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Hide Ring' }))
+    const updated = useProjectStore.getState().project.layers.find((l) => l.id === layer.id)
+    expect(updated?.visible).toBe(false)
+    expect(updated?.locked).toBe(false)
+  })
+
+  it('clicking lock button does not change selection', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ name: 'Ring', locked: false })
+    useProjectStore.setState({
+      project: { ...createDefaultProject(), layers: [layer] },
+    })
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<EditorShell />)
+    await user.click(screen.getByRole('button', { name: 'Lock Ring' }))
+    expect(useEditorStore.getState().selectedLayerIds).toEqual([])
   })
 })
 
