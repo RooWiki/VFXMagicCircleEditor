@@ -2,14 +2,14 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import App from './App'
 
-describe('App placeholder', () => {
-  it('renders the working title', () => {
+describe('App', () => {
+  it('renders the editor shell', () => {
     render(<App />)
-    expect(screen.getByText('Magic Circle Editor')).toBeInTheDocument()
+    expect(screen.getByTestId('editor-shell')).toBeInTheDocument()
   })
 
-  it('renders the Phase 1 status message', () => {
+  it('renders the product name', () => {
     render(<App />)
-    expect(screen.getByText(/Phase 1/i)).toBeInTheDocument()
+    expect(screen.getByText('Magic Circle Editor')).toBeInTheDocument()
   })
 })

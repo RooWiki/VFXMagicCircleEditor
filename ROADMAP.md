@@ -14,7 +14,7 @@
 | 0     | Product Specification and Architecture                  | **COMPLETED** |
 | 1     | Technical Project Setup                                 | **COMPLETED** |
 | 2     | Data Model and State Foundation                         | **COMPLETED** |
-| 3     | Editor Shell                                            | PENDING       |
+| 3     | Editor Shell                                            | **COMPLETED** |
 | 4     | SVG Canvas and Viewport Navigation                      | PENDING       |
 | 5     | First Ring Layer                                        | PENDING       |
 | 6     | Direct Canvas Transformations                           | PENDING       |
@@ -225,7 +225,7 @@ None — this phase has no UI.
 
 ## Phase 3 — Editor Shell
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 
