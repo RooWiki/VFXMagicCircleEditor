@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+dist-ssr/
+
+# Test coverage
+coverage/
+
+# Playwright
+playwright-report/
+playwright/.cache/
+test-results/
+
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# TypeScript incremental compilation info
+*.tsbuildinfo
+node_modules/.tmp/
+
+# Editor and OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+*.swp
+*.swo
+.vscode/settings.json
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log

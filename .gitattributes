@@ -1,0 +1,2 @@
+# Markdown files use trailing double-space for hard line breaks — do not flag as whitespace errors
+*.md whitespace=-trailing-space
