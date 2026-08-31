@@ -16,7 +16,7 @@
 | 2     | Data Model and State Foundation                         | **COMPLETED** |
 | 3     | Editor Shell                                            | **COMPLETED** |
 | 4     | SVG Canvas and Viewport Navigation                      | **COMPLETED** |
-| 5     | First Ring Layer                                        | PENDING       |
+| 5     | First Ring Layer                                        | **COMPLETED** |
 | 6     | Direct Canvas Transformations                           | PENDING       |
 | 7     | Complete Layer System                                   | PENDING       |
 | 8     | History, Precision Tools and Shortcuts                  | PENDING       |
@@ -345,7 +345,7 @@ Render the SVG canvas with the correct viewBox and coordinate system. Implement 
 
 ## Phase 5 — First Ring Layer
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 

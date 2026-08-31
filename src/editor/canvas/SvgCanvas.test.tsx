@@ -159,3 +159,45 @@ describe('SVG viewBox', () => {
     })
   })
 })
+
+describe('ring layer rendering in artwork group', () => {
+  it('artwork group starts empty with no layers', () => {
+    render(<SvgCanvas />)
+    const artwork = screen.getByTestId('artwork-group')
+    expect(artwork.children).toHaveLength(0)
+  })
+
+  it('renders a ring layer inside the artwork group', () => {
+    const layer = createRingLayer()
+    useProjectStore.getState().addLayer(layer)
+    render(<SvgCanvas />)
+    expect(screen.getByTestId(`ring-layer-${layer.id}`)).toBeInTheDocument()
+  })
+
+  it('renders multiple ring layers', () => {
+    const a = createRingLayer({ name: 'A' })
+    const b = createRingLayer({ name: 'B' })
+    useProjectStore.getState().addLayer(a)
+    useProjectStore.getState().addLayer(b)
+    render(<SvgCanvas />)
+    expect(screen.getByTestId(`ring-layer-${a.id}`)).toBeInTheDocument()
+    expect(screen.getByTestId(`ring-layer-${b.id}`)).toBeInTheDocument()
+  })
+
+  it('hidden ring layer does not render artwork', () => {
+    const layer = createRingLayer({ visible: false })
+    useProjectStore.getState().addLayer(layer)
+    render(<SvgCanvas />)
+    expect(screen.queryByTestId(`ring-layer-${layer.id}`)).not.toBeInTheDocument()
+  })
+
+  it('ring layer artwork group contains a circle element', () => {
+    const layer = createRingLayer({ radius: 250 })
+    useProjectStore.getState().addLayer(layer)
+    render(<SvgCanvas />)
+    const g = screen.getByTestId(`ring-layer-${layer.id}`)
+    const circle = g.querySelector('circle')
+    expect(circle).not.toBeNull()
+    expect(circle?.getAttribute('r')).toBe('250')
+  })
+})

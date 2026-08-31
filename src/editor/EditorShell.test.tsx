@@ -104,16 +104,16 @@ describe('tool rail', () => {
     expect(screen.getByRole('button', { name: 'Fit View' })).toBeInTheDocument()
   })
 
-  it('Select, Pan and Fit View are enabled in Phase 4', () => {
+  it('Select, Add Ring, Pan and Fit View are enabled in Phase 5', () => {
     render(<EditorShell />)
     expect(screen.getByRole('button', { name: 'Select' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Add Ring' })).not.toBeDisabled()
     expect(screen.getByRole('button', { name: 'Pan' })).not.toBeDisabled()
     expect(screen.getByRole('button', { name: 'Fit View' })).not.toBeDisabled()
   })
 
-  it('Ring and Radial Lines tools remain disabled', () => {
+  it('Radial Lines tool remains disabled in Phase 5', () => {
     render(<EditorShell />)
-    expect(screen.getByRole('button', { name: 'Add Ring' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
   })
 })

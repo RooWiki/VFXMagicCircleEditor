@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useEditorStore, type ActiveTool } from '../store/editor'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
+import { createRingLayer } from '../utils/factories'
 
 interface ToolButtonProps {
   label: string
@@ -138,12 +139,20 @@ export default function ToolRail() {
   const setActiveTool = useEditorStore((s) => s.setActiveTool)
   const fitView = useViewportStore((s) => s.fitView)
   const canvas = useProjectStore((s) => s.project.canvas)
+  const addLayer = useProjectStore((s) => s.addLayer)
+  const selectLayer = useEditorStore((s) => s.selectLayer)
 
   const handleFitView = () => {
     fitView(canvas.width, canvas.height)
   }
 
   const handleSelectTool = (tool: ActiveTool) => () => setActiveTool(tool)
+
+  const handleAddRing = () => {
+    const ring = createRingLayer()
+    addLayer(ring)
+    selectLayer(ring.id)
+  }
 
   return (
     <nav
@@ -160,12 +169,7 @@ export default function ToolRail() {
 
       <div aria-hidden="true" className="mx-2 my-1.5 h-px bg-neutral-700" />
 
-      <ToolButton
-        label="Add Ring"
-        title="Add Ring (coming in Phase 5)"
-        disabled
-        icon={<RingIcon />}
-      />
+      <ToolButton label="Add Ring" title="Add Ring" icon={<RingIcon />} onClick={handleAddRing} />
       <ToolButton
         label="Add Radial Lines"
         title="Add Radial Lines (coming in Phase 9)"

@@ -329,28 +329,18 @@ test('layers and properties tabs still work with SVG viewport active', async ({ 
   await expect(page.getByText('Select a layer to edit its properties.')).toBeVisible()
 })
 
-test('no layer artwork elements exist in Phase 4', async ({ page }) => {
-  await page.goto('/')
-  // The artwork group should be empty
-  const artworkChildren = await page.evaluate(() => {
-    const artwork = document.querySelector('[data-testid="artwork-group"]')
-    return artwork?.children.length ?? -1
-  })
-  expect(artworkChildren).toBe(0)
-})
+// ─── Radial Lines remains disabled (Add Ring enabled in Phase 5) ──────────
 
-// ─── Ring and Radial Lines remain disabled ─────────────────────────────────
-
-test('Ring and Radial Lines tool buttons remain disabled', async ({ page }) => {
+test('Radial Lines tool button remains disabled', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'Add Ring' })).toBeDisabled()
   await expect(page.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
 })
 
-// ─── Hand and Fit View are enabled ────────────────────────────────────────
+// ─── Add Ring, Hand and Fit View are enabled ──────────────────────────────
 
-test('Hand tool and Fit View buttons are enabled', async ({ page }) => {
+test('Add Ring, Hand tool and Fit View buttons are enabled', async ({ page }) => {
   await page.goto('/')
+  await expect(page.getByRole('button', { name: 'Add Ring' })).not.toBeDisabled()
   await expect(page.getByRole('button', { name: 'Pan' })).not.toBeDisabled()
   await expect(page.getByRole('button', { name: 'Fit View' })).not.toBeDisabled()
 })

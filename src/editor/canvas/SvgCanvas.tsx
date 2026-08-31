@@ -4,6 +4,7 @@ import { useEditorStore, type ActiveTool, type PreviewBackground } from '../../s
 import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
 import { calcViewBox, formatZoomPercent } from '../../utils/viewport'
+import RingLayerRenderer from './RingLayerRenderer'
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -67,7 +68,8 @@ export default function SvgCanvas() {
   const { centerX, centerY, zoom, pan, zoomAtPoint, fitView, setViewportSize } = useViewportStore()
   const { activeTool, gridVisible, guidesVisible, previewBackground } = useEditorStore()
   const canvas = useProjectStore((s) => s.project.canvas)
-  const layerCount = useProjectStore((s) => s.project.layers.length)
+  const layers = useProjectStore((s) => s.project.layers)
+  const layerCount = layers.length
 
   // DOM refs
   const containerRef = useRef<HTMLDivElement>(null)
@@ -359,8 +361,15 @@ export default function SvgCanvas() {
           </g>
         )}
 
-        {/* ── Artwork group (empty in Phase 4 — ready for Phase 5 rendering) */}
-        <g data-testid="artwork-group" id="artwork" />
+        {/* ── Artwork group — renders project layers in bottom-to-top order */}
+        <g data-testid="artwork-group" id="artwork">
+          {layers.map((layer) => {
+            if (layer.type === 'ring') {
+              return <RingLayerRenderer key={layer.id} layer={layer} />
+            }
+            return null
+          })}
+        </g>
 
         {/* ── Artboard border ─────────────────────────────────────────────── */}
         <rect
