@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useEditorStore } from '../store/editor'
+import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -219,17 +220,23 @@ export default function LayersPanel() {
     // duplicateLayer inserts at origIndex + 1 in the array
     const newLayer = useProjectStore.getState().project.layers[origIndex + 1]
     if (newLayer) selectLayer(newLayer.id)
+    useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
   }
 
   const handleDelete = () => {
     if (!selectedId) return
     removeLayer(selectedId)
     clearSelection()
+    useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
   }
 
   const handleCenter = () => {
     if (!selectedId) return
+    const layer = useProjectStore.getState().project.layers.find((l) => l.id === selectedId)
+    if (!layer || layer.locked) return
+    if (layer.transform.x === 0 && layer.transform.y === 0) return
     centerLayer(selectedId)
+    useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
   }
 
   // ── Rename ─────────────────────────────────────────────────────────────────
@@ -243,7 +250,11 @@ export default function LayersPanel() {
     if (!renamingId) return
     const trimmed = draftName.trim()
     if (trimmed) {
-      renameLayer(renamingId, trimmed)
+      const before = useProjectStore.getState().project.layers.find((l) => l.id === renamingId)
+      if (before && before.name !== trimmed) {
+        renameLayer(renamingId, trimmed)
+        useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+      }
     }
     setRenamingId(null)
   }
@@ -283,7 +294,10 @@ export default function LayersPanel() {
     const n = layers.length
     const fromArrayIndex = n - 1 - draggedDisplayIndex
     const toArrayIndex = n - 1 - displayIndex
-    reorderLayers(fromArrayIndex, toArrayIndex)
+    if (fromArrayIndex !== toArrayIndex) {
+      reorderLayers(fromArrayIndex, toArrayIndex)
+      useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+    }
     setDraggedDisplayIndex(null)
     setDropTargetDisplayIndex(null)
   }
@@ -308,14 +322,14 @@ export default function LayersPanel() {
         <ActionBtn
           icon={<DuplicateIcon />}
           label="Duplicate selected layer"
-          title="Duplicate"
+          title="Duplicate (Ctrl+D)"
           disabled={!hasSelection}
           onClick={handleDuplicate}
         />
         <ActionBtn
           icon={<TrashIcon />}
           label="Delete selected layer"
-          title="Delete"
+          title="Delete (Delete / Backspace)"
           disabled={!hasSelection}
           onClick={handleDelete}
         />
@@ -376,7 +390,10 @@ export default function LayersPanel() {
                     type="button"
                     aria-label={`${layer.visible ? 'Hide' : 'Show'} ${layer.name}`}
                     title={layer.visible ? 'Hide layer' : 'Show layer'}
-                    onClick={() => toggleLayerVisibility(layer.id)}
+                    onClick={() => {
+                      toggleLayerVisibility(layer.id)
+                      useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+                    }}
                     style={{ cursor: 'pointer' }}
                     className={[
                       iconBtnClass,
@@ -391,7 +408,10 @@ export default function LayersPanel() {
                     type="button"
                     aria-label={`${layer.locked ? 'Unlock' : 'Lock'} ${layer.name}`}
                     title={layer.locked ? 'Unlock layer' : 'Lock layer'}
-                    onClick={() => toggleLayerLock(layer.id)}
+                    onClick={() => {
+                      toggleLayerLock(layer.id)
+                      useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+                    }}
                     style={{ cursor: 'pointer' }}
                     className={[
                       iconBtnClass,

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { useEditorStore } from '../../store/editor'
+import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
-import type { RingLayer } from '../../types/layer'
+import type { RingLayer, Transform } from '../../types/layer'
 import { screenToWorld } from '../../utils/viewport'
 import {
   angleRadians,
@@ -13,6 +14,16 @@ import {
   rotateVec,
   type CornerHandle,
 } from '../../utils/transform'
+
+function transformsEqual(a: Transform, b: Transform): boolean {
+  return (
+    a.x === b.x &&
+    a.y === b.y &&
+    a.rotation === b.rotation &&
+    a.scaleX === b.scaleX &&
+    a.scaleY === b.scaleY
+  )
+}
 
 // ─── Handle geometry constants ────────────────────────────────────────────────
 
@@ -249,45 +260,54 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
   )
 
   // ── pointerup / cancel ────────────────────────────────────────────────────
+  const commitGestureHistory = useCallback(
+    (g: GestureState) => {
+      const currentLayer = useProjectStore.getState().project.layers.find((l) => l.id === layer.id)
+      if (currentLayer && !transformsEqual(currentLayer.transform, g.startTransform)) {
+        useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+      }
+    },
+    [layer.id]
+  )
+
   const handlePointerUp = useCallback(
     (e: React.PointerEvent) => {
-      if (gestureRef.current?.pointerId === e.pointerId) {
+      const g = gestureRef.current
+      if (g?.pointerId === e.pointerId) {
+        commitGestureHistory(g)
         endGesture(e.nativeEvent.currentTarget)
       }
     },
-    [endGesture]
+    [endGesture, commitGestureHistory]
   )
 
   const handlePointerCancel = useCallback(
     (e: React.PointerEvent) => {
-      if (gestureRef.current?.pointerId === e.pointerId) {
+      const g = gestureRef.current
+      if (g?.pointerId === e.pointerId) {
+        commitGestureHistory(g)
         endGesture(e.nativeEvent.currentTarget)
       }
     },
-    [endGesture]
+    [endGesture, commitGestureHistory]
   )
 
   // ── Computed geometry ─────────────────────────────────────────────────────
   const { x, y, rotation, scaleX, scaleY } = layer.transform
   const r = layer.radius
-  const transform = `translate(${x}, ${y}) rotate(${rotation}) scale(${scaleX}, ${scaleY})`
+  const hw = r * Math.abs(scaleX) // scaled half-width in world units
+  const hh = r * Math.abs(scaleY) // scaled half-height in world units
+  const artworkTransform = `translate(${x}, ${y}) rotate(${rotation}) scale(${scaleX}, ${scaleY})`
+  const uiTransform = `translate(${x}, ${y}) rotate(${rotation})`
+  const rotHandleY = -hh - ROTATION_HANDLE_OFFSET
 
-  // Corner handles in local (pre-scale) coordinates
   const corners: CornerHandle[] = ['nw', 'ne', 'sw', 'se']
-
-  // Rotation handle sits above the top of the ring in local space.
-  // We offset in the -Y direction (up in screen space) beyond the radius.
-  // The ROTATION_HANDLE_OFFSET is in "non-scaling" conceptual units, but since
-  // we're inside the scaled group, we add it in object space relative to -radius.
-  const rotHandleLocalY = -r - ROTATION_HANDLE_OFFSET / Math.max(0.01, Math.abs(scaleY))
-  const rotHandleLocalX = 0
-
   const isLocked = layer.locked
 
   return (
     <g data-testid="selection-overlay" data-layer-id={layer.id} style={{ pointerEvents: 'none' }}>
-      {/* Outer group applies the same layer transform */}
-      <g transform={transform}>
+      {/* Artwork group: full transform with scale — circle/rect become correct ellipse/box */}
+      <g transform={artworkTransform}>
         {/* Selection circle indicator */}
         <circle
           cx={0}
@@ -317,27 +337,46 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
           opacity={0.4}
         />
 
-        {/* Line from top of ring to rotation handle */}
+        {/* Move target: transparent ring body for dragging */}
         {!isLocked && (
+          <circle
+            cx={0}
+            cy={0}
+            r={r}
+            fill="transparent"
+            stroke="transparent"
+            strokeWidth={Math.max(layer.strokeWidth, 12)}
+            style={{ pointerEvents: 'visibleStroke', cursor: 'move' }}
+            onPointerDown={handleRingPointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
+            data-testid="move-target"
+          />
+        )}
+      </g>
+
+      {/* UI group: translate + rotate only — handles stay square regardless of scale */}
+      {!isLocked ? (
+        <g transform={uiTransform}>
+          {/* Line from top of scaled ring to rotation handle */}
           <line
             x1={0}
-            y1={-r}
-            x2={rotHandleLocalX}
-            y2={rotHandleLocalY}
+            y1={-hh}
+            x2={0}
+            y2={rotHandleY}
             stroke="#a78bfa"
             strokeWidth="1"
             vectorEffect="non-scaling-stroke"
             style={{ pointerEvents: 'none' }}
             opacity={0.6}
           />
-        )}
 
-        {/* Rotation handle hit target — has pointer events */}
-        {!isLocked && (
+          {/* Rotation handle hit target */}
           <circle
-            cx={rotHandleLocalX}
-            cy={rotHandleLocalY}
-            r={ROTATION_HANDLE_RADIUS * 2} // larger hit target
+            cx={0}
+            cy={rotHandleY}
+            r={ROTATION_HANDLE_RADIUS * 2}
             fill="transparent"
             style={{ pointerEvents: 'all', cursor: 'crosshair' }}
             onPointerDown={handleRotationPointerDown}
@@ -345,13 +384,11 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerCancel}
           />
-        )}
 
-        {/* Rotation handle visual */}
-        {!isLocked && (
+          {/* Rotation handle visual */}
           <circle
-            cx={rotHandleLocalX}
-            cy={rotHandleLocalY}
+            cx={0}
+            cy={rotHandleY}
             r={ROTATION_HANDLE_RADIUS}
             fill="#1e1e2e"
             stroke="#a78bfa"
@@ -360,12 +397,12 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
             style={{ pointerEvents: 'none' }}
             data-testid="rotation-handle"
           />
-        )}
 
-        {/* Corner scale handles */}
-        {!isLocked &&
-          corners.map((corner) => {
-            const { x: cx, y: cy } = cornerLocalPosition(r, corner)
+          {/* Corner scale handles — positioned at scaled bounding box corners */}
+          {corners.map((corner) => {
+            const { x: lx, y: ly } = cornerLocalPosition(1, corner)
+            const cx = lx * hw
+            const cy = ly * hh
             return (
               <g key={corner}>
                 {/* Hit target */}
@@ -398,30 +435,13 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
               </g>
             )
           })}
-
-        {/* Move target: transparent ring body for dragging */}
-        {!isLocked && (
-          <circle
-            cx={0}
-            cy={0}
-            r={r}
-            fill="transparent"
-            stroke="transparent"
-            strokeWidth={Math.max(layer.strokeWidth, 12)}
-            style={{ pointerEvents: 'visibleStroke', cursor: 'move' }}
-            onPointerDown={handleRingPointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerCancel}
-            data-testid="move-target"
-          />
-        )}
-
-        {/* Locked indicator */}
-        {isLocked && (
+        </g>
+      ) : (
+        <g transform={uiTransform}>
+          {/* Locked indicator */}
           <text
             x={0}
-            y={-r - 12}
+            y={-hh - 12}
             textAnchor="middle"
             fontSize={10}
             fill="#a78bfa"
@@ -432,8 +452,8 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
           >
             locked
           </text>
-        )}
-      </g>
+        </g>
+      )}
     </g>
   )
 }

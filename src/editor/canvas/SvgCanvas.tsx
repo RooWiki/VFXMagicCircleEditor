@@ -3,22 +3,10 @@ import { VIEWPORT_WHEEL_SENSITIVITY } from '../../constants'
 import { useEditorStore, type ActiveTool, type PreviewBackground } from '../../store/editor'
 import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
+import { isEditableElement } from '../../utils/keyboard'
 import { calcViewBox, formatZoomPercent } from '../../utils/viewport'
 import RingLayerRenderer from './RingLayerRenderer'
 import SelectionOverlay from './SelectionOverlay'
-
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-function isEditableElement(el: Element | null): boolean {
-  if (!el) return false
-  const tag = el.tagName.toLowerCase()
-  return (
-    tag === 'input' ||
-    tag === 'textarea' ||
-    tag === 'select' ||
-    (el as HTMLElement).isContentEditable
-  )
-}
 
 function cursorForState(
   activeTool: ActiveTool,

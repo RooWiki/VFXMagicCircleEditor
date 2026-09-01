@@ -2,6 +2,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useRef } from 'react'
 import { useEditorStore } from '../../store/editor'
+import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
 import { createDefaultProject, createRingLayer } from '../../utils/factories'
@@ -21,6 +22,7 @@ beforeEach(() => {
     viewportWidth: 1000,
     viewportHeight: 1000,
   })
+  useHistoryStore.setState({ snapshots: [], pointer: -1, pendingEditSnapshot: null })
 })
 
 // Wrapper providing the required refs
@@ -400,5 +402,334 @@ describe('SelectionOverlay — inspector sync', () => {
     // just verify no error thrown
     const overlay = screen.getByTestId('selection-overlay')
     expect(overlay).toBeInTheDocument()
+  })
+})
+
+// ─── Gesture history ──────────────────────────────────────────────────────────
+
+describe('SelectionOverlay — gesture history', () => {
+  function setupWithSvgRef(layer: ReturnType<typeof createRingLayer>) {
+    useProjectStore.getState().addLayer(layer)
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    useViewportStore.setState({
+      centerX: 0,
+      centerY: 0,
+      zoom: 1,
+      viewportWidth: 1000,
+      viewportHeight: 1000,
+    })
+    const svgRef = { current: null as SVGSVGElement | null }
+    const spaceHeldRef = { current: false }
+    render(
+      <svg
+        ref={(el) => {
+          svgRef.current = el
+        }}
+      >
+        <SelectionOverlay
+          layer={layer}
+          svgRef={svgRef as React.RefObject<SVGSVGElement | null>}
+          spaceHeldRef={spaceHeldRef as React.RefObject<boolean>}
+        />
+      </svg>
+    )
+    if (svgRef.current) {
+      svgRef.current.getBoundingClientRect = () =>
+        ({ left: 0, top: 0, width: 1000, height: 1000 }) as DOMRect
+    }
+    return { svgRef, spaceHeldRef }
+  }
+
+  it('move gesture pushes one history snapshot on pointerup', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    setupWithSvgRef(layer)
+    const moveTarget = screen.getByTestId('move-target')
+
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        pointerId: 1,
+        clientX: 500,
+        clientY: 500,
+      })
+    )
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointermove', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 600,
+        clientY: 550,
+      })
+    )
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointerup', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 600,
+        clientY: 550,
+      })
+    )
+
+    expect(useHistoryStore.getState().pointer).toBe(1)
+    expect(useHistoryStore.getState().snapshots).toHaveLength(2)
+  })
+
+  it('move gesture with no actual movement does not push a snapshot', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    setupWithSvgRef(layer)
+    const moveTarget = screen.getByTestId('move-target')
+
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        pointerId: 1,
+        clientX: 500,
+        clientY: 500,
+      })
+    )
+    // No pointermove — pointerup immediately at same position
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointerup', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 500,
+        clientY: 500,
+      })
+    )
+
+    expect(useHistoryStore.getState().pointer).toBe(0)
+  })
+
+  it('rotation gesture pushes one history snapshot on pointerup', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    setupWithSvgRef(layer)
+
+    const circles = document.querySelectorAll('circle')
+    const hitTarget = Array.from(circles).find((c) => c.style.pointerEvents === 'all')
+    expect(hitTarget).toBeTruthy()
+
+    hitTarget?.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        pointerId: 1,
+        clientX: 500,
+        clientY: 400,
+      })
+    )
+    hitTarget?.dispatchEvent(
+      new PointerEvent('pointermove', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 600,
+        clientY: 500,
+      })
+    )
+    hitTarget?.dispatchEvent(
+      new PointerEvent('pointerup', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 600,
+        clientY: 500,
+      })
+    )
+
+    expect(useHistoryStore.getState().pointer).toBe(1)
+    expect(useHistoryStore.getState().snapshots).toHaveLength(2)
+  })
+
+  it('scale gesture pushes one history snapshot on pointerup', () => {
+    const layer = createRingLayer({
+      radius: 100,
+      transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    setupWithSvgRef(layer)
+    const seHandle = screen.getByTestId('scale-handle-se')
+
+    seHandle.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        pointerId: 1,
+        clientX: 600,
+        clientY: 600,
+      })
+    )
+    seHandle.dispatchEvent(
+      new PointerEvent('pointermove', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 700,
+        clientY: 700,
+      })
+    )
+    seHandle.dispatchEvent(
+      new PointerEvent('pointerup', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 700,
+        clientY: 700,
+      })
+    )
+
+    expect(useHistoryStore.getState().pointer).toBe(1)
+    expect(useHistoryStore.getState().snapshots).toHaveLength(2)
+  })
+
+  it('pointercancel also commits gesture to history', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    setupWithSvgRef(layer)
+    const moveTarget = screen.getByTestId('move-target')
+
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        pointerId: 1,
+        clientX: 500,
+        clientY: 500,
+      })
+    )
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointermove', {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        clientX: 600,
+        clientY: 600,
+      })
+    )
+    moveTarget.dispatchEvent(
+      new PointerEvent('pointercancel', { bubbles: true, cancelable: true, pointerId: 1 })
+    )
+
+    expect(useHistoryStore.getState().pointer).toBe(1)
+  })
+})
+
+// ─── Scale-invariant UI geometry ──────────────────────────────────────────────
+
+describe('SelectionOverlay — scale-invariant UI geometry', () => {
+  // SCALE_HANDLE_HALF = 5, ROTATION_HANDLE_OFFSET = 40, ROTATION_HANDLE_RADIUS = 5
+
+  function renderLayer(
+    opts: {
+      radius?: number
+      scaleX?: number
+      scaleY?: number
+      rotation?: number
+      locked?: boolean
+    } = {}
+  ) {
+    const { radius = 100, scaleX = 1, scaleY = 1, rotation = 0, locked = false } = opts
+    const layer = createRingLayer({
+      radius,
+      locked,
+      transform: { x: 0, y: 0, rotation, scaleX, scaleY },
+    })
+    render(<OverlayWrapper layer={layer} />)
+    return layer
+  }
+
+  it('SE handle hit-target positioned at (hw - 10, hh - 10) for uniform scale (1,1) r=100', () => {
+    renderLayer({ radius: 100, scaleX: 1, scaleY: 1 })
+    const seHandle = screen.getByTestId('scale-handle-se')
+    // hw = 100, hh = 100; hit target x = hw - SCALE_HANDLE_HALF*2 = 90, y = 90
+    expect(Number(seHandle.getAttribute('x'))).toBeCloseTo(90)
+    expect(Number(seHandle.getAttribute('y'))).toBeCloseTo(90)
+  })
+
+  it('SE handle adapts to non-uniform scale (0.25, 2) with r=100', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2 })
+    const seHandle = screen.getByTestId('scale-handle-se')
+    // hw = 25, hh = 200; hit target x = 25-10=15, y = 200-10=190
+    expect(Number(seHandle.getAttribute('x'))).toBeCloseTo(15)
+    expect(Number(seHandle.getAttribute('y'))).toBeCloseTo(190)
+  })
+
+  it('NW handle adapts to non-uniform scale (0.25, 2) with r=100', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2 })
+    const nwHandle = screen.getByTestId('scale-handle-nw')
+    // hw=25, hh=200; NW: cx=-25, cy=-200; hit target x=-25-10=-35, y=-200-10=-210
+    expect(Number(nwHandle.getAttribute('x'))).toBeCloseTo(-35)
+    expect(Number(nwHandle.getAttribute('y'))).toBeCloseTo(-210)
+  })
+
+  it('scale handle hit-target size is constant (20x20) regardless of scale', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2 })
+    const seHandle = screen.getByTestId('scale-handle-se')
+    // SCALE_HANDLE_HALF * 4 = 20
+    expect(Number(seHandle.getAttribute('width'))).toBeCloseTo(20)
+    expect(Number(seHandle.getAttribute('height'))).toBeCloseTo(20)
+  })
+
+  it('rotation handle radius is constant (5) regardless of scale', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2 })
+    const rotHandle = screen.getByTestId('rotation-handle')
+    expect(Number(rotHandle.getAttribute('r'))).toBeCloseTo(5)
+  })
+
+  it('rotation handle cy = -(hh + ROTATION_HANDLE_OFFSET) for non-uniform scale', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2 })
+    const rotHandle = screen.getByTestId('rotation-handle')
+    // hh = 200; rotHandleY = -200 - 40 = -240
+    expect(Number(rotHandle.getAttribute('cy'))).toBeCloseTo(-240)
+  })
+
+  it('UI group (containing rotation handle) has no scale in transform', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2 })
+    const rotHandle = screen.getByTestId('rotation-handle')
+    const uiGroup = rotHandle.closest('g[transform]')
+    const uiTransform = uiGroup?.getAttribute('transform') ?? ''
+    expect(uiTransform).toContain('translate')
+    expect(uiTransform).not.toContain('scale')
+  })
+
+  it('artwork group (containing selection indicator) has scale in transform', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2 })
+    const indicator = screen.getByTestId('selection-indicator')
+    const artGroup = indicator.closest('g[transform]')
+    const artTransform = artGroup?.getAttribute('transform') ?? ''
+    expect(artTransform).toContain('scale(0.25, 2)')
+  })
+
+  it('very wide ring (scaleX=3, scaleY=0.3): SE handle at x=290, y=20, size 20x20', () => {
+    renderLayer({ radius: 100, scaleX: 3, scaleY: 0.3 })
+    const seHandle = screen.getByTestId('scale-handle-se')
+    // hw=300, hh=30; hit target x=300-10=290, y=30-10=20
+    expect(Number(seHandle.getAttribute('x'))).toBeCloseTo(290)
+    expect(Number(seHandle.getAttribute('y'))).toBeCloseTo(20)
+    expect(Number(seHandle.getAttribute('width'))).toBeCloseTo(20)
+    expect(Number(seHandle.getAttribute('height'))).toBeCloseTo(20)
+  })
+
+  it('rotated 35° + non-uniform scale: UI group contains rotate(35) but no scale', () => {
+    renderLayer({ radius: 100, scaleX: 2, scaleY: 0.5, rotation: 35 })
+    const rotHandle = screen.getByTestId('rotation-handle')
+    const uiGroup = rotHandle.closest('g[transform]')
+    const uiTransform = uiGroup?.getAttribute('transform') ?? ''
+    expect(uiTransform).toContain('rotate(35)')
+    expect(uiTransform).not.toContain('scale')
+  })
+
+  it('locked indicator y = -(hh + 12) for non-uniform scale', () => {
+    renderLayer({ radius: 100, scaleX: 0.25, scaleY: 2, locked: true })
+    const lockedIndicator = screen.getByTestId('locked-indicator')
+    // hh = 200; y = -(200 + 12) = -212
+    expect(Number(lockedIndicator.getAttribute('y'))).toBeCloseTo(-212)
   })
 })

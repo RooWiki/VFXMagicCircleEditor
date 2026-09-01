@@ -2,6 +2,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useEditorStore } from '../store/editor'
+import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
 import { createDefaultProject, createRingLayer } from '../utils/factories'
@@ -27,6 +28,7 @@ beforeEach(() => {
     guidesVisible: false,
     previewBackground: 'dark',
   })
+  useHistoryStore.setState({ snapshots: [], pointer: -1, pendingEditSnapshot: null })
 })
 
 describe('layout regions', () => {
@@ -558,5 +560,513 @@ describe('store read-only access', () => {
     render(<EditorShell />)
     const after = useProjectStore.getState().project.canvas
     expect(after).toStrictEqual(before)
+  })
+})
+
+// ─── Phase 8: keyboard shortcuts ─────────────────────────────────────────────
+
+describe('EditorShell — Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y (undo/redo)', () => {
+  it('Ctrl+Z undoes the last action', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+    await user.keyboard('{Control>}z{/Control}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+  })
+
+  it('Ctrl+Shift+Z redoes after undo', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    await user.keyboard('{Control>}z{/Control}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+    await user.keyboard('{Control>}{Shift>}z{/Shift}{/Control}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+  })
+
+  it('Ctrl+Y redoes after undo', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    await user.keyboard('{Control>}z{/Control}')
+    await user.keyboard('{Control>}y{/Control}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+  })
+
+  it('Ctrl+Z is no-op when nothing to undo', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{Control>}z{/Control}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(1)
+  })
+
+  it('Ctrl+Z is ignored when editable element is focused', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({
+      name: 'My Ring',
+      transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    // Focus rename input (editable element)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer My Ring' }))
+    await user.keyboard('{Control>}z{/Control}')
+    // Project undo should NOT fire — x still 1
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+  })
+})
+
+describe('EditorShell — Ctrl+D (duplicate)', () => {
+  it('Ctrl+D duplicates the selected layer', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{Control>}d{/Control}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(2)
+  })
+
+  it('Ctrl+D selects the new duplicate', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{Control>}d{/Control}')
+    const layers = useProjectStore.getState().project.layers
+    const newId = layers.find((l) => l.id !== layer.id)?.id
+    expect(useEditorStore.getState().selectedLayerIds).toContain(newId)
+  })
+
+  it('Ctrl+D pushes a history snapshot', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{Control>}d{/Control}')
+    const { snapshots, pointer } = useHistoryStore.getState()
+    expect(pointer).toBe(1)
+    expect(snapshots).toHaveLength(2)
+  })
+
+  it('Ctrl+D with no selection is a no-op', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<EditorShell />)
+    await user.keyboard('{Control>}d{/Control}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(1)
+  })
+})
+
+describe('EditorShell — Backspace (delete)', () => {
+  it('Backspace removes the selected layer', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Backspace}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(0)
+  })
+
+  it('Backspace clears selection after delete', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Backspace}')
+    expect(useEditorStore.getState().selectedLayerIds).toHaveLength(0)
+  })
+
+  it('Backspace with no selection is a no-op', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<EditorShell />)
+    await user.keyboard('{Backspace}')
+    expect(useProjectStore.getState().project.layers).toHaveLength(1)
+  })
+})
+
+describe('EditorShell — Arrow nudge', () => {
+  it('ArrowRight nudges x by +1', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+  })
+
+  it('ArrowLeft nudges x by -1', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowLeft}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(-1)
+  })
+
+  it('ArrowDown nudges y by +1', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowDown}')
+    expect(useProjectStore.getState().project.layers[0].transform.y).toBe(1)
+  })
+
+  it('ArrowUp nudges y by -1', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowUp}')
+    expect(useProjectStore.getState().project.layers[0].transform.y).toBe(-1)
+  })
+
+  it('Shift+ArrowRight nudges x by +10', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{Shift>}{ArrowRight}{/Shift}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(10)
+  })
+
+  it('Shift+ArrowUp nudges y by -10', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{Shift>}{ArrowUp}{/Shift}')
+    expect(useProjectStore.getState().project.layers[0].transform.y).toBe(-10)
+  })
+
+  it('Arrow nudge pushes a history snapshot', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    expect(useHistoryStore.getState().pointer).toBe(1)
+  })
+
+  it('Arrow keys ignored when rename input is focused', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({
+      name: 'My Ring',
+      transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer My Ring' }))
+    await user.keyboard('{ArrowRight}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+  })
+
+  it('locked layer cannot be nudged via arrow keys', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({
+      locked: true,
+      transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 },
+    })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+  })
+
+  it('Arrow with no selection is a safe no-op', async () => {
+    const user = userEvent.setup()
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<EditorShell />)
+    await user.keyboard('{ArrowRight}')
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+  })
+})
+
+describe('EditorShell — Tab layer cycling', () => {
+  it('Tab with no selection selects the first layer', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'A' })
+    const layerB = createRingLayer({ name: 'B' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layerA, layerB] } })
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<EditorShell />)
+    await user.keyboard('{Tab}')
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layerA.id)
+  })
+
+  it('Tab advances to the next layer', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'A' })
+    const layerB = createRingLayer({ name: 'B' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layerA, layerB] } })
+    useEditorStore.setState({ selectedLayerIds: [layerA.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Tab}')
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layerB.id)
+  })
+
+  it('Tab wraps from last layer to first', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'A' })
+    const layerB = createRingLayer({ name: 'B' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layerA, layerB] } })
+    useEditorStore.setState({ selectedLayerIds: [layerB.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Tab}')
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layerA.id)
+  })
+
+  it('Shift+Tab with no selection selects the last layer', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'A' })
+    const layerB = createRingLayer({ name: 'B' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layerA, layerB] } })
+    useEditorStore.setState({ selectedLayerIds: [] })
+    render(<EditorShell />)
+    await user.keyboard('{Shift>}{Tab}{/Shift}')
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layerB.id)
+  })
+
+  it('Shift+Tab moves to the previous layer', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'A' })
+    const layerB = createRingLayer({ name: 'B' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layerA, layerB] } })
+    useEditorStore.setState({ selectedLayerIds: [layerB.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Shift>}{Tab}{/Shift}')
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layerA.id)
+  })
+
+  it('Shift+Tab wraps from first layer to last', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'A' })
+    const layerB = createRingLayer({ name: 'B' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layerA, layerB] } })
+    useEditorStore.setState({ selectedLayerIds: [layerA.id] })
+    render(<EditorShell />)
+    await user.keyboard('{Shift>}{Tab}{/Shift}')
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layerB.id)
+  })
+
+  it('Tab with no layers is a safe no-op', async () => {
+    const user = userEvent.setup()
+    useProjectStore.setState({ project: createDefaultProject() })
+    render(<EditorShell />)
+    await expect(user.keyboard('{Tab}')).resolves.toBeUndefined()
+  })
+
+  it('Tab does not cycle layers when rename input is focused', async () => {
+    const user = userEvent.setup()
+    const layerA = createRingLayer({ name: 'Ring A' })
+    const layerB = createRingLayer({ name: 'Ring B' })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layerA, layerB] } })
+    useEditorStore.setState({ selectedLayerIds: [layerA.id] })
+    render(<EditorShell />)
+    await user.dblClick(screen.getByRole('button', { name: 'Select layer Ring A' }))
+    await user.keyboard('{Tab}')
+    // Tab in rename input moves focus to next input, not layer cycling
+    expect(useEditorStore.getState().selectedLayerIds).toContain(layerA.id)
+  })
+})
+
+describe('EditorShell — keyboard shortcut key-case regression', () => {
+  // These tests dispatch realistic KeyboardEvents that match what a real browser
+  // sends: Shift held → key is uppercase. userEvent.keyboard does not reliably
+  // produce uppercase keys with Shift, so we dispatch manually.
+
+  it('Ctrl+Shift+Z with key="Z" (uppercase, real browser) triggers redo', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+
+    // Create a history entry via arrow nudge
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+
+    // Undo
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+
+    // Redo via Ctrl+Shift+Z with uppercase 'Z' — the real browser value
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Z',
+        ctrlKey: true,
+        shiftKey: true,
+        bubbles: true,
+        cancelable: true,
+      })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+  })
+
+  it('Ctrl+Z with key="z" (no shift) still triggers undo', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+  })
+
+  it('Ctrl+Y with key="y" triggers redo', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
+    )
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true, cancelable: true })
+    )
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'y', ctrlKey: true, bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+  })
+
+  it('Ctrl+D with key="d" (lowercase) duplicates', () => {
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'd', ctrlKey: true, bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers).toHaveLength(2)
+  })
+
+  it('Ctrl+D with key="D" (Caps Lock / uppercase) also duplicates', () => {
+    const layer = createRingLayer()
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'D', ctrlKey: true, bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers).toHaveLength(2)
+  })
+
+  it('Meta+Shift+Z (Mac) with key="Z" triggers redo', () => {
+    const layer = createRingLayer({ transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 } })
+    useProjectStore.setState({ project: { ...createDefaultProject(), layers: [layer] } })
+    useEditorStore.setState({ selectedLayerIds: [layer.id] })
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    render(<EditorShell />)
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
+    )
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'z', metaKey: true, bubbles: true, cancelable: true })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Z',
+        metaKey: true,
+        shiftKey: true,
+        bubbles: true,
+        cancelable: true,
+      })
+    )
+    expect(useProjectStore.getState().project.layers[0].transform.x).toBe(1)
+  })
+})
+
+describe('EditorShell — Ctrl+0 Fit View', () => {
+  it('Ctrl+0 does not throw', async () => {
+    const user = userEvent.setup()
+    render(<EditorShell />)
+    await expect(user.keyboard('{Control>}0{/Control}')).resolves.toBeUndefined()
+  })
+
+  it('Ctrl+0 triggers fitView on the viewport store', async () => {
+    const user = userEvent.setup()
+    useViewportStore.setState({
+      centerX: 0,
+      centerY: 0,
+      zoom: 0.1,
+      viewportWidth: 1000,
+      viewportHeight: 800,
+    })
+    render(<EditorShell />)
+    await user.keyboard('{Control>}0{/Control}')
+    const { zoom } = useViewportStore.getState()
+    expect(zoom).toBeGreaterThan(0.1)
   })
 })

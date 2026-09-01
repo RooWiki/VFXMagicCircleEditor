@@ -1,18 +1,21 @@
+import { useHistoryStore, selectCanUndo, selectCanRedo } from '../store/history'
 import { useProjectStore } from '../store/project'
 
 interface TopBarButtonProps {
   label: string
   title: string
   disabled?: boolean
+  onClick?: () => void
 }
 
-function TopBarButton({ label, title, disabled = false }: TopBarButtonProps) {
+function TopBarButton({ label, title, disabled = false, onClick }: TopBarButtonProps) {
   return (
     <button
       type="button"
       aria-label={label}
       title={title}
       disabled={disabled}
+      onClick={onClick}
       className="px-3 py-1.5 text-[13px] rounded text-neutral-200 hover:bg-neutral-800 hover:text-neutral-100 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-neutral-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
     >
       {label}
@@ -26,6 +29,10 @@ function Divider() {
 
 export default function TopBar() {
   const title = useProjectStore((s) => s.project.meta.title)
+  const canUndo = useHistoryStore(selectCanUndo)
+  const canRedo = useHistoryStore(selectCanRedo)
+  const undo = useHistoryStore((s) => s.undo)
+  const redo = useHistoryStore((s) => s.redo)
 
   return (
     <header
@@ -56,8 +63,13 @@ export default function TopBar() {
       <Divider />
 
       <div className="flex items-center gap-0.5">
-        <TopBarButton label="Undo" title="Undo (Phase 8)" disabled />
-        <TopBarButton label="Redo" title="Redo (Phase 8)" disabled />
+        <TopBarButton label="Undo" title="Undo (Ctrl+Z)" disabled={!canUndo} onClick={undo} />
+        <TopBarButton
+          label="Redo"
+          title="Redo (Ctrl+Shift+Z / Ctrl+Y)"
+          disabled={!canRedo}
+          onClick={redo}
+        />
       </div>
 
       <Divider />

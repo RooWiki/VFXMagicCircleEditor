@@ -639,8 +639,9 @@ test('no later-phase UI appears unexpectedly', async ({ page }) => {
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
 
-  // Undo/redo are present but disabled (Phase 8 placeholders)
-  await expect(page.getByRole('button', { name: /undo/i })).toBeDisabled()
+  // Undo is enabled after adding a ring (Phase 8 history active); Redo is disabled at tip
+  await expect(page.getByRole('button', { name: /undo/i })).toBeEnabled()
+  await expect(page.getByRole('button', { name: /redo/i })).toBeDisabled()
 
   // No export panel beyond the disabled export button (Phase 11)
   // Just verify the page loads correctly

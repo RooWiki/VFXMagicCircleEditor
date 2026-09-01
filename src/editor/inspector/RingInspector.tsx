@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
 import type { RingLayer } from '../../types/layer'
 
@@ -12,9 +13,21 @@ interface NumericFieldProps {
   max?: number
   step?: number
   unit?: string
+  onBeginEdit?: () => void
+  onCommitEdit?: () => void
 }
 
-function NumericField({ label, value, onChange, min, max, step = 1, unit }: NumericFieldProps) {
+function NumericField({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  step = 1,
+  unit,
+  onBeginEdit,
+  onCommitEdit,
+}: NumericFieldProps) {
   const [draft, setDraft] = useState(String(value))
   const focusedRef = useRef(false)
 
@@ -28,7 +41,7 @@ function NumericField({ label, value, onChange, min, max, step = 1, unit }: Nume
   const commit = (raw: string) => {
     const n = parseFloat(raw)
     if (Number.isFinite(n) && (min === undefined || n >= min) && (max === undefined || n <= max)) {
-      onChange(n)
+      if (n !== value) onChange(n)
       setDraft(String(n))
     } else {
       setDraft(String(value))
@@ -48,6 +61,7 @@ function NumericField({ label, value, onChange, min, max, step = 1, unit }: Nume
           aria-label={label}
           onFocus={() => {
             focusedRef.current = true
+            onBeginEdit?.()
           }}
           onChange={(e) => {
             const raw = e.target.value
@@ -64,6 +78,7 @@ function NumericField({ label, value, onChange, min, max, step = 1, unit }: Nume
           onBlur={(e) => {
             focusedRef.current = false
             commit(e.target.value)
+            onCommitEdit?.()
           }}
           className={[
             'w-full rounded bg-neutral-800 border border-neutral-700 px-2 py-1',
@@ -98,6 +113,9 @@ export default function RingInspector({ layer }: Props) {
   const updateRingLayer = useProjectStore((s) => s.updateRingLayer)
   const updateLayerTransform = useProjectStore((s) => s.updateLayerTransform)
 
+  const historyBegin = () => useHistoryStore.getState().beginInspectorEdit()
+  const historyCommit = () => useHistoryStore.getState().commitInspectorEdit()
+
   return (
     <div className="flex flex-col" data-testid="ring-inspector">
       {/* Layer name */}
@@ -115,6 +133,8 @@ export default function RingInspector({ layer }: Props) {
           value={layer.radius}
           min={0.1}
           step={1}
+          onBeginEdit={historyBegin}
+          onCommitEdit={historyCommit}
           onChange={(n) => updateRingLayer(layer.id, { radius: n })}
         />
         <NumericField
@@ -122,6 +142,8 @@ export default function RingInspector({ layer }: Props) {
           value={layer.strokeWidth}
           min={0.1}
           step={0.5}
+          onBeginEdit={historyBegin}
+          onCommitEdit={historyCommit}
           onChange={(n) => updateRingLayer(layer.id, { strokeWidth: n })}
         />
 
@@ -133,7 +155,9 @@ export default function RingInspector({ layer }: Props) {
               type="color"
               value={layer.color}
               aria-label="Color"
+              onFocus={historyBegin}
               onChange={(e) => updateRingLayer(layer.id, { color: e.target.value })}
+              onBlur={historyCommit}
               className="w-8 h-7 rounded border border-neutral-700 bg-neutral-800 cursor-pointer p-0.5"
             />
             <input
@@ -141,6 +165,7 @@ export default function RingInspector({ layer }: Props) {
               value={layer.color}
               aria-label="Color hex value"
               maxLength={7}
+              onFocus={historyBegin}
               onChange={(e) => {
                 const v = e.target.value
                 if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
@@ -149,6 +174,7 @@ export default function RingInspector({ layer }: Props) {
                   }
                 }
               }}
+              onBlur={historyCommit}
               className={[
                 'flex-1 rounded bg-neutral-800 border border-neutral-700 px-2 py-1',
                 'text-xs text-neutral-200 font-mono',
@@ -169,9 +195,11 @@ export default function RingInspector({ layer }: Props) {
               step={1}
               value={Math.round(layer.opacity * 100)}
               aria-label="Opacity"
+              onFocus={historyBegin}
               onChange={(e) =>
                 updateRingLayer(layer.id, { opacity: parseInt(e.target.value, 10) / 100 })
               }
+              onBlur={historyCommit}
               className="flex-1 accent-violet-500"
             />
             <span className="text-xs text-neutral-400 tabular-nums w-9 text-right">
@@ -192,12 +220,16 @@ export default function RingInspector({ layer }: Props) {
             label="X"
             value={layer.transform.x}
             step={1}
+            onBeginEdit={historyBegin}
+            onCommitEdit={historyCommit}
             onChange={(n) => updateLayerTransform(layer.id, { x: n })}
           />
           <NumericField
             label="Y"
             value={layer.transform.y}
             step={1}
+            onBeginEdit={historyBegin}
+            onCommitEdit={historyCommit}
             onChange={(n) => updateLayerTransform(layer.id, { y: n })}
           />
         </div>
@@ -207,6 +239,8 @@ export default function RingInspector({ layer }: Props) {
           value={layer.transform.rotation}
           step={1}
           unit="°"
+          onBeginEdit={historyBegin}
+          onCommitEdit={historyCommit}
           onChange={(n) => updateLayerTransform(layer.id, { rotation: n })}
         />
 
@@ -215,12 +249,16 @@ export default function RingInspector({ layer }: Props) {
             label="Scale X"
             value={layer.transform.scaleX}
             step={0.01}
+            onBeginEdit={historyBegin}
+            onCommitEdit={historyCommit}
             onChange={(n) => updateLayerTransform(layer.id, { scaleX: n })}
           />
           <NumericField
             label="Scale Y"
             value={layer.transform.scaleY}
             step={0.01}
+            onBeginEdit={historyBegin}
+            onCommitEdit={historyCommit}
             onChange={(n) => updateLayerTransform(layer.id, { scaleY: n })}
           />
         </div>

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useEditorStore, type ActiveTool } from '../store/editor'
+import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
 import { createRingLayer } from '../utils/factories'
@@ -152,6 +153,7 @@ export default function ToolRail() {
     const ring = createRingLayer()
     addLayer(ring)
     selectLayer(ring.id)
+    useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
   }
 
   return (
@@ -188,7 +190,7 @@ export default function ToolRail() {
       />
       <ToolButton
         label="Fit View"
-        title="Fit canvas to viewport"
+        title="Fit View (Ctrl+0)"
         icon={<FitViewIcon />}
         onClick={handleFitView}
       />
