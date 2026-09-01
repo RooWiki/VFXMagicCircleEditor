@@ -1,42 +1,74 @@
 import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
-import type { RingLayer } from '../../types/layer'
+import type { RadialLinesLayer } from '../../types/layer'
 import { NumericField, SectionHeading } from './shared'
 
 // ─── inspector ───────────────────────────────────────────────────────────────
 
 interface Props {
-  layer: RingLayer
+  layer: RadialLinesLayer
 }
 
-export default function RingInspector({ layer }: Props) {
-  const updateRingLayer = useProjectStore((s) => s.updateRingLayer)
+export default function RadialLinesInspector({ layer }: Props) {
+  const updateRadialLinesLayer = useProjectStore((s) => s.updateRadialLinesLayer)
   const updateLayerTransform = useProjectStore((s) => s.updateLayerTransform)
 
   const historyBegin = () => useHistoryStore.getState().beginInspectorEdit()
   const historyCommit = () => useHistoryStore.getState().commitInspectorEdit()
 
   return (
-    <div className="flex flex-col" data-testid="ring-inspector">
+    <div className="flex flex-col" data-testid="radial-lines-inspector">
       {/* Layer name */}
       <div className="px-3 pt-3 pb-2 border-b border-neutral-800">
         <p className="text-xs font-medium text-neutral-200 truncate">{layer.name}</p>
-        <p className="text-[10px] text-neutral-500 mt-0.5">Ring</p>
+        <p className="text-[10px] text-neutral-500 mt-0.5">Radial Lines</p>
       </div>
 
       {/* ── Artwork ────────────────────────────────────────────────────────── */}
-      <SectionHeading>Ring</SectionHeading>
+      <SectionHeading>Radial Lines</SectionHeading>
 
       <div className="flex flex-col gap-2 px-3 pb-3">
         <NumericField
-          label="Radius"
-          value={layer.radius}
+          label="Count"
+          value={layer.count}
+          min={1}
+          max={360}
+          step={1}
+          onBeginEdit={historyBegin}
+          onCommitEdit={historyCommit}
+          onChange={(n) => updateRadialLinesLayer(layer.id, { count: Math.round(n) })}
+        />
+
+        <NumericField
+          label="Inner Radius"
+          value={layer.innerRadius}
           min={0.1}
           step={1}
           onBeginEdit={historyBegin}
           onCommitEdit={historyCommit}
-          onChange={(n) => updateRingLayer(layer.id, { radius: n })}
+          onChange={(n) => updateRadialLinesLayer(layer.id, { innerRadius: n })}
         />
+
+        <NumericField
+          label="Outer Radius"
+          value={layer.outerRadius}
+          min={0.1}
+          step={1}
+          onBeginEdit={historyBegin}
+          onCommitEdit={historyCommit}
+          onChange={(n) => updateRadialLinesLayer(layer.id, { outerRadius: n })}
+        />
+
+        <NumericField
+          label="Start Angle"
+          value={layer.startAngle}
+          step={1}
+          unit="°"
+          onBeginEdit={historyBegin}
+          onCommitEdit={historyCommit}
+          onChange={(n) => updateRadialLinesLayer(layer.id, { startAngle: n })}
+        />
+
         <NumericField
           label="Thickness"
           value={layer.strokeWidth}
@@ -44,7 +76,7 @@ export default function RingInspector({ layer }: Props) {
           step={0.5}
           onBeginEdit={historyBegin}
           onCommitEdit={historyCommit}
-          onChange={(n) => updateRingLayer(layer.id, { strokeWidth: n })}
+          onChange={(n) => updateRadialLinesLayer(layer.id, { strokeWidth: n })}
         />
 
         {/* Color */}
@@ -56,7 +88,7 @@ export default function RingInspector({ layer }: Props) {
               value={layer.color}
               aria-label="Color"
               onFocus={historyBegin}
-              onChange={(e) => updateRingLayer(layer.id, { color: e.target.value })}
+              onChange={(e) => updateRadialLinesLayer(layer.id, { color: e.target.value })}
               onBlur={historyCommit}
               className="w-8 h-7 rounded border border-neutral-700 bg-neutral-800 cursor-pointer p-0.5"
             />
@@ -70,7 +102,7 @@ export default function RingInspector({ layer }: Props) {
                 const v = e.target.value
                 if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
                   if (/^#[0-9a-fA-F]{6}$/.test(v)) {
-                    updateRingLayer(layer.id, { color: v })
+                    updateRadialLinesLayer(layer.id, { color: v })
                   }
                 }
               }}
@@ -97,7 +129,7 @@ export default function RingInspector({ layer }: Props) {
               aria-label="Opacity"
               onFocus={historyBegin}
               onChange={(e) =>
-                updateRingLayer(layer.id, { opacity: parseInt(e.target.value, 10) / 100 })
+                updateRadialLinesLayer(layer.id, { opacity: parseInt(e.target.value, 10) / 100 })
               }
               onBlur={historyCommit}
               className="flex-1 accent-violet-500"

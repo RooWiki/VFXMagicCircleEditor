@@ -92,9 +92,11 @@ export const useProjectStore = create<ProjectStore>((set) => ({
   updateRadialLinesLayer: (id, patch) =>
     set((state) => {
       const layer = state.project.layers.find((l) => l.id === id)
-      if (layer === undefined || layer.type !== 'radial-lines' || layer.locked) {
-        return state
-      }
+      if (layer === undefined || layer.type !== 'radial-lines' || layer.locked) return state
+      // Enforce: innerRadius < outerRadius after the patch is applied
+      const newInner = patch.innerRadius ?? layer.innerRadius
+      const newOuter = patch.outerRadius ?? layer.outerRadius
+      if (newInner >= newOuter) return state
       return {
         project: {
           ...state.project,

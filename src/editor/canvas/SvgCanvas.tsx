@@ -5,6 +5,7 @@ import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
 import { isEditableElement } from '../../utils/keyboard'
 import { calcViewBox, formatZoomPercent } from '../../utils/viewport'
+import RadialLinesLayerRenderer from './RadialLinesLayerRenderer'
 import RingLayerRenderer from './RingLayerRenderer'
 import SelectionOverlay from './SelectionOverlay'
 
@@ -400,12 +401,22 @@ export default function SvgCanvas() {
             if (layer.type === 'ring') {
               return <RingLayerRenderer key={layer.id} layer={layer} spaceHeldRef={spaceHeldRef} />
             }
+            if (layer.type === 'radial-lines') {
+              return (
+                <RadialLinesLayerRenderer
+                  key={layer.id}
+                  layer={layer}
+                  spaceHeldRef={spaceHeldRef}
+                  svgRef={svgRef}
+                />
+              )
+            }
             return null
           })}
         </g>
 
         {/* ── Selection overlay — above artwork, not part of artwork ─────── */}
-        {selectedLayer?.type === 'ring' && selectedLayer.visible && (
+        {selectedLayer !== null && selectedLayer.visible && (
           <SelectionOverlay
             key={selectedLayer.id}
             layer={selectedLayer}

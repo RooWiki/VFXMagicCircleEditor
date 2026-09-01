@@ -201,6 +201,34 @@ describe('updateRadialLinesLayer', () => {
     accept({ radius: 300 })
     expect(accept({ count: 8, innerRadius: 100, outerRadius: 200 })).toBeDefined()
   })
+
+  it('rejects patch when resulting innerRadius equals outerRadius', () => {
+    const rl = createRadialLinesLayer({ innerRadius: 100, outerRadius: 300 })
+    useProjectStore.getState().addLayer(rl)
+    useProjectStore.getState().updateRadialLinesLayer(rl.id, { innerRadius: 300 })
+    expect((getLayers()[0] as { innerRadius: number }).innerRadius).toBe(100)
+  })
+
+  it('rejects patch when resulting innerRadius exceeds outerRadius', () => {
+    const rl = createRadialLinesLayer({ innerRadius: 100, outerRadius: 300 })
+    useProjectStore.getState().addLayer(rl)
+    useProjectStore.getState().updateRadialLinesLayer(rl.id, { innerRadius: 400 })
+    expect((getLayers()[0] as { innerRadius: number }).innerRadius).toBe(100)
+  })
+
+  it('rejects patch when resulting outerRadius falls below innerRadius', () => {
+    const rl = createRadialLinesLayer({ innerRadius: 200, outerRadius: 400 })
+    useProjectStore.getState().addLayer(rl)
+    useProjectStore.getState().updateRadialLinesLayer(rl.id, { outerRadius: 100 })
+    expect((getLayers()[0] as { outerRadius: number }).outerRadius).toBe(400)
+  })
+
+  it('accepts patch that widens the band (valid innerRadius < outerRadius)', () => {
+    const rl = createRadialLinesLayer({ innerRadius: 100, outerRadius: 300 })
+    useProjectStore.getState().addLayer(rl)
+    useProjectStore.getState().updateRadialLinesLayer(rl.id, { outerRadius: 500 })
+    expect((getLayers()[0] as { outerRadius: number }).outerRadius).toBe(500)
+  })
 })
 
 describe('updateLayerTransform', () => {

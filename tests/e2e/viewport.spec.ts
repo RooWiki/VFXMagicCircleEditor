@@ -329,11 +329,11 @@ test('layers and properties tabs still work with SVG viewport active', async ({ 
   await expect(page.getByText('Select a layer to edit its properties.')).toBeVisible()
 })
 
-// ─── Radial Lines remains disabled (Add Ring enabled in Phase 5) ──────────
+// ─── Radial Lines is now enabled (Phase 9) ────────────────────────────────
 
-test('Radial Lines tool button remains disabled', async ({ page }) => {
+test('Radial Lines tool button is enabled', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 // ─── Add Ring, Hand and Fit View are enabled ──────────────────────────────

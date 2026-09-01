@@ -488,11 +488,11 @@ test('adding a ring auto-selects it showing the selection overlay', async ({ pag
   expect(overlayCount).toBe(1)
 })
 
-// ─── Radial Lines remains disabled ────────────────────────────────────────────
+// ─── Radial Lines is now enabled (Phase 9) ────────────────────────────────────
 
-test('Radial Lines tool button remains disabled in Phase 5', async ({ page }) => {
+test('Radial Lines tool button is enabled in Phase 9', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 // ─── Layout integrity ─────────────────────────────────────────────────────────

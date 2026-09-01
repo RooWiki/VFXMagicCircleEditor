@@ -20,7 +20,7 @@
 | 6     | Direct Canvas Transformations                           | **COMPLETED** |
 | 7     | Complete Layer System                                   | **COMPLETED** |
 | 8     | History, Precision Tools and Shortcuts                  | **COMPLETED** |
-| 9     | Radial-Lines Layer                                      | PENDING       |
+| 9     | Radial-Lines Layer                                      | **COMPLETED** |
 | 10    | Project Persistence and Import                          | PENDING       |
 | 11    | PNG Export                                              | PENDING       |
 | 12    | Procedural Generator                                    | PENDING       |
@@ -599,7 +599,7 @@ Finalize the history system, implement keyboard shortcuts, numeric precision con
 
 ## Phase 9 — Radial-Lines Layer
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 

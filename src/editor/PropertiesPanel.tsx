@@ -1,6 +1,7 @@
 import { useEditorStore } from '../store/editor'
 import { useProjectStore } from '../store/project'
-import type { RingLayer } from '../types/layer'
+import type { RadialLinesLayer, RingLayer } from '../types/layer'
+import RadialLinesInspector from './inspector/RadialLinesInspector'
 import RingInspector from './inspector/RingInspector'
 
 export default function PropertiesPanel() {
@@ -23,6 +24,10 @@ export default function PropertiesPanel() {
 
   if (selectedLayer.type === 'ring') {
     return <RingInspector key={selectedLayer.id} layer={selectedLayer as RingLayer} />
+  }
+
+  if (selectedLayer.type === 'radial-lines') {
+    return <RadialLinesInspector key={selectedLayer.id} layer={selectedLayer as RadialLinesLayer} />
   }
 
   return (

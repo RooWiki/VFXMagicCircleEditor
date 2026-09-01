@@ -3,7 +3,7 @@ import { useEditorStore } from '../../store/editor'
 import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
-import type { RingLayer, Transform } from '../../types/layer'
+import type { Layer, Transform } from '../../types/layer'
 import { screenToWorld } from '../../utils/viewport'
 import {
   angleRadians,
@@ -23,6 +23,13 @@ function transformsEqual(a: Transform, b: Transform): boolean {
     a.scaleX === b.scaleX &&
     a.scaleY === b.scaleY
   )
+}
+
+// ─── Layer radius helper ──────────────────────────────────────────────────────
+
+function getLayerRadius(layer: Layer): number {
+  if (layer.type === 'ring') return layer.radius
+  return layer.outerRadius
 }
 
 // ─── Handle geometry constants ────────────────────────────────────────────────
@@ -86,7 +93,7 @@ function clientToWorld(clientX: number, clientY: number, rect: DOMRect): { x: nu
 // ─── SelectionOverlay ─────────────────────────────────────────────────────────
 
 interface OverlayProps {
-  layer: RingLayer
+  layer: Layer
   svgRef: React.RefObject<SVGSVGElement | null>
   spaceHeldRef: React.RefObject<boolean>
 }
@@ -294,7 +301,7 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
 
   // ── Computed geometry ─────────────────────────────────────────────────────
   const { x, y, rotation, scaleX, scaleY } = layer.transform
-  const r = layer.radius
+  const r = getLayerRadius(layer)
   const hw = r * Math.abs(scaleX) // scaled half-width in world units
   const hh = r * Math.abs(scaleY) // scaled half-height in world units
   const artworkTransform = `translate(${x}, ${y}) rotate(${rotation}) scale(${scaleX}, ${scaleY})`
@@ -337,7 +344,7 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
           opacity={0.4}
         />
 
-        {/* Move target: transparent ring body for dragging */}
+        {/* Move target: transparent hit area for dragging */}
         {!isLocked && (
           <circle
             cx={0}

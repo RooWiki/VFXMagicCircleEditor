@@ -3,7 +3,7 @@ import { useEditorStore, type ActiveTool } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
-import { createRingLayer } from '../utils/factories'
+import { createRadialLinesLayer, createRingLayer } from '../utils/factories'
 
 interface ToolButtonProps {
   label: string
@@ -156,6 +156,13 @@ export default function ToolRail() {
     useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
   }
 
+  const handleAddRadialLines = () => {
+    const rl = createRadialLinesLayer()
+    addLayer(rl)
+    selectLayer(rl.id)
+    useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+  }
+
   return (
     <nav
       aria-label="Tools"
@@ -174,9 +181,9 @@ export default function ToolRail() {
       <ToolButton label="Add Ring" title="Add Ring" icon={<RingIcon />} onClick={handleAddRing} />
       <ToolButton
         label="Add Radial Lines"
-        title="Add Radial Lines (coming in Phase 9)"
-        disabled
+        title="Add Radial Lines"
         icon={<RadialLinesIcon />}
+        onClick={handleAddRadialLines}
       />
 
       <div aria-hidden="true" className="mx-2 my-1.5 h-px bg-neutral-700" />

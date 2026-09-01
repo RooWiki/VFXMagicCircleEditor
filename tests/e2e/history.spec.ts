@@ -568,11 +568,11 @@ test('Delete does not delete layer while rename input is focused', async ({ page
   expect(await getLayerCount(page)).toBe(1)
 })
 
-// ─── Radial Lines still disabled ──────────────────────────────────────────────
+// ─── Radial Lines is now enabled (Phase 9) ────────────────────────────────────
 
-test('Radial Lines tool remains disabled in Phase 8', async ({ page }) => {
+test('Radial Lines tool is enabled in Phase 9', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 // ─── No console errors ────────────────────────────────────────────────────────

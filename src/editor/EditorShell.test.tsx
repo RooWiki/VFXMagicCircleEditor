@@ -114,9 +114,9 @@ describe('tool rail', () => {
     expect(screen.getByRole('button', { name: 'Fit View' })).not.toBeDisabled()
   })
 
-  it('Radial Lines tool remains disabled in Phase 5', () => {
+  it('Radial Lines tool is enabled in Phase 9', () => {
     render(<EditorShell />)
-    expect(screen.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
   })
 })
 

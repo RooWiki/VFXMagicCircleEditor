@@ -628,9 +628,9 @@ test('no selection UI in artwork group (overlay is separate)', async ({ page }) 
   expect(overlayInArtwork).toBe(false)
 })
 
-test('Radial Lines remains disabled', async ({ page }) => {
+test('Radial Lines tool is enabled (Phase 9)', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 test('no later-phase UI appears unexpectedly', async ({ page }) => {
