@@ -21,7 +21,7 @@
 | 7     | Complete Layer System                                   | **COMPLETED** |
 | 8     | History, Precision Tools and Shortcuts                  | **COMPLETED** |
 | 9     | Radial-Lines Layer                                      | **COMPLETED** |
-| 10    | Project Persistence and Import                          | PENDING       |
+| 10    | Project Persistence and Import                          | IN PROGRESS   |
 | 11    | PNG Export                                              | PENDING       |
 | 12    | Procedural Generator                                    | PENDING       |
 | 13    | Templates                                               | PENDING       |
@@ -659,7 +659,7 @@ Implement the Radial-Lines layer type: renderer, inspector controls and canvas i
 
 ## Phase 10 — Project Persistence and Import
 
-**Status: PENDING**
+**Status: IN PROGRESS**
 
 ### Objective
 

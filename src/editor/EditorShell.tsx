@@ -6,6 +6,7 @@ import { useViewportStore } from '../store/viewport'
 import { isEditableElement } from '../utils/keyboard'
 import RightSidebar from './RightSidebar'
 import StatusBar from './StatusBar'
+import ToastContainer from './ToastContainer'
 import ToolRail from './ToolRail'
 import TopBar from './TopBar'
 import Workspace from './Workspace'
@@ -135,6 +136,7 @@ export default function EditorShell() {
         <RightSidebar />
       </div>
       <StatusBar />
+      <ToastContainer />
     </div>
   )
 }

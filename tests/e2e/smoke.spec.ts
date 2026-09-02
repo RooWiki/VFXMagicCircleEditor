@@ -18,13 +18,16 @@ test('top bar is visible with all controls', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Export' })).toBeVisible()
 })
 
-test('future actions are disabled', async ({ page }) => {
+test('phase-gated top-bar actions are disabled', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'New' })).toBeDisabled()
-  await expect(page.getByRole('button', { name: 'Open' })).toBeDisabled()
-  await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled()
+  // New, Open, Save are implemented (Phase 10) and enabled
+  await expect(page.getByRole('button', { name: 'New' })).not.toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Open' })).not.toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Save' })).not.toBeDisabled()
+  // Undo/Redo disabled until history has entries
   await expect(page.getByRole('button', { name: 'Undo' })).toBeDisabled()
   await expect(page.getByRole('button', { name: 'Redo' })).toBeDisabled()
+  // Export still pending (Phase 11)
   await expect(page.getByRole('button', { name: 'Export' })).toBeDisabled()
 })
 

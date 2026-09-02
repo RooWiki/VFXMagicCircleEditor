@@ -1,7 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
+import type { Layer } from '../types/layer'
+
+// LayersPanel only needs these fields to render its rows. Transform values are
+// not displayed, so the panel should not re-render when only transforms change.
+function layersListEqual(prev: readonly Layer[], next: readonly Layer[]): boolean {
+  if (prev.length !== next.length) return false
+  for (let i = 0; i < prev.length; i++) {
+    const p = prev[i]
+    const n = next[i]
+    if (
+      p.id !== n.id ||
+      p.name !== n.name ||
+      p.type !== n.type ||
+      p.visible !== n.visible ||
+      p.locked !== n.locked
+    )
+      return false
+  }
+  return true
+}
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -173,7 +193,22 @@ function ActionBtn({ icon, label, title, disabled, onClick }: ActionBtnProps) {
 // ─── LayersPanel ──────────────────────────────────────────────────────────────
 
 export default function LayersPanel() {
-  const layers = useProjectStore((s) => s.project.layers)
+  // Subscribe to layers with a custom equality check: only re-render when the
+  // fields LayersPanel actually displays change (id/name/type/visible/locked).
+  // Transform-only updates during drag are skipped, eliminating ~300 wasted
+  // renders per 5-second drag.
+  const layersSnapshotRef = useRef<readonly Layer[]>(useProjectStore.getState().project.layers)
+  const getLayersSnapshot = useCallback(() => {
+    const next = useProjectStore.getState().project.layers
+    if (layersListEqual(layersSnapshotRef.current, next)) return layersSnapshotRef.current
+    layersSnapshotRef.current = next
+    return next
+  }, [])
+  const layers = useSyncExternalStore(
+    useProjectStore.subscribe,
+    getLayersSnapshot,
+    getLayersSnapshot
+  )
   const reorderLayers = useProjectStore((s) => s.reorderLayers)
   const duplicateLayer = useProjectStore((s) => s.duplicateLayer)
   const renameLayer = useProjectStore((s) => s.renameLayer)

@@ -287,6 +287,38 @@ describe('updateLayerTransform', () => {
     useProjectStore.getState().updateLayerTransform(ring.id, { x: 10 })
     expect(getLayers()[0].transform).not.toBe(originalTransform)
   })
+
+  it('preserves reference identity of layers that were NOT updated', () => {
+    // This invariant is required for React.memo on layer renderers to work:
+    // only the updated layer's object changes; all other layer objects stay
+    // the same reference so memo can bail out without re-rendering them.
+    const ring1 = createRingLayer()
+    const ring2 = createRingLayer()
+    useProjectStore.getState().addLayer(ring1)
+    useProjectStore.getState().addLayer(ring2)
+
+    const ring2Before = getLayers().find((l) => l.id === ring2.id)!
+    useProjectStore.getState().updateLayerTransform(ring1.id, { x: 50 })
+    const ring2After = getLayers().find((l) => l.id === ring2.id)!
+
+    expect(ring2After).toBe(ring2Before)
+  })
+
+  it('preserves reference identity of all non-updated layers with many rings', () => {
+    const rings = Array.from({ length: 5 }, () => createRingLayer())
+    rings.forEach((r) => useProjectStore.getState().addLayer(r))
+
+    const refsBefore = rings.map((r) => getLayers().find((l) => l.id === r.id)!)
+    useProjectStore.getState().updateLayerTransform(rings[0].id, { x: 10 })
+    const refsAfter = rings.map((r) => getLayers().find((l) => l.id === r.id)!)
+
+    // Ring 0 gets a new object
+    expect(refsAfter[0]).not.toBe(refsBefore[0])
+    // Rings 1-4 keep the same object reference
+    for (let i = 1; i < rings.length; i++) {
+      expect(refsAfter[i]).toBe(refsBefore[i])
+    }
+  })
 })
 
 describe('renameLayer', () => {

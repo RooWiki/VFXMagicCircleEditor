@@ -423,3 +423,9 @@ describe('RadialLinesLayerRenderer — artwork move gesture', () => {
     expect(filledChildren).toHaveLength(0)
   })
 })
+
+describe('RadialLinesLayerRenderer — memoization', () => {
+  it('is wrapped in React.memo (export has a .type property)', () => {
+    expect(typeof (RadialLinesLayerRenderer as unknown as { type: unknown }).type).toBe('function')
+  })
+})

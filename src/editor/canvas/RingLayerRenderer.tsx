@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useEditorStore } from '../../store/editor'
 import type { RingLayer } from '../../types/layer'
 
@@ -6,7 +7,7 @@ interface Props {
   spaceHeldRef: React.RefObject<boolean>
 }
 
-export default function RingLayerRenderer({ layer, spaceHeldRef }: Props) {
+function RingLayerRenderer({ layer, spaceHeldRef }: Props) {
   if (!layer.visible) return null
 
   const { x, y, rotation, scaleX, scaleY } = layer.transform
@@ -54,3 +55,5 @@ export default function RingLayerRenderer({ layer, spaceHeldRef }: Props) {
     </g>
   )
 }
+
+export default memo(RingLayerRenderer)

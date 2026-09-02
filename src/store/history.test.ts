@@ -79,6 +79,38 @@ describe('initHistory', () => {
     expect(getHistory().snapshots).toHaveLength(1)
     expect(getHistory().pointer).toBe(0)
   })
+
+  it('New Project: initHistory discards all previous snapshots', () => {
+    // Simulate a session with many snapshots (like a user who edited heavily)
+    const initial = createDefaultProject()
+    useHistoryStore.getState().initHistory(initial)
+    for (let i = 0; i < 5; i++) {
+      useHistoryStore.getState().pushSnapshot(makeProject(`Step ${i}`))
+    }
+    expect(getHistory().snapshots).toHaveLength(6)
+
+    // New Project
+    const fresh = createDefaultProject()
+    useHistoryStore.getState().initHistory(fresh)
+
+    expect(getHistory().snapshots).toHaveLength(1)
+    expect(getHistory().pointer).toBe(0)
+    expect(getHistory().snapshots[0]).toBe(fresh)
+    expect(selectCanUndo(getHistory())).toBe(false)
+    expect(selectCanRedo(getHistory())).toBe(false)
+  })
+
+  it('New Project: initHistory clears pendingEditSnapshot', () => {
+    const p = createDefaultProject()
+    useHistoryStore.getState().initHistory(p)
+    // Simulate an in-progress inspector edit
+    useHistoryStore.setState({ pendingEditSnapshot: { ...p } })
+    expect(getHistory().pendingEditSnapshot).not.toBeNull()
+
+    // New Project
+    useHistoryStore.getState().initHistory(createDefaultProject())
+    expect(getHistory().pendingEditSnapshot).toBeNull()
+  })
 })
 
 // ─── pushSnapshot ─────────────────────────────────────────────────────────────

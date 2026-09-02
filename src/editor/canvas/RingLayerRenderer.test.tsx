@@ -210,3 +210,11 @@ describe('RingLayerRenderer — data attributes', () => {
     expect(g.getAttribute('data-layer-id')).toBe(layer.id)
   })
 })
+
+describe('RingLayerRenderer — memoization', () => {
+  it('is wrapped in React.memo (export has a .type property)', () => {
+    // React.memo returns a special object: { $$typeof: REACT_MEMO_TYPE, type, compare }
+    // We verify the export is a memo wrapper by checking for the inner `.type`.
+    expect(typeof (RingLayerRenderer as unknown as { type: unknown }).type).toBe('function')
+  })
+})

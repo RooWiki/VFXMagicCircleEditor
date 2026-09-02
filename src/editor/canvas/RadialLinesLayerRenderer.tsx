@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useEditorStore } from '../../store/editor'
 import type { RadialLinesLayer } from '../../types/layer'
 import { computeRadialLines } from '../../utils/geometry'
@@ -9,7 +10,7 @@ interface Props {
   svgRef: React.RefObject<SVGSVGElement | null>
 }
 
-export default function RadialLinesLayerRenderer({ layer, spaceHeldRef, svgRef }: Props) {
+function RadialLinesLayerRenderer({ layer, spaceHeldRef, svgRef }: Props) {
   const { startGesture, onPointerMove, onPointerUp, onPointerCancel } = useArtworkMoveGesture(
     layer.id,
     () => layer.transform,
@@ -77,3 +78,5 @@ export default function RadialLinesLayerRenderer({ layer, spaceHeldRef, svgRef }
     </g>
   )
 }
+
+export default memo(RadialLinesLayerRenderer)
