@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { downloadProject } from '../persistence/projectIO'
 import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
@@ -18,6 +19,13 @@ export default function EditorShell() {
       const key = e.key.toLowerCase()
       const isEditable = isEditableElement(document.activeElement)
       const isRenaming = !!document.querySelector('[data-testid="layer-rename-input"]')
+
+      // ── Ctrl+S: Save / Download ─────────────────────────────────────────────
+      if (ctrl && key === 's' && !isEditable) {
+        e.preventDefault()
+        downloadProject()
+        return
+      }
 
       // ── Ctrl+Z: Undo ────────────────────────────────────────────────────────
       if (ctrl && !shift && key === 'z' && !isEditable) {

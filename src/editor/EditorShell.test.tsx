@@ -84,13 +84,16 @@ describe('top bar', () => {
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument()
   })
 
-  it('all top-bar actions are disabled', () => {
+  it('file buttons are enabled and history/export buttons respect their state', () => {
     render(<EditorShell />)
-    expect(screen.getByRole('button', { name: 'New' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Open' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+    // Phase 10: New, Open, Save are fully implemented and enabled
+    expect(screen.getByRole('button', { name: 'New' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Open' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save' })).not.toBeDisabled()
+    // Undo/Redo disabled when history is empty
     expect(screen.getByRole('button', { name: 'Undo' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Redo' })).toBeDisabled()
+    // Export remains Phase 11 placeholder
     expect(screen.getByRole('button', { name: 'Export' })).toBeDisabled()
   })
 })

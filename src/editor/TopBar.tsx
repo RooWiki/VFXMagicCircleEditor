@@ -1,3 +1,6 @@
+import { useRef } from 'react'
+import { isProjectDirty } from '../persistence/autosave'
+import { downloadProject, newProject, openProject } from '../persistence/projectIO'
 import { useHistoryStore, selectCanUndo, selectCanRedo } from '../store/history'
 import { useProjectStore } from '../store/project'
 
@@ -38,6 +41,29 @@ export default function TopBar() {
   const undo = useHistoryStore((s) => s.undo)
   const redo = useHistoryStore((s) => s.redo)
 
+  // Hidden file input for Open Project
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleNew = () => {
+    void newProject(isProjectDirty())
+  }
+
+  const handleOpenClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    void openProject(file, isProjectDirty())
+    // Reset so the same file can be opened again
+    e.target.value = ''
+  }
+
+  const handleSave = () => {
+    downloadProject()
+  }
+
   return (
     <header
       role="banner"
@@ -58,10 +84,21 @@ export default function TopBar() {
 
       <div className="flex-1" />
 
+      {/* Hidden file input for Open Project */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json,.mce.json,application/json"
+        className="sr-only"
+        aria-hidden="true"
+        tabIndex={-1}
+        onChange={handleFileChange}
+      />
+
       <div className="flex items-center gap-0.5">
-        <TopBarButton label="New" title="New Project (Phase 10)" disabled />
-        <TopBarButton label="Open" title="Open Project (Phase 10)" disabled />
-        <TopBarButton label="Save" title="Save Project (Phase 10)" disabled />
+        <TopBarButton label="New" title="New Project" onClick={handleNew} />
+        <TopBarButton label="Open" title="Open Project" onClick={handleOpenClick} />
+        <TopBarButton label="Save" title="Download Project (Ctrl+S)" onClick={handleSave} />
       </div>
 
       <Divider />

@@ -18,13 +18,18 @@ test('top bar is visible with all controls', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Export' })).toBeVisible()
 })
 
-test('future actions are disabled', async ({ page }) => {
+test('Phase 10 file actions are enabled; unimplemented actions remain disabled', async ({
+  page,
+}) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'New' })).toBeDisabled()
-  await expect(page.getByRole('button', { name: 'Open' })).toBeDisabled()
-  await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled()
+  // Phase 10: New, Open, Save are implemented and enabled
+  await expect(page.getByRole('button', { name: 'New' })).not.toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Open' })).not.toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Save' })).not.toBeDisabled()
+  // Undo/Redo disabled on fresh load (empty history)
   await expect(page.getByRole('button', { name: 'Undo' })).toBeDisabled()
   await expect(page.getByRole('button', { name: 'Redo' })).toBeDisabled()
+  // Export remains Phase 11 placeholder
   await expect(page.getByRole('button', { name: 'Export' })).toBeDisabled()
 })
 
