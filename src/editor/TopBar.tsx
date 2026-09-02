@@ -15,7 +15,11 @@ function TopBarButton({ label, title, disabled = false, onClick }: TopBarButtonP
       aria-label={label}
       title={title}
       disabled={disabled}
-      onClick={onClick}
+      onClick={(e) => {
+        onClick?.()
+        // detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
+        if (e.detail > 0) e.currentTarget.blur()
+      }}
       className="px-3 py-1.5 text-[13px] rounded text-neutral-200 hover:bg-neutral-800 hover:text-neutral-100 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-neutral-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
     >
       {label}

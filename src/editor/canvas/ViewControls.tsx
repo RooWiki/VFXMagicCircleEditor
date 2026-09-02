@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import { useEditorStore, type PreviewBackground } from '../../store/editor'
 
 function GridIcon() {
@@ -43,6 +44,11 @@ const BG_OPTIONS: { value: PreviewBackground; label: string }[] = [
   { value: 'transparent', label: 'Checker' },
 ]
 
+// detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
+function blurOnPointer(e: MouseEvent<HTMLButtonElement>) {
+  if (e.detail > 0) e.currentTarget.blur()
+}
+
 export default function ViewControls() {
   const {
     gridVisible,
@@ -64,7 +70,10 @@ export default function ViewControls() {
         aria-label="Toggle grid"
         aria-pressed={gridVisible}
         title={gridVisible ? 'Hide grid' : 'Show grid'}
-        onClick={() => setGridVisible(!gridVisible)}
+        onClick={(e) => {
+          setGridVisible(!gridVisible)
+          blurOnPointer(e)
+        }}
         className={[
           'flex items-center justify-center w-7 h-7 rounded text-xs',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
@@ -82,7 +91,10 @@ export default function ViewControls() {
         aria-label="Toggle guides"
         aria-pressed={guidesVisible}
         title={guidesVisible ? 'Hide guides' : 'Show guides'}
-        onClick={() => setGuidesVisible(!guidesVisible)}
+        onClick={(e) => {
+          setGuidesVisible(!guidesVisible)
+          blurOnPointer(e)
+        }}
         className={[
           'flex items-center justify-center w-7 h-7 rounded text-xs',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
@@ -105,7 +117,10 @@ export default function ViewControls() {
           aria-label={`Preview background: ${label}`}
           aria-pressed={previewBackground === value}
           title={`${label} background`}
-          onClick={() => setPreviewBackground(value)}
+          onClick={(e) => {
+            setPreviewBackground(value)
+            blurOnPointer(e)
+          }}
           className={[
             'flex items-center justify-center h-7 px-2 rounded text-[11px] font-medium',
             'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',

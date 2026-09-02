@@ -360,3 +360,56 @@ test('deleting selected layer removes selection overlay', async ({ page }) => {
   await page.waitForTimeout(50)
   await expect(page.getByTestId('selection-overlay')).not.toBeVisible()
 })
+
+// ─── Space-after-pointer-click regression ────────────────────────────────────
+// Clicking a create button must not leave it focused so that pressing Space
+// afterward (for canvas panning) does not fire the button again.
+
+test('pointer-click Ring create + Space does not create extra rings', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Add Ring' }).click()
+  await page.waitForTimeout(50)
+  expect(await getLayerCount(page)).toBe(1)
+
+  for (let i = 0; i < 10; i++) {
+    await page.keyboard.press('Space')
+    await page.waitForTimeout(20)
+  }
+
+  expect(await getLayerCount(page)).toBe(1)
+})
+
+test('pointer-click Radial Lines create + Space does not create extra layers', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Add Radial Lines' }).click()
+  await page.waitForTimeout(50)
+  expect(await getLayerCount(page)).toBe(1)
+
+  for (let i = 0; i < 10; i++) {
+    await page.keyboard.press('Space')
+    await page.waitForTimeout(20)
+  }
+
+  expect(await getLayerCount(page)).toBe(1)
+})
+
+test('repeated pointer clicks on Ring create still produce multiple rings', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Add Ring' }).click()
+  await page.waitForTimeout(50)
+  await page.getByRole('button', { name: 'Add Ring' }).click()
+  await page.waitForTimeout(50)
+  await page.getByRole('button', { name: 'Add Ring' }).click()
+  await page.waitForTimeout(50)
+  expect(await getLayerCount(page)).toBe(3)
+})
+
+test('keyboard-focused Ring button activated by Space still creates a ring', async ({ page }) => {
+  await page.goto('/')
+  // Programmatic focus simulates Tab navigation to the button
+  await page.getByRole('button', { name: 'Add Ring' }).focus()
+  await page.keyboard.press('Space')
+  await page.waitForTimeout(50)
+  // Keyboard activation (detail === 0) must still create the layer
+  expect(await getLayerCount(page)).toBe(1)
+})

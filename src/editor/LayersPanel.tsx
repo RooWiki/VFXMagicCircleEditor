@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { type MouseEvent, useEffect, useRef, useState } from 'react'
 import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
@@ -156,7 +156,11 @@ function ActionBtn({ icon, label, title, disabled, onClick }: ActionBtnProps) {
       aria-label={label}
       title={title}
       disabled={disabled}
-      onClick={onClick}
+      onClick={(e) => {
+        onClick()
+        // detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
+        if (e.detail > 0) e.currentTarget.blur()
+      }}
       className={[
         'flex items-center justify-center w-6 h-6 rounded',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
@@ -168,6 +172,11 @@ function ActionBtn({ icon, label, title, disabled, onClick }: ActionBtnProps) {
       {icon}
     </button>
   )
+}
+
+// detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
+function blurOnPointer(e: MouseEvent<HTMLButtonElement>) {
+  if (e.detail > 0) e.currentTarget.blur()
 }
 
 // ─── LayersPanel ──────────────────────────────────────────────────────────────
@@ -390,9 +399,10 @@ export default function LayersPanel() {
                     type="button"
                     aria-label={`${layer.visible ? 'Hide' : 'Show'} ${layer.name}`}
                     title={layer.visible ? 'Hide layer' : 'Show layer'}
-                    onClick={() => {
+                    onClick={(e) => {
                       toggleLayerVisibility(layer.id)
                       useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+                      blurOnPointer(e)
                     }}
                     style={{ cursor: 'pointer' }}
                     className={[
@@ -408,9 +418,10 @@ export default function LayersPanel() {
                     type="button"
                     aria-label={`${layer.locked ? 'Unlock' : 'Lock'} ${layer.name}`}
                     title={layer.locked ? 'Unlock layer' : 'Lock layer'}
-                    onClick={() => {
+                    onClick={(e) => {
                       toggleLayerLock(layer.id)
                       useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+                      blurOnPointer(e)
                     }}
                     style={{ cursor: 'pointer' }}
                     className={[

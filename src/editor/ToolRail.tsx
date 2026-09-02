@@ -29,7 +29,11 @@ function ToolButton({
       aria-pressed={active ? true : undefined}
       title={title}
       disabled={disabled}
-      onClick={onClick}
+      onClick={(e) => {
+        onClick?.()
+        // detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
+        if (e.detail > 0) e.currentTarget.blur()
+      }}
       className={[
         'flex items-center justify-center w-9 h-9 rounded mx-auto my-0.5',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
