@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useEditorStore, type ActiveTool } from '../store/editor'
+import { useGeneratorStore } from '../store/generatorStore'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
@@ -115,6 +116,14 @@ function PanIcon() {
   )
 }
 
+function GenerateIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18" aria-hidden="true">
+      <path d="M10 1.5l1.8 6.7L18.5 10l-6.7 1.8L10 18.5l-1.8-6.7L1.5 10l6.7-1.8L10 1.5z" />
+    </svg>
+  )
+}
+
 function FitViewIcon() {
   return (
     <svg
@@ -146,6 +155,7 @@ export default function ToolRail() {
   const canvas = useProjectStore((s) => s.project.canvas)
   const addLayer = useProjectStore((s) => s.addLayer)
   const selectLayer = useEditorStore((s) => s.selectLayer)
+  const openGenerator = useGeneratorStore((s) => s.open)
 
   const handleFitView = () => {
     fitView(canvas.width, canvas.height)
@@ -188,6 +198,12 @@ export default function ToolRail() {
         title="Add Radial Lines"
         icon={<RadialLinesIcon />}
         onClick={handleAddRadialLines}
+      />
+      <ToolButton
+        label="Generate"
+        title="Procedural Generator"
+        icon={<GenerateIcon />}
+        onClick={openGenerator}
       />
 
       <div aria-hidden="true" className="mx-2 my-1.5 h-px bg-neutral-700" />

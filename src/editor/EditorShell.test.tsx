@@ -105,6 +105,7 @@ describe('tool rail', () => {
     expect(screen.getByRole('button', { name: 'Select' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Add Ring' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Add Radial Lines' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Generate' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Pan' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Fit View' })).toBeInTheDocument()
   })

@@ -23,7 +23,7 @@
 | 9     | Radial-Lines Layer                                      | **COMPLETED** |
 | 10    | Project Persistence and Import                          | **COMPLETED** |
 | 11    | PNG Export                                              | **COMPLETED** |
-| 12    | Procedural Generator                                    | PENDING       |
+| 12    | Procedural Generator                                    | **COMPLETED** |
 | 13    | Templates                                               | PENDING       |
 | 14    | Basic Animation Preview                                 | PENDING       |
 | 15    | Polish, Testing, Portfolio Documentation and Deployment | PENDING       |
@@ -785,7 +785,7 @@ Implement the PNG export pipeline as defined in [ARCHITECTURE.md § 12](ARCHITEC
 
 ## Phase 12 — Procedural Generator
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 
