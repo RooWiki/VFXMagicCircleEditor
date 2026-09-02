@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { isProjectDirty } from '../persistence/autosave'
 import { downloadProject, newProject, openProject } from '../persistence/projectIO'
 import { useHistoryStore, selectCanUndo, selectCanRedo } from '../store/history'
+import { useExportModalStore } from '../store/exportModal'
 import { useProjectStore } from '../store/project'
 
 interface TopBarButtonProps {
@@ -40,6 +41,7 @@ export default function TopBar() {
   const canRedo = useHistoryStore(selectCanRedo)
   const undo = useHistoryStore((s) => s.undo)
   const redo = useHistoryStore((s) => s.redo)
+  const openExportModal = useExportModalStore((s) => s.open)
 
   // Hidden file input for Open Project
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -115,7 +117,7 @@ export default function TopBar() {
 
       <Divider />
 
-      <TopBarButton label="Export" title="Export PNG (Phase 11)" disabled />
+      <TopBarButton label="Export" title="Export PNG" onClick={openExportModal} />
     </header>
   )
 }

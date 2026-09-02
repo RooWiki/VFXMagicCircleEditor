@@ -10,6 +10,7 @@ import { loadPreferences, savePreferences } from './store/preferences'
 import { useProjectStore } from './store/project'
 import ConfirmDialog from './editor/ConfirmDialog'
 import EditorShell from './editor/EditorShell'
+import ExportModal from './editor/ExportModal'
 import NotificationBar from './editor/NotificationBar'
 
 export default function App() {
@@ -52,6 +53,7 @@ export default function App() {
     <>
       <EditorShell />
       <ConfirmDialog />
+      <ExportModal />
       <NotificationBar />
     </>
   )

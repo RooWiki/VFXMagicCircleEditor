@@ -22,7 +22,7 @@
 | 8     | History, Precision Tools and Shortcuts                  | **COMPLETED** |
 | 9     | Radial-Lines Layer                                      | **COMPLETED** |
 | 10    | Project Persistence and Import                          | **COMPLETED** |
-| 11    | PNG Export                                              | PENDING       |
+| 11    | PNG Export                                              | **COMPLETED** |
 | 12    | Procedural Generator                                    | PENDING       |
 | 13    | Templates                                               | PENDING       |
 | 14    | Basic Animation Preview                                 | PENDING       |
@@ -723,7 +723,7 @@ Implement auto-save to local storage and manual project file download and upload
 
 ## Phase 11 — PNG Export
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 

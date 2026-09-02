@@ -18,7 +18,7 @@ test('top bar is visible with all controls', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Export' })).toBeVisible()
 })
 
-test('Phase 10 file actions are enabled; unimplemented actions remain disabled', async ({
+test('Phase 11 toolbar actions: file/export enabled, Undo/Redo disabled on fresh load', async ({
   page,
 }) => {
   await page.goto('/')
@@ -29,8 +29,8 @@ test('Phase 10 file actions are enabled; unimplemented actions remain disabled',
   // Undo/Redo disabled on fresh load (empty history)
   await expect(page.getByRole('button', { name: 'Undo' })).toBeDisabled()
   await expect(page.getByRole('button', { name: 'Redo' })).toBeDisabled()
-  // Export remains Phase 11 placeholder
-  await expect(page.getByRole('button', { name: 'Export' })).toBeDisabled()
+  // Phase 11: Export is now enabled
+  await expect(page.getByRole('button', { name: 'Export' })).not.toBeDisabled()
 })
 
 test('tool rail is visible', async ({ page }) => {
