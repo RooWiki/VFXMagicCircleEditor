@@ -24,7 +24,7 @@
 | 10    | Project Persistence and Import                          | **COMPLETED** |
 | 11    | PNG Export                                              | **COMPLETED** |
 | 12    | Procedural Generator                                    | **COMPLETED** |
-| 13    | Templates                                               | PENDING       |
+| 13    | Templates                                               | **COMPLETED** |
 | 14    | Basic Animation Preview                                 | PENDING       |
 | 15    | Polish, Testing, Portfolio Documentation and Deployment | PENDING       |
 
@@ -840,7 +840,7 @@ Implement the procedural generator module. The generator produces `Layer[]` arra
 
 ## Phase 13 — Templates
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 

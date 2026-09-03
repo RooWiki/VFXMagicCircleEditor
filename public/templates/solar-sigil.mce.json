@@ -1,0 +1,78 @@
+{
+  "__magic_circle__": true,
+  "version": "1.0.0",
+  "meta": {
+    "title": "Solar Sigil",
+    "created": "2026-01-01T00:00:00.000Z",
+    "modified": "2026-01-01T00:00:00.000Z"
+  },
+  "canvas": { "width": 1000, "height": 1000 },
+  "layers": [
+    {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "type": "ring",
+      "name": "Outer Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 400,
+      "strokeWidth": 4,
+      "color": "#f97316"
+    },
+    {
+      "id": "11111111-1111-4111-8111-111111111112",
+      "type": "radial-lines",
+      "name": "Solar Rays",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.85,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 12,
+      "innerRadius": 350,
+      "outerRadius": 395,
+      "startAngle": 15,
+      "strokeWidth": 2,
+      "color": "#fbbf24"
+    },
+    {
+      "id": "11111111-1111-4111-8111-111111111113",
+      "type": "ring",
+      "name": "Mid Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.9,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 300,
+      "strokeWidth": 3,
+      "color": "#fbbf24"
+    },
+    {
+      "id": "11111111-1111-4111-8111-111111111114",
+      "type": "radial-lines",
+      "name": "Inner Rays",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.7,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 6,
+      "innerRadius": 200,
+      "outerRadius": 290,
+      "startAngle": 0,
+      "strokeWidth": 3,
+      "color": "#84cc16"
+    },
+    {
+      "id": "11111111-1111-4111-8111-111111111115",
+      "type": "ring",
+      "name": "Inner Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 150,
+      "strokeWidth": 5,
+      "color": "#f97316"
+    }
+  ]
+}

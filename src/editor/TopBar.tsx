@@ -4,6 +4,7 @@ import { downloadProject, newProject, openProject } from '../persistence/project
 import { useHistoryStore, selectCanUndo, selectCanRedo } from '../store/history'
 import { useExportModalStore } from '../store/exportModal'
 import { useProjectStore } from '../store/project'
+import { useTemplateGalleryStore } from '../store/templateGalleryStore'
 
 interface TopBarButtonProps {
   label: string
@@ -42,6 +43,7 @@ export default function TopBar() {
   const undo = useHistoryStore((s) => s.undo)
   const redo = useHistoryStore((s) => s.redo)
   const openExportModal = useExportModalStore((s) => s.open)
+  const openTemplates = useTemplateGalleryStore((s) => s.open)
 
   // Hidden file input for Open Project
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -99,6 +101,7 @@ export default function TopBar() {
 
       <div className="flex items-center gap-0.5">
         <TopBarButton label="New" title="New Project" onClick={handleNew} />
+        <TopBarButton label="Templates" title="New from Template" onClick={openTemplates} />
         <TopBarButton label="Open" title="Open Project" onClick={handleOpenClick} />
         <TopBarButton label="Save" title="Download Project (Ctrl+S)" onClick={handleSave} />
       </div>

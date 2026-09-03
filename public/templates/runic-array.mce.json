@@ -1,0 +1,78 @@
+{
+  "__magic_circle__": true,
+  "version": "1.0.0",
+  "meta": {
+    "title": "Runic Array",
+    "created": "2026-01-01T00:00:00.000Z",
+    "modified": "2026-01-01T00:00:00.000Z"
+  },
+  "canvas": { "width": 1000, "height": 1000 },
+  "layers": [
+    {
+      "id": "22222222-2222-4222-8222-222222222221",
+      "type": "ring",
+      "name": "Outer Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 380,
+      "strokeWidth": 3,
+      "color": "#06b6d4"
+    },
+    {
+      "id": "22222222-2222-4222-8222-222222222222",
+      "type": "radial-lines",
+      "name": "Outer Dividers",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.9,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 6,
+      "innerRadius": 330,
+      "outerRadius": 375,
+      "startAngle": 0,
+      "strokeWidth": 2.5,
+      "color": "#06b6d4"
+    },
+    {
+      "id": "22222222-2222-4222-8222-222222222223",
+      "type": "ring",
+      "name": "Mid Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 260,
+      "strokeWidth": 4,
+      "color": "#3b82f6"
+    },
+    {
+      "id": "22222222-2222-4222-8222-222222222224",
+      "type": "radial-lines",
+      "name": "Inner Dividers",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.8,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 12,
+      "innerRadius": 200,
+      "outerRadius": 255,
+      "startAngle": 15,
+      "strokeWidth": 1.5,
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "22222222-2222-4222-8222-222222222225",
+      "type": "ring",
+      "name": "Inner Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 140,
+      "strokeWidth": 3,
+      "color": "#8b5cf6"
+    }
+  ]
+}

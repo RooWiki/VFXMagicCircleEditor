@@ -13,6 +13,7 @@ import EditorShell from './editor/EditorShell'
 import ExportModal from './editor/ExportModal'
 import GeneratorModal from './editor/GeneratorModal'
 import NotificationBar from './editor/NotificationBar'
+import TemplateGallery from './editor/TemplateGallery'
 
 export default function App() {
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function App() {
       <ConfirmDialog />
       <ExportModal />
       <GeneratorModal />
+      <TemplateGallery />
       <NotificationBar />
     </>
   )

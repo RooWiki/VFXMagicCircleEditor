@@ -1,0 +1,66 @@
+{
+  "__magic_circle__": true,
+  "version": "1.0.0",
+  "meta": {
+    "title": "Arcane Matrix",
+    "created": "2026-01-01T00:00:00.000Z",
+    "modified": "2026-01-01T00:00:00.000Z"
+  },
+  "canvas": { "width": 1000, "height": 1000 },
+  "layers": [
+    {
+      "id": "44444444-4444-4444-8444-444444444441",
+      "type": "ring",
+      "name": "Outer Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 400,
+      "strokeWidth": 5,
+      "color": "#f43f5e"
+    },
+    {
+      "id": "44444444-4444-4444-8444-444444444442",
+      "type": "radial-lines",
+      "name": "Primary Star",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.9,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 8,
+      "innerRadius": 50,
+      "outerRadius": 395,
+      "startAngle": 0,
+      "strokeWidth": 2,
+      "color": "#ec4899"
+    },
+    {
+      "id": "44444444-4444-4444-8444-444444444443",
+      "type": "radial-lines",
+      "name": "Secondary Star",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.7,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 8,
+      "innerRadius": 50,
+      "outerRadius": 395,
+      "startAngle": 22.5,
+      "strokeWidth": 1.5,
+      "color": "#a855f7"
+    },
+    {
+      "id": "44444444-4444-4444-8444-444444444444",
+      "type": "ring",
+      "name": "Inner Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.9,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 200,
+      "strokeWidth": 3,
+      "color": "#a855f7"
+    }
+  ]
+}

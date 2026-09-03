@@ -1,0 +1,87 @@
+{
+  "__magic_circle__": true,
+  "version": "1.0.0",
+  "meta": {
+    "title": "Crystal Web",
+    "created": "2026-01-01T00:00:00.000Z",
+    "modified": "2026-01-01T00:00:00.000Z"
+  },
+  "canvas": { "width": 1000, "height": 1000 },
+  "layers": [
+    {
+      "id": "33333333-3333-4333-8333-333333333331",
+      "type": "radial-lines",
+      "name": "Web",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.6,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 24,
+      "innerRadius": 110,
+      "outerRadius": 435,
+      "startAngle": 7.5,
+      "strokeWidth": 1,
+      "color": "#475569"
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333332",
+      "type": "ring",
+      "name": "Ring 5",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 440,
+      "strokeWidth": 2,
+      "color": "#ffffff"
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333333",
+      "type": "ring",
+      "name": "Ring 4",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.85,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 360,
+      "strokeWidth": 1.5,
+      "color": "#94a3b8"
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333334",
+      "type": "ring",
+      "name": "Ring 3",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 280,
+      "strokeWidth": 2,
+      "color": "#ffffff"
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333335",
+      "type": "ring",
+      "name": "Ring 2",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.85,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 200,
+      "strokeWidth": 1.5,
+      "color": "#94a3b8"
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333336",
+      "type": "ring",
+      "name": "Ring 1",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 120,
+      "strokeWidth": 2,
+      "color": "#ffffff"
+    }
+  ]
+}
