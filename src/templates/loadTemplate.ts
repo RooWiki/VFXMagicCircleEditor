@@ -1,6 +1,7 @@
 import { resetDirtyState } from '../persistence/autosave'
 import { importProjectFile } from '../schema/project'
 import { showConfirm } from '../store/confirm'
+import { useAnimationStore } from '../store/animation'
 import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
@@ -61,6 +62,7 @@ export async function loadTemplate(
   useProjectStore.getState().setProject(project)
   useEditorStore.getState().clearSelection()
   useHistoryStore.getState().initHistory(project)
+  useAnimationStore.getState().clearConfigs()
   resetDirtyState()
 
   return true

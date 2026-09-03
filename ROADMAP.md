@@ -25,7 +25,7 @@
 | 11    | PNG Export                                              | **COMPLETED** |
 | 12    | Procedural Generator                                    | **COMPLETED** |
 | 13    | Templates                                               | **COMPLETED** |
-| 14    | Basic Animation Preview                                 | PENDING       |
+| 14    | Basic Animation Preview                                 | **COMPLETED** |
 | 15    | Polish, Testing, Portfolio Documentation and Deployment | PENDING       |
 
 ---
@@ -891,7 +891,7 @@ Implement a template gallery. Templates are pre-defined project files that load 
 
 ## Phase 14 — Basic Animation Preview
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 ### Objective
 

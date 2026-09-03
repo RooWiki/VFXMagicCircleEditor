@@ -4,6 +4,7 @@ import {
   startAutosaveSubscription,
   tryRestoreFromAutosave,
 } from './persistence/autosave'
+import { useAnimationLoop } from './hooks/useAnimationLoop'
 import { useEditorStore } from './store/editor'
 import { useHistoryStore } from './store/history'
 import { loadPreferences, savePreferences } from './store/preferences'
@@ -16,6 +17,8 @@ import NotificationBar from './editor/NotificationBar'
 import TemplateGallery from './editor/TemplateGallery'
 
 export default function App() {
+  useAnimationLoop()
+
   useEffect(() => {
     // 1. Restore from autosave BEFORE subscribing so restore itself doesn't mark dirty
     const restored = tryRestoreFromAutosave()

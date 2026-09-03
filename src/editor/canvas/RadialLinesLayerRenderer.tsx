@@ -1,4 +1,5 @@
 import { useEditorStore } from '../../store/editor'
+import { computeAnimatedTransform, useAnimationStore } from '../../store/animation'
 import type { RadialLinesLayer } from '../../types/layer'
 import { computeRadialLines } from '../../utils/geometry'
 import { useArtworkMoveGesture } from './useArtworkMoveGesture'
@@ -10,6 +11,9 @@ interface Props {
 }
 
 export default function RadialLinesLayerRenderer({ layer, spaceHeldRef, svgRef }: Props) {
+  const elapsedMs = useAnimationStore((s) => s.elapsedMs)
+  const animConfig = useAnimationStore((s) => s.configs[layer.id])
+
   const { startGesture, onPointerMove, onPointerUp, onPointerCancel } = useArtworkMoveGesture(
     layer.id,
     () => layer.transform,
@@ -18,7 +22,10 @@ export default function RadialLinesLayerRenderer({ layer, spaceHeldRef, svgRef }
 
   if (!layer.visible) return null
 
-  const { x, y, rotation, scaleX, scaleY } = layer.transform
+  const displayTransform = animConfig
+    ? computeAnimatedTransform(layer.transform, animConfig, elapsedMs)
+    : layer.transform
+  const { x, y, rotation, scaleX, scaleY } = displayTransform
   const transform = `translate(${x}, ${y}) rotate(${rotation}) scale(${scaleX}, ${scaleY})`
 
   const handlePointerDown = (e: React.PointerEvent) => {

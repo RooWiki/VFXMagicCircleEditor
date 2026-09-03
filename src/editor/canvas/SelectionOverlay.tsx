@@ -3,6 +3,7 @@ import { useEditorStore } from '../../store/editor'
 import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
+import { computeAnimatedTransform, useAnimationStore } from '../../store/animation'
 import type { Layer, Transform } from '../../types/layer'
 import { screenToWorld } from '../../utils/viewport'
 import {
@@ -300,7 +301,12 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
   )
 
   // ── Computed geometry ─────────────────────────────────────────────────────
-  const { x, y, rotation, scaleX, scaleY } = layer.transform
+  const elapsedMs = useAnimationStore((s) => s.elapsedMs)
+  const animConfig = useAnimationStore((s) => s.configs[layer.id])
+  const displayTransform = animConfig
+    ? computeAnimatedTransform(layer.transform, animConfig, elapsedMs)
+    : layer.transform
+  const { x, y, rotation, scaleX, scaleY } = displayTransform
   const r = getLayerRadius(layer)
   const hw = r * Math.abs(scaleX) // scaled half-width in world units
   const hh = r * Math.abs(scaleY) // scaled half-height in world units

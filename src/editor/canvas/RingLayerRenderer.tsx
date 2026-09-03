@@ -1,4 +1,5 @@
 import { useEditorStore } from '../../store/editor'
+import { computeAnimatedTransform, useAnimationStore } from '../../store/animation'
 import type { RingLayer } from '../../types/layer'
 
 interface Props {
@@ -7,9 +8,15 @@ interface Props {
 }
 
 export default function RingLayerRenderer({ layer, spaceHeldRef }: Props) {
+  const elapsedMs = useAnimationStore((s) => s.elapsedMs)
+  const animConfig = useAnimationStore((s) => s.configs[layer.id])
+
   if (!layer.visible) return null
 
-  const { x, y, rotation, scaleX, scaleY } = layer.transform
+  const displayTransform = animConfig
+    ? computeAnimatedTransform(layer.transform, animConfig, elapsedMs)
+    : layer.transform
+  const { x, y, rotation, scaleX, scaleY } = displayTransform
   const transform = `translate(${x}, ${y}) rotate(${rotation}) scale(${scaleX}, ${scaleY})`
 
   const handlePointerDown = (e: React.PointerEvent) => {

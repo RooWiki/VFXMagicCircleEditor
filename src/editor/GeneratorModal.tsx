@@ -1,3 +1,4 @@
+import { useAnimationStore } from '../store/animation'
 import { useEditorStore } from '../store/editor'
 import { useGeneratorStore, type LockKey } from '../store/generatorStore'
 import { useHistoryStore } from '../store/history'
@@ -143,6 +144,7 @@ export default function GeneratorModal() {
     const newProject = { ...current, layers }
     useProjectStore.getState().setProject(newProject)
     useEditorStore.getState().clearSelection()
+    useAnimationStore.getState().clearConfigs()
     useHistoryStore.getState().pushSnapshot(newProject)
   }
 

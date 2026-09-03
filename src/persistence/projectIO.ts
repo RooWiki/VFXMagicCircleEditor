@@ -2,6 +2,7 @@ import { importProjectFile, parseProjectFileStrict } from '../schema/project'
 import { markProjectSaved, resetDirtyState } from './autosave'
 import { showConfirm } from '../store/confirm'
 import { notify } from '../store/notifications'
+import { useAnimationStore } from '../store/animation'
 import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
@@ -87,6 +88,7 @@ export async function openProject(file: File, isDirty: boolean): Promise<void> {
   useProjectStore.getState().setProject(result.project)
   useEditorStore.getState().clearSelection()
   useHistoryStore.getState().initHistory(result.project)
+  useAnimationStore.getState().clearConfigs()
   resetDirtyState()
 }
 
@@ -106,5 +108,6 @@ export async function newProject(isDirty: boolean): Promise<void> {
   useProjectStore.getState().setProject(blank)
   useEditorStore.getState().clearSelection()
   useHistoryStore.getState().initHistory(blank)
+  useAnimationStore.getState().clearConfigs()
   resetDirtyState()
 }

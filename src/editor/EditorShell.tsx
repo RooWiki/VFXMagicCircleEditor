@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { downloadProject } from '../persistence/projectIO'
+import { useAnimationStore } from '../store/animation'
 import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
@@ -91,6 +92,7 @@ export default function EditorShell() {
       if ((e.key === 'Delete' || e.key === 'Backspace') && !isEditable && !isRenaming) {
         const { selectedLayerIds, clearSelection } = useEditorStore.getState()
         if (selectedLayerIds.length === 0) return
+        useAnimationStore.getState().removeLayerConfig(selectedLayerIds[0])
         useProjectStore.getState().removeLayer(selectedLayerIds[0])
         clearSelection()
         useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)

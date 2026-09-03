@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { isProjectDirty } from '../persistence/autosave'
 import { downloadProject, newProject, openProject } from '../persistence/projectIO'
+import { useAnimationStore } from '../store/animation'
 import { useHistoryStore, selectCanUndo, selectCanRedo } from '../store/history'
 import { useExportModalStore } from '../store/exportModal'
 import { useProjectStore } from '../store/project'
@@ -44,6 +45,10 @@ export default function TopBar() {
   const redo = useHistoryStore((s) => s.redo)
   const openExportModal = useExportModalStore((s) => s.open)
   const openTemplates = useTemplateGalleryStore((s) => s.open)
+  const isPlaying = useAnimationStore((s) => s.isPlaying)
+  const playAnimation = useAnimationStore((s) => s.play)
+  const pauseAnimation = useAnimationStore((s) => s.pause)
+  const resetAnimation = useAnimationStore((s) => s.reset)
 
   // Hidden file input for Open Project
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -116,6 +121,17 @@ export default function TopBar() {
           disabled={!canRedo}
           onClick={redo}
         />
+      </div>
+
+      <Divider />
+
+      <div className="flex items-center gap-0.5">
+        <TopBarButton
+          label={isPlaying ? 'Pause' : 'Play'}
+          title={isPlaying ? 'Pause Animation (Space)' : 'Play Animation (Space)'}
+          onClick={isPlaying ? pauseAnimation : playAnimation}
+        />
+        <TopBarButton label="Reset" title="Reset Animation" onClick={resetAnimation} />
       </div>
 
       <Divider />

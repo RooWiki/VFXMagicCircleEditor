@@ -1,6 +1,7 @@
 import { useEditorStore } from '../store/editor'
 import { useProjectStore } from '../store/project'
 import type { RadialLinesLayer, RingLayer } from '../types/layer'
+import AnimationPanel from './AnimationPanel'
 import RadialLinesInspector from './inspector/RadialLinesInspector'
 import RingInspector from './inspector/RingInspector'
 
@@ -23,11 +24,21 @@ export default function PropertiesPanel() {
   }
 
   if (selectedLayer.type === 'ring') {
-    return <RingInspector key={selectedLayer.id} layer={selectedLayer as RingLayer} />
+    return (
+      <div className="flex flex-col" key={selectedLayer.id}>
+        <RingInspector layer={selectedLayer as RingLayer} />
+        <AnimationPanel layer={selectedLayer} />
+      </div>
+    )
   }
 
   if (selectedLayer.type === 'radial-lines') {
-    return <RadialLinesInspector key={selectedLayer.id} layer={selectedLayer as RadialLinesLayer} />
+    return (
+      <div className="flex flex-col" key={selectedLayer.id}>
+        <RadialLinesInspector layer={selectedLayer as RadialLinesLayer} />
+        <AnimationPanel layer={selectedLayer} />
+      </div>
+    )
   }
 
   return (

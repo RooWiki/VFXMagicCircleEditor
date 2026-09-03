@@ -1,4 +1,5 @@
 import { type MouseEvent, useEffect, useRef, useState } from 'react'
+import { useAnimationStore } from '../store/animation'
 import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
@@ -234,6 +235,7 @@ export default function LayersPanel() {
 
   const handleDelete = () => {
     if (!selectedId) return
+    useAnimationStore.getState().removeLayerConfig(selectedId)
     removeLayer(selectedId)
     clearSelection()
     useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
