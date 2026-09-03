@@ -48,7 +48,7 @@ export default function TemplateGallery() {
             type="button"
             aria-label="Close template gallery"
             onClick={close}
-            className="w-7 h-7 flex items-center justify-center rounded text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
+            className="w-7 h-7 flex items-center justify-center rounded text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]"
           >
             ×
           </button>
@@ -67,7 +67,7 @@ export default function TemplateGallery() {
                   aria-label={`Load template: ${template.name}`}
                   disabled={loadingId !== null}
                   onClick={() => void handleSelect(template)}
-                  className="flex flex-col rounded-lg border border-neutral-700 bg-neutral-800 hover:border-violet-500 hover:bg-neutral-750 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 disabled:cursor-not-allowed disabled:opacity-50 transition-colors overflow-hidden text-left"
+                  className="flex flex-col rounded-lg border border-neutral-700 bg-neutral-800 hover:border-[var(--rw-border-default)] hover:bg-neutral-750 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)] disabled:cursor-not-allowed disabled:opacity-50 transition-colors overflow-hidden text-left"
                 >
                   {/* Thumbnail */}
                   <div className="w-full aspect-square bg-neutral-950 flex items-center justify-center relative">

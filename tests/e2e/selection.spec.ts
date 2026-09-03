@@ -15,7 +15,7 @@ async function addRing(page: Parameters<typeof test>[1]['page']) {
 }
 
 async function goToProperties(page: Parameters<typeof test>[1]['page']) {
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 }
 
 async function getRingId(page: Parameters<typeof test>[1]['page']) {

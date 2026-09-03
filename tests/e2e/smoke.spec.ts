@@ -45,9 +45,15 @@ test('canvas workspace is visible', async ({ page }) => {
 
 test('right sidebar is visible with tabs', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('complementary', { name: 'Layers and Properties' })).toBeVisible()
-  await expect(page.getByRole('tab', { name: 'Layers' })).toBeVisible()
-  await expect(page.getByRole('tab', { name: 'Properties' })).toBeVisible()
+  await expect(page.getByRole('complementary', { name: 'Inspector and Animation' })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Inspector' })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Animation' })).toBeVisible()
+})
+
+test('layers panel is always visible as standalone sidebar', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('complementary', { name: 'Layers' })).toBeVisible()
+  await expect(page.getByText('No layers yet')).toBeVisible()
 })
 
 test('status bar is visible', async ({ page }) => {
@@ -55,19 +61,22 @@ test('status bar is visible', async ({ page }) => {
   await expect(page.getByRole('contentinfo')).toBeVisible()
 })
 
-test('switching between Layers and Properties tabs works', async ({ page }) => {
+test('switching between Inspector and Animation tabs works', async ({ page }) => {
   await page.goto('/')
-  // Layers tab is selected by default
-  await expect(page.getByRole('tab', { name: 'Layers' })).toHaveAttribute('aria-selected', 'true')
-  await expect(page.getByText('No layers yet')).toBeVisible()
-
-  // Switch to Properties
-  await page.getByRole('tab', { name: 'Properties' }).click()
-  await expect(page.getByRole('tab', { name: 'Properties' })).toHaveAttribute(
+  // Inspector tab is selected by default
+  await expect(page.getByRole('tab', { name: 'Inspector' })).toHaveAttribute(
     'aria-selected',
     'true'
   )
   await expect(page.getByText('Select a layer to edit its properties.')).toBeVisible()
+
+  // Switch to Animation
+  await page.getByRole('tab', { name: 'Animation' }).click()
+  await expect(page.getByRole('tab', { name: 'Animation' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  )
+  await expect(page.getByText('Select a layer to configure animation.')).toBeVisible()
 })
 
 test('no console errors on load', async ({ page }) => {
@@ -105,7 +114,7 @@ test('shell regions meet minimum dimensions at 1440x900', async ({ page }) => {
   const topBarBox = await page.getByRole('banner').boundingBox()
   const toolRailBox = await page.getByRole('navigation', { name: 'Tools' }).boundingBox()
   const sidebarBox = await page
-    .getByRole('complementary', { name: 'Layers and Properties' })
+    .getByRole('complementary', { name: 'Inspector and Animation' })
     .boundingBox()
   const statusBarBox = await page.getByRole('contentinfo').boundingBox()
   const workspaceBox = await page.getByRole('main', { name: 'Canvas workspace' }).boundingBox()

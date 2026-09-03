@@ -1,79 +1,95 @@
 import { useState } from 'react'
-import LayersPanel from './LayersPanel'
+import { useEditorStore } from '../store/editor'
+import { useProjectStore } from '../store/project'
+import AnimationPanel from './AnimationPanel'
 import PropertiesPanel from './PropertiesPanel'
 
-type SidebarTab = 'layers' | 'properties'
+type SidebarTab = 'inspector' | 'animation'
 
 export default function RightSidebar() {
-  const [activeTab, setActiveTab] = useState<SidebarTab>('layers')
+  const [activeTab, setActiveTab] = useState<SidebarTab>('inspector')
+
+  const selectedLayerIds = useEditorStore((s) => s.selectedLayerIds)
+  const layers = useProjectStore((s) => s.project.layers)
+  const selectedId = selectedLayerIds[0] ?? null
+  const selectedLayer = selectedId !== null ? layers.find((l) => l.id === selectedId) : null
 
   return (
     <aside
-      aria-label="Layers and Properties"
-      className="shrink-0 flex flex-col bg-neutral-900 border-l border-neutral-700"
-      style={{ width: 'clamp(288px, 20vw, 320px)' }}
+      aria-label="Inspector and Animation"
+      className="shrink-0 flex flex-col border-l"
+      style={{
+        width: 'clamp(288px, 20vw, 320px)',
+        background: 'var(--rw-bg-panel)',
+        borderColor: 'var(--rw-border-default)',
+      }}
     >
       <div
         role="tablist"
         aria-label="Sidebar panels"
-        className="flex shrink-0 border-b border-neutral-700"
+        className="flex shrink-0 border-b"
+        style={{ borderColor: 'var(--rw-border-default)' }}
       >
-        <button
-          role="tab"
-          id="tab-layers"
-          aria-selected={activeTab === 'layers'}
-          aria-controls="panel-layers"
-          type="button"
-          onClick={() => setActiveTab('layers')}
-          className={[
-            'flex-1 h-[38px] flex items-center justify-center text-[13px] font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-violet-500',
-            activeTab === 'layers'
-              ? 'text-violet-300 border-b-2 border-violet-500'
-              : 'text-neutral-400 hover:text-neutral-200',
-          ].join(' ')}
-        >
-          Layers
-        </button>
-        <button
-          role="tab"
-          id="tab-properties"
-          aria-selected={activeTab === 'properties'}
-          aria-controls="panel-properties"
-          type="button"
-          onClick={() => setActiveTab('properties')}
-          className={[
-            'flex-1 h-[38px] flex items-center justify-center text-[13px] font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-violet-500',
-            activeTab === 'properties'
-              ? 'text-violet-300 border-b-2 border-violet-500'
-              : 'text-neutral-400 hover:text-neutral-200',
-          ].join(' ')}
-        >
-          Properties
-        </button>
-      </div>
-
-      {/* aria-label (not aria-labelledby) avoids accessible-name resolution failures on
-          hidden elements in jsdom — aria-labelledby on a hidden panel resolves to "". */}
-      <div
-        role="tabpanel"
-        id="panel-layers"
-        aria-label="Layers"
-        data-testid="panel-layers"
-        hidden={activeTab !== 'layers'}
-        className="flex-1 overflow-y-auto min-h-0"
-      >
-        <LayersPanel />
+        {(['inspector', 'animation'] as const).map((tab) => {
+          const isActive = activeTab === tab
+          return (
+            <button
+              key={tab}
+              role="tab"
+              id={`tab-${tab}`}
+              aria-selected={isActive}
+              aria-controls={`panel-${tab}`}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className="flex-1 h-[38px] flex items-center justify-center text-[13px] font-medium focus-visible:outline focus-visible:outline-2"
+              style={{
+                color: isActive ? 'var(--rw-text-primary)' : 'var(--rw-text-secondary)',
+                background: isActive ? 'var(--rw-active-bg)' : 'transparent',
+                borderBottom: isActive
+                  ? '1px solid var(--rw-active-border)'
+                  : '1px solid transparent',
+                outlineColor: 'var(--rw-focus)',
+              }}
+            >
+              {tab === 'inspector' ? 'Inspector' : 'Animation'}
+            </button>
+          )
+        })}
       </div>
 
       <div
         role="tabpanel"
-        id="panel-properties"
-        aria-label="Properties"
+        id="panel-inspector"
+        aria-label="Inspector"
         data-testid="panel-properties"
-        hidden={activeTab !== 'properties'}
+        hidden={activeTab !== 'inspector'}
         className="flex-1 overflow-y-auto min-h-0"
       >
         <PropertiesPanel />
+      </div>
+
+      <div
+        role="tabpanel"
+        id="panel-animation"
+        aria-label="Animation"
+        hidden={activeTab !== 'animation'}
+        className="flex-1 overflow-y-auto min-h-0"
+      >
+        {selectedLayer ? (
+          <AnimationPanel layer={selectedLayer} />
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-2 p-6 text-center h-full">
+            <p className="text-sm" style={{ color: 'var(--rw-text-secondary)' }}>
+              No selection
+            </p>
+            <p
+              className="text-xs max-w-[200px] leading-relaxed"
+              style={{ color: 'var(--rw-text-tertiary)' }}
+            >
+              Select a layer to configure animation.
+            </p>
+          </div>
+        )}
       </div>
     </aside>
   )

@@ -47,7 +47,12 @@ export function NumericField({
 
   return (
     <label className="flex flex-col gap-0.5">
-      <span className="text-[10px] text-neutral-500 uppercase tracking-wide">{label}</span>
+      <span
+        className="text-[10px] uppercase tracking-wide"
+        style={{ color: 'var(--rw-text-tertiary)' }}
+      >
+        {label}
+      </span>
       <div className="flex items-center gap-1">
         <input
           type="number"
@@ -56,8 +61,9 @@ export function NumericField({
           min={min}
           max={max}
           aria-label={label}
-          onFocus={() => {
+          onFocus={(e) => {
             focusedRef.current = true
+            e.currentTarget.style.borderColor = 'var(--rw-active-border)'
             onBeginEdit?.()
           }}
           onChange={(e) => {
@@ -74,17 +80,22 @@ export function NumericField({
           }}
           onBlur={(e) => {
             focusedRef.current = false
+            e.currentTarget.style.borderColor = 'var(--rw-border-default)'
             commit(e.target.value)
             onCommitEdit?.()
           }}
-          className={[
-            'w-full rounded bg-neutral-800 border border-neutral-700 px-2 py-1',
-            'text-xs text-neutral-200 tabular-nums',
-            'focus:outline-none focus:border-violet-500',
-            '[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none',
-          ].join(' ')}
+          className="w-full rounded px-2 py-1 text-xs tabular-nums focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+          style={{
+            background: 'var(--rw-bg-control)',
+            border: '1px solid var(--rw-border-default)',
+            color: 'var(--rw-text-primary)',
+          }}
         />
-        {unit && <span className="text-[10px] text-neutral-500 shrink-0">{unit}</span>}
+        {unit && (
+          <span className="text-[10px] shrink-0" style={{ color: 'var(--rw-text-tertiary)' }}>
+            {unit}
+          </span>
+        )}
       </div>
     </label>
   )
@@ -94,7 +105,10 @@ export function NumericField({
 
 export function SectionHeading({ children }: { children: string }) {
   return (
-    <h3 className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-3 pt-3 pb-1">
+    <h3
+      className="text-[10px] font-semibold uppercase tracking-widest px-3 pt-3 pb-1"
+      style={{ color: 'var(--rw-text-tertiary)' }}
+    >
       {children}
     </h3>
   )

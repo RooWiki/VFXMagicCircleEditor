@@ -1,9 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Magic Circle Editor</title>
+    <script>
+      try {
+        var p = JSON.parse(localStorage.getItem('magic-circle-editor:preferences') || '{}')
+        document.documentElement.setAttribute('data-theme', p.theme || 'dark')
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark')
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

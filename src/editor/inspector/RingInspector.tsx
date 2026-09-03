@@ -19,9 +19,13 @@ export default function RingInspector({ layer }: Props) {
   return (
     <div className="flex flex-col" data-testid="ring-inspector">
       {/* Layer name */}
-      <div className="px-3 pt-3 pb-2 border-b border-neutral-800">
-        <p className="text-xs font-medium text-neutral-200 truncate">{layer.name}</p>
-        <p className="text-[10px] text-neutral-500 mt-0.5">Ring</p>
+      <div className="px-3 pt-3 pb-2 border-b" style={{ borderColor: 'var(--rw-border-subtle)' }}>
+        <p className="text-xs font-medium truncate" style={{ color: 'var(--rw-text-primary)' }}>
+          {layer.name}
+        </p>
+        <p className="text-[10px] mt-0.5" style={{ color: 'var(--rw-text-tertiary)' }}>
+          Ring
+        </p>
       </div>
 
       {/* ── Artwork ────────────────────────────────────────────────────────── */}
@@ -49,7 +53,12 @@ export default function RingInspector({ layer }: Props) {
 
         {/* Color */}
         <label className="flex flex-col gap-0.5">
-          <span className="text-[10px] text-neutral-500 uppercase tracking-wide">Color</span>
+          <span
+            className="text-[10px] uppercase tracking-wide"
+            style={{ color: 'var(--rw-text-tertiary)' }}
+          >
+            Color
+          </span>
           <div className="flex items-center gap-2">
             <input
               type="color"
@@ -58,14 +67,21 @@ export default function RingInspector({ layer }: Props) {
               onFocus={historyBegin}
               onChange={(e) => updateRingLayer(layer.id, { color: e.target.value })}
               onBlur={historyCommit}
-              className="w-8 h-7 rounded border border-neutral-700 bg-neutral-800 cursor-pointer p-0.5"
+              className="w-8 h-7 rounded cursor-pointer p-0.5"
+              style={{
+                background: 'var(--rw-bg-control)',
+                border: '1px solid var(--rw-border-default)',
+              }}
             />
             <input
               type="text"
               value={layer.color}
               aria-label="Color hex value"
               maxLength={7}
-              onFocus={historyBegin}
+              onFocus={(e) => {
+                historyBegin()
+                e.currentTarget.style.borderColor = 'var(--rw-active-border)'
+              }}
               onChange={(e) => {
                 const v = e.target.value
                 if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
@@ -74,19 +90,28 @@ export default function RingInspector({ layer }: Props) {
                   }
                 }
               }}
-              onBlur={historyCommit}
-              className={[
-                'flex-1 rounded bg-neutral-800 border border-neutral-700 px-2 py-1',
-                'text-xs text-neutral-200 font-mono',
-                'focus:outline-none focus:border-violet-500',
-              ].join(' ')}
+              onBlur={(e) => {
+                historyCommit()
+                e.currentTarget.style.borderColor = 'var(--rw-border-default)'
+              }}
+              className="flex-1 rounded px-2 py-1 text-xs font-mono focus:outline-none"
+              style={{
+                background: 'var(--rw-bg-control)',
+                border: '1px solid var(--rw-border-default)',
+                color: 'var(--rw-text-primary)',
+              }}
             />
           </div>
         </label>
 
         {/* Opacity */}
         <label className="flex flex-col gap-0.5">
-          <span className="text-[10px] text-neutral-500 uppercase tracking-wide">Opacity</span>
+          <span
+            className="text-[10px] uppercase tracking-wide"
+            style={{ color: 'var(--rw-text-tertiary)' }}
+          >
+            Opacity
+          </span>
           <div className="flex items-center gap-2">
             <input
               type="range"
@@ -100,16 +125,23 @@ export default function RingInspector({ layer }: Props) {
                 updateRingLayer(layer.id, { opacity: parseInt(e.target.value, 10) / 100 })
               }
               onBlur={historyCommit}
-              className="flex-1 accent-violet-500"
+              className="flex-1"
             />
-            <span className="text-xs text-neutral-400 tabular-nums w-9 text-right">
+            <span
+              className="text-xs tabular-nums w-9 text-right"
+              style={{ color: 'var(--rw-text-secondary)' }}
+            >
               {Math.round(layer.opacity * 100)}%
             </span>
           </div>
         </label>
       </div>
 
-      <div aria-hidden="true" className="mx-3 h-px bg-neutral-800" />
+      <div
+        aria-hidden="true"
+        className="mx-3 h-px"
+        style={{ background: 'var(--rw-border-subtle)' }}
+      />
 
       {/* ── Transform ───────────────────────────────────────────────────────── */}
       <SectionHeading>Transform</SectionHeading>

@@ -1,7 +1,6 @@
 import { useEditorStore } from '../store/editor'
 import { useProjectStore } from '../store/project'
 import type { RadialLinesLayer, RingLayer } from '../types/layer'
-import AnimationPanel from './AnimationPanel'
 import RadialLinesInspector from './inspector/RadialLinesInspector'
 import RingInspector from './inspector/RingInspector'
 
@@ -15,8 +14,13 @@ export default function PropertiesPanel() {
   if (!selectedLayer) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 p-6 text-center h-full">
-        <p className="text-sm font-medium text-neutral-300">No selection</p>
-        <p className="text-xs text-neutral-600 max-w-[200px] leading-relaxed">
+        <p className="text-sm font-medium" style={{ color: 'var(--rw-text-secondary)' }}>
+          No selection
+        </p>
+        <p
+          className="text-xs max-w-[200px] leading-relaxed"
+          style={{ color: 'var(--rw-text-tertiary)' }}
+        >
           Select a layer to edit its properties.
         </p>
       </div>
@@ -24,27 +28,22 @@ export default function PropertiesPanel() {
   }
 
   if (selectedLayer.type === 'ring') {
-    return (
-      <div className="flex flex-col" key={selectedLayer.id}>
-        <RingInspector layer={selectedLayer as RingLayer} />
-        <AnimationPanel layer={selectedLayer} />
-      </div>
-    )
+    return <RingInspector key={selectedLayer.id} layer={selectedLayer as RingLayer} />
   }
 
   if (selectedLayer.type === 'radial-lines') {
-    return (
-      <div className="flex flex-col" key={selectedLayer.id}>
-        <RadialLinesInspector layer={selectedLayer as RadialLinesLayer} />
-        <AnimationPanel layer={selectedLayer} />
-      </div>
-    )
+    return <RadialLinesInspector key={selectedLayer.id} layer={selectedLayer as RadialLinesLayer} />
   }
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 p-6 text-center h-full">
-      <p className="text-sm font-medium text-neutral-300">Unknown layer type</p>
-      <p className="text-xs text-neutral-600 max-w-[200px] leading-relaxed">
+      <p className="text-sm font-medium" style={{ color: 'var(--rw-text-secondary)' }}>
+        Unknown layer type
+      </p>
+      <p
+        className="text-xs max-w-[200px] leading-relaxed"
+        style={{ color: 'var(--rw-text-tertiary)' }}
+      >
         This layer type is not yet supported in the inspector.
       </p>
     </div>

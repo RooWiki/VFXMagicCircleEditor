@@ -6,3 +6,45 @@ body,
   height: 100%;
   overflow: hidden;
 }
+
+/* ── RooWiki design tokens — iOS/iPadOS system gray palette ───────────────── */
+
+html[data-theme='dark'] {
+  --rw-bg-app: #1c1c1e;
+  --rw-bg-panel: #2c2c2e;
+  --rw-bg-raised: #3a3a3c;
+  --rw-bg-control: #3a3a3c;
+  --rw-bg-control-hover: #48484a;
+  --rw-border-subtle: #3a3a3c;
+  --rw-border-default: #48484a;
+  --rw-text-primary: #f2f2f7;
+  --rw-text-secondary: #aeaeb2;
+  --rw-text-tertiary: #636366;
+  --rw-text-disabled: #48484a;
+  /* neutral focus ring — visible on dark, no saturated color */
+  --rw-focus: #aeaeb2;
+  /* neutral active — used for selected states */
+  --rw-active-bg: #3a3a3c;
+  --rw-active-border: #636366;
+  --rw-active-text: #f2f2f7;
+}
+
+html[data-theme='light'] {
+  --rw-bg-app: #f2f2f7;
+  --rw-bg-panel: #ffffff;
+  --rw-bg-raised: #f2f2f7;
+  --rw-bg-control: #e5e5ea;
+  --rw-bg-control-hover: #d1d1d6;
+  --rw-border-subtle: #e5e5ea;
+  --rw-border-default: #c7c7cc;
+  --rw-text-primary: #1c1c1e;
+  --rw-text-secondary: #636366;
+  --rw-text-tertiary: #aeaeb2;
+  --rw-text-disabled: #c7c7cc;
+  /* neutral focus ring — visible on light, no saturated color */
+  --rw-focus: #48484a;
+  /* neutral active — used for selected states */
+  --rw-active-bg: #e5e5ea;
+  --rw-active-border: #8e8e93;
+  --rw-active-text: #1c1c1e;
+}

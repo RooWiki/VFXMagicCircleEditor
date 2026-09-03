@@ -7,6 +7,7 @@ const PREFS_KEY = 'magic-circle-editor:preferences'
 
 export interface StoredPreferences {
   previewBackground?: PreviewBackground
+  theme?: 'light' | 'dark'
 }
 
 export function loadPreferences(): StoredPreferences {

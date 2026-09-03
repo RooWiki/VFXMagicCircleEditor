@@ -318,15 +318,18 @@ test('existing layout regions do not overlap', async ({ page }) => {
   expect(workspaceBox!.y + workspaceBox!.height).toBeLessThanOrEqual(statusBarBox!.y + 1)
 })
 
-test('layers and properties tabs still work with SVG viewport active', async ({ page }) => {
+test('inspector and animation tabs work with SVG viewport active', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('tab', { name: 'Layers' })).toHaveAttribute('aria-selected', 'true')
-  await page.getByRole('tab', { name: 'Properties' }).click()
-  await expect(page.getByRole('tab', { name: 'Properties' })).toHaveAttribute(
+  await expect(page.getByRole('tab', { name: 'Inspector' })).toHaveAttribute(
     'aria-selected',
     'true'
   )
-  await expect(page.getByText('Select a layer to edit its properties.')).toBeVisible()
+  await page.getByRole('tab', { name: 'Animation' }).click()
+  await expect(page.getByRole('tab', { name: 'Animation' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  )
+  await expect(page.getByText('Select a layer to configure animation.')).toBeVisible()
 })
 
 // ─── Radial Lines is now enabled (Phase 9) ────────────────────────────────

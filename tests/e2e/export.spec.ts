@@ -58,8 +58,8 @@ test('Export modal: Transparent background is the default', async ({ page }) => 
   await page.getByRole('button', { name: 'Export' }).click()
   const transparentBtn = page.getByRole('button', { name: 'Transparent' })
   await expect(transparentBtn).toBeVisible()
-  // The Transparent button should be active (highlighted) by default
-  await expect(transparentBtn).toHaveClass(/bg-violet-600/)
+  // The Transparent button should be active (selected state) by default
+  await expect(transparentBtn).toHaveClass(/rw-active/)
 })
 
 test('Export modal: selecting Color background reveals color picker', async ({ page }) => {

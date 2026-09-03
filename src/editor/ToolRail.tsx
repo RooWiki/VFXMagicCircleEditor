@@ -32,21 +32,25 @@ function ToolButton({
       disabled={disabled}
       onClick={(e) => {
         onClick?.()
-        // detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
         if (e.detail > 0) e.currentTarget.blur()
       }}
-      className={[
-        'flex items-center justify-center w-9 h-9 rounded mx-auto my-0.5',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
-        active
-          ? 'bg-violet-600/30 text-violet-300'
-          : 'text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200',
-        disabled
-          ? 'text-neutral-600 cursor-not-allowed hover:bg-transparent hover:text-neutral-600'
-          : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      className="flex items-center justify-center w-9 h-9 rounded mx-auto my-0.5 focus-visible:outline focus-visible:outline-2"
+      style={{
+        background: active ? 'var(--rw-active-bg)' : 'transparent',
+        color: disabled
+          ? 'var(--rw-text-disabled)'
+          : active
+            ? 'var(--rw-active-text)'
+            : 'var(--rw-text-secondary)',
+        outlineColor: 'var(--rw-focus)',
+        cursor: disabled ? 'not-allowed' : 'default',
+      }}
+      onMouseEnter={(e) => {
+        if (!active && !disabled) e.currentTarget.style.background = 'var(--rw-bg-raised)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = active ? 'var(--rw-active-bg)' : 'transparent'
+      }}
     >
       {icon}
     </button>
@@ -180,7 +184,11 @@ export default function ToolRail() {
   return (
     <nav
       aria-label="Tools"
-      className="flex flex-col w-14 shrink-0 bg-neutral-900 border-r border-neutral-700 py-1.5"
+      className="flex flex-col w-14 shrink-0 border-r py-1.5"
+      style={{
+        background: 'var(--rw-bg-panel)',
+        borderColor: 'var(--rw-border-default)',
+      }}
     >
       <ToolButton
         label={TOOL_LABEL.select}
@@ -190,7 +198,11 @@ export default function ToolRail() {
         onClick={handleSelectTool('select')}
       />
 
-      <div aria-hidden="true" className="mx-2 my-1.5 h-px bg-neutral-700" />
+      <div
+        aria-hidden="true"
+        className="mx-2 my-1.5 h-px"
+        style={{ background: 'var(--rw-border-subtle)' }}
+      />
 
       <ToolButton label="Add Ring" title="Add Ring" icon={<RingIcon />} onClick={handleAddRing} />
       <ToolButton
@@ -206,7 +218,11 @@ export default function ToolRail() {
         onClick={openGenerator}
       />
 
-      <div aria-hidden="true" className="mx-2 my-1.5 h-px bg-neutral-700" />
+      <div
+        aria-hidden="true"
+        className="mx-2 my-1.5 h-px"
+        style={{ background: 'var(--rw-border-subtle)' }}
+      />
 
       <ToolButton
         label="Pan"

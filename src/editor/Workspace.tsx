@@ -5,7 +5,8 @@ export default function Workspace() {
   return (
     <main
       aria-label="Canvas workspace"
-      className="flex-1 min-w-0 min-h-0 overflow-hidden bg-neutral-950 relative"
+      className="flex-1 min-w-0 min-h-0 overflow-hidden relative"
+      style={{ background: 'var(--rw-bg-app)' }}
     >
       <SvgCanvas />
       <ViewControls />

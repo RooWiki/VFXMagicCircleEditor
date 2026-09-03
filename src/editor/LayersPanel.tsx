@@ -162,13 +162,12 @@ function ActionBtn({ icon, label, title, disabled, onClick }: ActionBtnProps) {
         // detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
         if (e.detail > 0) e.currentTarget.blur()
       }}
-      className={[
-        'flex items-center justify-center w-6 h-6 rounded',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
-        disabled
-          ? 'text-neutral-700 cursor-not-allowed'
-          : 'text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200',
-      ].join(' ')}
+      className="flex items-center justify-center w-6 h-6 rounded focus-visible:outline focus-visible:outline-2"
+      style={{
+        color: disabled ? 'var(--rw-text-disabled)' : 'var(--rw-text-secondary)',
+        outlineColor: 'var(--rw-focus)',
+        cursor: disabled ? 'not-allowed' : 'default',
+      }}
     >
       {icon}
     </button>
@@ -320,16 +319,16 @@ export default function LayersPanel() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
-  const iconBtnClass = [
-    'flex items-center justify-center w-5 h-5 shrink-0 rounded',
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
-    'hover:text-neutral-200',
-  ].join(' ')
+  const iconBtnClass =
+    'flex items-center justify-center w-5 h-5 shrink-0 rounded focus-visible:outline focus-visible:outline-2'
 
   return (
     <div className="flex flex-col h-full">
       {/* ── Action bar ──────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-neutral-800 shrink-0">
+      <div
+        className="flex items-center gap-0.5 px-2 py-1.5 border-b shrink-0"
+        style={{ borderColor: 'var(--rw-border-subtle)' }}
+      >
         <ActionBtn
           icon={<DuplicateIcon />}
           label="Duplicate selected layer"
@@ -357,7 +356,9 @@ export default function LayersPanel() {
       {/* ── Layer list or empty state ───────────────────────────────────────── */}
       {layers.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-1.5 p-6 text-center flex-1">
-          <p className="text-sm text-neutral-400">No layers yet. Add a Ring or Radial Lines.</p>
+          <p className="text-sm" style={{ color: 'var(--rw-text-secondary)' }}>
+            No layers yet. Add a Ring or Radial Lines.
+          </p>
         </div>
       ) : (
         <ol aria-label="Layers" className="flex flex-col py-1 flex-1 overflow-y-auto">
@@ -377,22 +378,23 @@ export default function LayersPanel() {
                 onDragOver={(e) => handleDragOver(e, displayIndex)}
                 onDrop={() => handleDrop(displayIndex)}
                 onDragEnd={handleDragEnd}
-                className={[
-                  'border-t-2',
-                  isDropTarget ? 'border-violet-400' : 'border-transparent',
-                ].join(' ')}
+                className="border-t-2"
+                style={{
+                  borderColor: isDropTarget ? 'var(--rw-border-default)' : 'transparent',
+                }}
               >
                 <div
                   className={[
                     'flex items-center gap-1 px-2 py-1.5 text-xs',
-                    isSelected
-                      ? 'bg-violet-900/30 text-neutral-200'
-                      : 'text-neutral-300 hover:bg-neutral-800/50',
                     isDragging ? 'opacity-40' : '',
                     !isRenaming ? 'cursor-grab' : '',
                   ]
                     .filter(Boolean)
                     .join(' ')}
+                  style={{
+                    background: isSelected ? 'var(--rw-active-bg)' : undefined,
+                    color: isSelected ? 'var(--rw-active-text)' : 'var(--rw-text-secondary)',
+                  }}
                   role="row"
                   aria-selected={isSelected}
                 >
@@ -406,11 +408,12 @@ export default function LayersPanel() {
                       useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
                       blurOnPointer(e)
                     }}
-                    style={{ cursor: 'pointer' }}
-                    className={[
-                      iconBtnClass,
-                      layer.visible ? 'text-neutral-400' : 'text-neutral-600',
-                    ].join(' ')}
+                    style={{
+                      cursor: 'pointer',
+                      color: layer.visible ? 'var(--rw-text-secondary)' : 'var(--rw-text-tertiary)',
+                      outlineColor: 'var(--rw-focus)',
+                    }}
+                    className={iconBtnClass}
                   >
                     {layer.visible ? <EyeOpenIcon /> : <EyeClosedIcon />}
                   </button>
@@ -425,11 +428,12 @@ export default function LayersPanel() {
                       useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
                       blurOnPointer(e)
                     }}
-                    style={{ cursor: 'pointer' }}
-                    className={[
-                      iconBtnClass,
-                      layer.locked ? 'text-amber-400' : 'text-neutral-600',
-                    ].join(' ')}
+                    style={{
+                      cursor: 'pointer',
+                      color: layer.locked ? 'var(--rw-text-primary)' : 'var(--rw-text-tertiary)',
+                      outlineColor: 'var(--rw-focus)',
+                    }}
+                    className={iconBtnClass}
                   >
                     {layer.locked ? <LockClosedIcon /> : <LockOpenIcon />}
                   </button>
@@ -445,12 +449,13 @@ export default function LayersPanel() {
                       onChange={(e) => setDraftName(e.target.value)}
                       onKeyDown={handleRenameKeyDown}
                       onBlur={handleCommitRename}
-                      style={{ cursor: 'text' }}
-                      className={[
-                        'flex-1 min-w-0 rounded bg-neutral-800 border border-violet-500 px-1.5 py-0.5',
-                        'text-xs text-neutral-200',
-                        'focus:outline-none',
-                      ].join(' ')}
+                      style={{
+                        cursor: 'text',
+                        background: 'var(--rw-bg-control)',
+                        border: '1px solid var(--rw-border-default)',
+                        color: 'var(--rw-text-primary)',
+                      }}
+                      className="flex-1 min-w-0 rounded px-1.5 py-0.5 text-xs focus:outline-none"
                     />
                   ) : (
                     <button
@@ -458,13 +463,16 @@ export default function LayersPanel() {
                       aria-label={`Select layer ${layer.name}`}
                       onClick={() => selectLayer(layer.id)}
                       onDoubleClick={() => handleStartRename(layer.id, layer.name)}
-                      style={{ cursor: 'pointer' }}
-                      className="flex-1 flex items-center gap-2 min-w-0 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 rounded"
+                      style={{ cursor: 'pointer', outlineColor: 'var(--rw-focus)' }}
+                      className="flex-1 flex items-center gap-2 min-w-0 text-left focus-visible:outline focus-visible:outline-2 rounded"
                     >
                       <span className="truncate" data-testid={`layer-name-${layer.id}`}>
                         {layer.name}
                       </span>
-                      <span className="ml-auto shrink-0 text-neutral-500 capitalize">
+                      <span
+                        className="ml-auto shrink-0 capitalize text-[10px]"
+                        style={{ color: 'var(--rw-text-tertiary)' }}
+                      >
                         {layer.type}
                       </span>
                     </button>

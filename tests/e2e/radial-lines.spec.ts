@@ -52,13 +52,14 @@ async function selectLayerByName(page: Parameters<typeof test>[1]['page'], name:
 }
 
 async function openProperties(page: Parameters<typeof test>[1]['page']) {
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
   await page.waitForTimeout(30)
 }
 
-async function openLayers(page: Parameters<typeof test>[1]['page']) {
-  await page.getByRole('tab', { name: 'Layers' }).click()
-  await page.waitForTimeout(30)
+// Layers panel is always visible; this is kept as a no-op for call-site compatibility.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function openLayers(_page: Parameters<typeof test>[1]['page']) {
+  // no-op: LayersPanel is standalone and always visible
 }
 
 // Returns screen position of the MIDPOINT of the first visible radial line.

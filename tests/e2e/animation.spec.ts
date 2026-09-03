@@ -9,9 +9,8 @@ async function addRing(page: Parameters<typeof test>[1]['page']) {
   await page.waitForTimeout(50)
 }
 
-async function openPropertiesPanel(page: Parameters<typeof test>[1]['page']) {
-  const propertiesTab = page.getByRole('tab', { name: 'Properties' })
-  await propertiesTab.click()
+async function openAnimationPanel(page: Parameters<typeof test>[1]['page']) {
+  await page.getByRole('tab', { name: 'Animation' }).click()
 }
 
 // ─── Play / Pause / Reset controls ────────────────────────────────────────────
@@ -54,7 +53,7 @@ test('Reset button stops playback', async ({ page }) => {
 
 test('animation panel is not shown when no layer is selected', async ({ page }) => {
   await page.goto('/')
-  await openPropertiesPanel(page)
+  await openAnimationPanel(page)
   await expect(page.getByTestId('animation-panel')).not.toBeVisible()
 })
 
@@ -65,7 +64,7 @@ test('animation panel appears when a layer is selected', async ({ page }) => {
     .getByRole('button', { name: /Select layer/ })
     .first()
     .click()
-  await openPropertiesPanel(page)
+  await openAnimationPanel(page)
   await expect(page.getByTestId('animation-panel')).toBeVisible()
 })
 
@@ -76,7 +75,7 @@ test('animation panel shows Spin Speed, Pulse Speed, Pulse Amplitude fields', as
     .getByRole('button', { name: /Select layer/ })
     .first()
     .click()
-  await openPropertiesPanel(page)
+  await openAnimationPanel(page)
   await expect(page.getByLabel('Spin Speed')).toBeVisible()
   await expect(page.getByLabel('Pulse Speed')).toBeVisible()
   await expect(page.getByLabel('Pulse Amplitude')).toBeVisible()
@@ -89,7 +88,7 @@ test('animation panel defaults: spin speed is 0', async ({ page }) => {
     .getByRole('button', { name: /Select layer/ })
     .first()
     .click()
-  await openPropertiesPanel(page)
+  await openAnimationPanel(page)
   await expect(page.getByLabel('Spin Speed')).toHaveValue('0')
 })
 
@@ -100,7 +99,7 @@ test('animation panel defaults: pulse speed is 0', async ({ page }) => {
     .getByRole('button', { name: /Select layer/ })
     .first()
     .click()
-  await openPropertiesPanel(page)
+  await openAnimationPanel(page)
   await expect(page.getByLabel('Pulse Speed')).toHaveValue('0')
 })
 
@@ -111,7 +110,7 @@ test('animation panel defaults: pulse amplitude is 0', async ({ page }) => {
     .getByRole('button', { name: /Select layer/ })
     .first()
     .click()
-  await openPropertiesPanel(page)
+  await openAnimationPanel(page)
   await expect(page.getByLabel('Pulse Amplitude')).toHaveValue('0')
 })
 
@@ -157,7 +156,7 @@ test('setting spin speed and playing causes animated transform change', async ({
     .getByRole('button', { name: /Select layer/ })
     .first()
     .click()
-  await openPropertiesPanel(page)
+  await openAnimationPanel(page)
 
   const layerId = await page.evaluate(() =>
     document.querySelector('[data-testid^="ring-layer-"]')?.getAttribute('data-layer-id')

@@ -52,9 +52,16 @@ describe('layout regions', () => {
     expect(screen.getByRole('main', { name: 'Canvas workspace' })).toBeInTheDocument()
   })
 
-  it('renders the layers and properties sidebar', () => {
+  it('renders the layers sidebar', () => {
     render(<EditorShell />)
-    expect(screen.getByRole('complementary', { name: 'Layers and Properties' })).toBeInTheDocument()
+    expect(screen.getByRole('complementary', { name: 'Layers' })).toBeInTheDocument()
+  })
+
+  it('renders the inspector and animation sidebar', () => {
+    render(<EditorShell />)
+    expect(
+      screen.getByRole('complementary', { name: 'Inspector and Animation' })
+    ).toBeInTheDocument()
   })
 
   it('renders the status bar', () => {
@@ -125,46 +132,42 @@ describe('tool rail', () => {
 })
 
 describe('right sidebar tabs', () => {
-  it('renders Layers and Properties tabs', () => {
+  it('renders Inspector and Animation tabs', () => {
     render(<EditorShell />)
-    expect(screen.getByRole('tab', { name: 'Layers' })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: 'Properties' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Inspector' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Animation' })).toBeInTheDocument()
   })
 
-  it('Layers tab is selected initially', () => {
+  it('Inspector tab is selected initially', () => {
     render(<EditorShell />)
-    expect(screen.getByRole('tab', { name: 'Layers' })).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('tab', { name: 'Properties' })).toHaveAttribute(
-      'aria-selected',
-      'false'
-    )
+    expect(screen.getByRole('tab', { name: 'Inspector' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Animation' })).toHaveAttribute('aria-selected', 'false')
   })
 
-  it('Layers panel is visible initially', () => {
+  it('Layers panel is always visible as standalone sidebar', () => {
     render(<EditorShell />)
     expect(screen.getByTestId('panel-layers')).toBeVisible()
   })
 
-  it('Properties panel is not visible initially', () => {
+  it('Inspector panel is visible initially', () => {
     render(<EditorShell />)
+    expect(screen.getByTestId('panel-properties')).toBeVisible()
+  })
+
+  it('clicking Animation tab shows the Animation panel', async () => {
+    const user = userEvent.setup()
+    render(<EditorShell />)
+    await user.click(screen.getByRole('tab', { name: 'Animation' }))
     expect(screen.getByTestId('panel-properties')).not.toBeVisible()
   })
 
-  it('clicking Properties tab shows the Properties panel', async () => {
+  it('clicking Animation then Inspector restores the Inspector panel', async () => {
     const user = userEvent.setup()
     render(<EditorShell />)
-    await user.click(screen.getByRole('tab', { name: 'Properties' }))
+    await user.click(screen.getByRole('tab', { name: 'Animation' }))
+    await user.click(screen.getByRole('tab', { name: 'Inspector' }))
     expect(screen.getByTestId('panel-properties')).toBeVisible()
-    expect(screen.getByTestId('panel-layers')).not.toBeVisible()
-  })
-
-  it('clicking Properties then Layers restores the Layers panel', async () => {
-    const user = userEvent.setup()
-    render(<EditorShell />)
-    await user.click(screen.getByRole('tab', { name: 'Properties' }))
-    await user.click(screen.getByRole('tab', { name: 'Layers' }))
-    expect(screen.getByTestId('panel-layers')).toBeVisible()
-    expect(screen.getByRole('tab', { name: 'Layers' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Inspector' })).toHaveAttribute('aria-selected', 'true')
   })
 })
 
@@ -269,10 +272,8 @@ describe('layers panel — lock control', () => {
 })
 
 describe('properties panel', () => {
-  it('shows the empty state message after switching to Properties', async () => {
-    const user = userEvent.setup()
+  it('shows the empty state message in the Inspector tab', async () => {
     render(<EditorShell />)
-    await user.click(screen.getByRole('tab', { name: 'Properties' }))
     expect(screen.getByText('Select a layer to edit its properties.')).toBeVisible()
   })
 })

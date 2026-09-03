@@ -9,6 +9,7 @@ import { useEditorStore } from './store/editor'
 import { useHistoryStore } from './store/history'
 import { loadPreferences, savePreferences } from './store/preferences'
 import { useProjectStore } from './store/project'
+import { useThemeStore } from './store/themeStore'
 import ConfirmDialog from './editor/ConfirmDialog'
 import EditorShell from './editor/EditorShell'
 import ExportModal from './editor/ExportModal'
@@ -44,6 +45,12 @@ export default function App() {
         savePreferences({ previewBackground: state.previewBackground })
       }
     })
+
+    // 6. Apply saved theme (themeStore self-initializes, but sync state in case of race)
+    const savedTheme = prefs.theme ?? 'dark'
+    if (useThemeStore.getState().theme !== savedTheme) {
+      useThemeStore.getState().setTheme(savedTheme)
+    }
 
     // Freshly initialized (restored or default) — treat as clean baseline
     resetDirtyState()

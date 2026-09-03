@@ -16,7 +16,11 @@ export default function AnimationPanel({ layer }: Props) {
 
   return (
     <div data-testid="animation-panel">
-      <div aria-hidden="true" className="mx-3 h-px bg-neutral-800" />
+      <div
+        aria-hidden="true"
+        className="mx-3 h-px"
+        style={{ background: 'var(--rw-border-subtle)' }}
+      />
       <SectionHeading>Animation</SectionHeading>
       <div className="flex flex-col gap-2 px-3 pb-3">
         <NumericField

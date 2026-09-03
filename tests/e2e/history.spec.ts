@@ -30,7 +30,7 @@ async function selectLayerByName(page: Parameters<typeof test>[1]['page'], name:
 }
 
 async function openProperties(page: Parameters<typeof test>[1]['page']) {
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
   await page.waitForTimeout(30)
 }
 
@@ -248,7 +248,6 @@ test('center action is undoable', async ({ page }) => {
   await page.waitForTimeout(50)
 
   // Center it
-  await page.getByRole('tab', { name: 'Layers' }).click()
   await page.getByRole('button', { name: 'Center selected layer on canvas' }).click()
   await page.waitForTimeout(50)
 
@@ -329,7 +328,6 @@ test('locked layer cannot be nudged', async ({ page }) => {
   const xInput = page.getByRole('spinbutton', { name: 'X', exact: true })
   const initialValue = await xInput.inputValue()
 
-  await page.getByRole('tab', { name: 'Layers' }).click()
   await page.getByRole('button', { name: `Lock ${name}` }).click()
   await page.waitForTimeout(30)
 
@@ -385,8 +383,7 @@ test('typing multiple characters in inspector creates one history entry per blur
   await page.keyboard.press('Control+z')
   await page.waitForTimeout(50)
 
-  // Switch to Layers, reselect, open Properties to verify radius restored
-  await page.getByRole('tab', { name: 'Layers' }).click()
+  // Reselect, open Properties to verify radius restored
   await selectLayerByName(page, name)
   await openProperties(page)
   await expect(radiusInput).toHaveValue(originalValue)

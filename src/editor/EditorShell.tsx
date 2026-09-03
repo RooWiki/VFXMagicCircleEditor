@@ -6,6 +6,7 @@ import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
 import { isEditableElement } from '../utils/keyboard'
+import LayersPanel from './LayersPanel'
 import RightSidebar from './RightSidebar'
 import StatusBar from './StatusBar'
 import ToolRail from './ToolRail'
@@ -135,12 +136,35 @@ export default function EditorShell() {
 
   return (
     <div
-      className="flex flex-col h-dvh overflow-hidden bg-neutral-950 text-neutral-100"
+      className="flex flex-col h-dvh overflow-hidden"
       data-testid="editor-shell"
+      style={{ background: 'var(--rw-bg-app)', color: 'var(--rw-text-primary)' }}
     >
       <TopBar />
       <div className="flex flex-1 min-h-0">
         <ToolRail />
+        <aside
+          aria-label="Layers"
+          className="shrink-0 flex flex-col border-r"
+          style={{
+            width: '240px',
+            background: 'var(--rw-bg-panel)',
+            borderColor: 'var(--rw-border-default)',
+          }}
+        >
+          <div
+            className="flex items-center h-[38px] px-3 shrink-0 border-b text-[13px] font-medium"
+            style={{
+              borderColor: 'var(--rw-border-default)',
+              color: 'var(--rw-text-secondary)',
+            }}
+          >
+            Layers
+          </div>
+          <div className="flex-1 overflow-y-auto min-h-0" data-testid="panel-layers">
+            <LayersPanel />
+          </div>
+        </aside>
         <Workspace />
         <RightSidebar />
       </div>

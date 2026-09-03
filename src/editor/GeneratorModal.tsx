@@ -75,9 +75,9 @@ function LockButton({
       title={locked ? `Unlock ${label}` : `Lock ${label}`}
       className={[
         'flex-shrink-0 w-6 h-6 flex items-center justify-center rounded transition-colors',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]',
         locked
-          ? 'text-violet-400 hover:text-violet-300'
+          ? 'text-[var(--rw-text-primary)] hover:text-[var(--rw-text-primary)]'
           : 'text-neutral-600 hover:text-neutral-400',
       ].join(' ')}
     >
@@ -120,7 +120,7 @@ function NumberInput({
       disabled={disabled}
       className={[
         'w-16 px-2 py-1 text-[13px] rounded bg-neutral-800 border border-neutral-700',
-        'text-neutral-200 focus:outline-none focus:ring-1 focus:ring-violet-500',
+        'text-neutral-200 focus:outline-none focus:ring-1 focus:ring-[var(--rw-focus)]',
         'disabled:opacity-40 disabled:cursor-not-allowed tabular-nums',
         className,
       ].join(' ')}
@@ -200,7 +200,7 @@ export default function GeneratorModal() {
             type="button"
             onClick={close}
             aria-label="Close generator"
-            className="text-neutral-500 hover:text-neutral-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 rounded"
+            className="text-neutral-500 hover:text-neutral-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)] rounded"
           >
             <CloseIcon />
           </button>
@@ -217,7 +217,7 @@ export default function GeneratorModal() {
               aria-label="Generation seed"
               disabled={isLocked('seed')}
               placeholder="e.g. magic-circle"
-              className="flex-1 px-2.5 py-1.5 text-[13px] rounded bg-neutral-800 border border-neutral-700 text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-violet-500 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex-1 px-2.5 py-1.5 text-[13px] rounded bg-neutral-800 border border-neutral-700 text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-[var(--rw-focus)] disabled:opacity-40 disabled:cursor-not-allowed"
             />
             <LockButton
               locked={isLocked('seed')}
@@ -458,7 +458,7 @@ export default function GeneratorModal() {
                     'px-3 py-1 text-[13px] rounded border transition-colors capitalize',
                     'disabled:opacity-40 disabled:cursor-not-allowed',
                     params.complexity === c
-                      ? 'bg-violet-600 border-violet-500 text-white'
+                      ? 'bg-[var(--rw-active-bg)] border-[var(--rw-active-border)] text-[var(--rw-text-primary)]'
                       : 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:border-neutral-600',
                   ].join(' ')}
                 >
@@ -485,21 +485,21 @@ export default function GeneratorModal() {
           <button
             type="button"
             onClick={close}
-            className="px-3 py-1.5 text-[13px] rounded text-neutral-300 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
+            className="px-3 py-1.5 text-[13px] rounded text-neutral-300 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleRegenerate}
-            className="px-4 py-1.5 text-[13px] rounded bg-neutral-700 text-neutral-100 hover:bg-neutral-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
+            className="px-4 py-1.5 text-[13px] rounded bg-neutral-700 text-neutral-100 hover:bg-neutral-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]"
           >
             Regenerate
           </button>
           <button
             type="button"
             onClick={handleGenerate}
-            className="px-4 py-1.5 text-[13px] rounded bg-violet-600 text-white hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
+            className="px-4 py-1.5 text-[13px] rounded bg-[var(--rw-text-primary)] text-[var(--rw-bg-panel)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]"
           >
             Generate
           </button>

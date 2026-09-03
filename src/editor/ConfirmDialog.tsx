@@ -20,15 +20,35 @@ export default function ConfirmDialog() {
       />
 
       {/* Panel */}
-      <div className="relative z-10 w-80 rounded-lg bg-neutral-900 border border-neutral-700 shadow-2xl p-5 flex flex-col gap-4">
-        <p id="confirm-dialog-message" className="text-sm text-neutral-200 leading-relaxed">
+      <div
+        className="relative z-10 w-80 rounded-lg shadow-2xl p-5 flex flex-col gap-4 border"
+        style={{
+          background: 'var(--rw-bg-panel)',
+          borderColor: 'var(--rw-border-default)',
+        }}
+      >
+        <p
+          id="confirm-dialog-message"
+          className="text-sm leading-relaxed"
+          style={{ color: 'var(--rw-text-primary)' }}
+        >
           {message}
         </p>
         <div className="flex justify-end gap-2">
           <button
             type="button"
             onClick={() => respond(false)}
-            className="px-3 py-1.5 text-[13px] rounded text-neutral-300 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
+            className="px-3 py-1.5 text-[13px] rounded focus-visible:outline focus-visible:outline-2"
+            style={{
+              color: 'var(--rw-text-secondary)',
+              outlineColor: 'var(--rw-focus)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--rw-bg-control)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = ''
+            }}
           >
             Cancel
           </button>
@@ -36,7 +56,12 @@ export default function ConfirmDialog() {
             type="button"
             onClick={() => respond(true)}
             autoFocus
-            className="px-3 py-1.5 text-[13px] rounded bg-violet-600 text-white hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
+            className="px-3 py-1.5 text-[13px] rounded focus-visible:outline focus-visible:outline-2"
+            style={{
+              background: 'var(--rw-text-primary)',
+              color: 'var(--rw-bg-panel)',
+              outlineColor: 'var(--rw-focus)',
+            }}
           >
             Confirm
           </button>

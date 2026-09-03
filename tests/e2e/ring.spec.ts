@@ -107,7 +107,7 @@ test('selecting a ring through the Layers panel shows ring properties', async ({
     .click()
 
   // Switch to Properties tab and verify ring inspector is shown
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
   await expect(page.getByTestId('ring-inspector')).toBeVisible()
 })
 
@@ -116,7 +116,7 @@ test('ring is auto-selected after adding', async ({ page }) => {
   await addRing(page)
 
   // Properties should show ring inspector (ring auto-selected on add)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
   await expect(page.getByTestId('ring-inspector')).toBeVisible()
 })
 
@@ -125,7 +125,7 @@ test('ring is auto-selected after adding', async ({ page }) => {
 test('Radius control updates the rendered SVG circle radius', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
   await expect(page.getByTestId('ring-inspector')).toBeVisible()
 
   const id = await getRingId(page)
@@ -144,7 +144,7 @@ test('Radius control updates the rendered SVG circle radius', async ({ page }) =
 test('Thickness control updates the SVG stroke-width', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 
   const id = await getRingId(page)
   const swBefore = await getSvgCircleAttr(page, id!, 'stroke-width')
@@ -162,7 +162,7 @@ test('Thickness control updates the SVG stroke-width', async ({ page }) => {
 test('Color control updates the SVG circle stroke', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 
   const id = await getRingId(page)
   const strokeBefore = await getSvgCircleAttr(page, id!, 'stroke')
@@ -180,7 +180,7 @@ test('Color control updates the SVG circle stroke', async ({ page }) => {
 test('Opacity slider updates the layer group opacity', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 
   const id = await getRingId(page)
 
@@ -199,7 +199,7 @@ test('Opacity slider updates the layer group opacity', async ({ page }) => {
 test('X position updates the ring transform', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 
   const id = await getRingId(page)
   const transformBefore = await page.evaluate(
@@ -224,7 +224,7 @@ test('X position updates the ring transform', async ({ page }) => {
 test('Y position updates the ring transform', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 
   const id = await getRingId(page)
 
@@ -243,7 +243,7 @@ test('Y position updates the ring transform', async ({ page }) => {
 test('Rotation updates the ring transform', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 
   const id = await getRingId(page)
   const input = page.getByLabel('Rotation')
@@ -261,7 +261,7 @@ test('Rotation updates the ring transform', async ({ page }) => {
 test('Scale X updates the ring transform', async ({ page }) => {
   await page.goto('/')
   await addRing(page)
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
 
   const id = await getRingId(page)
   const input = page.getByLabel('Scale X')
@@ -356,7 +356,7 @@ test('editing one ring does not mutate the other', async ({ page }) => {
   const layerButtons = page.getByRole('button', { name: /Select layer/ })
   await layerButtons.first().click()
 
-  await page.getByRole('tab', { name: 'Properties' }).click()
+  await page.getByRole('tab', { name: 'Inspector' }).click()
   const radiusInput = page.getByLabel('Radius')
   await radiusInput.fill('100')
   await radiusInput.press('Tab')

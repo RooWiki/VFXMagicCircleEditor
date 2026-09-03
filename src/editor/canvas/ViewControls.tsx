@@ -44,9 +44,50 @@ const BG_OPTIONS: { value: PreviewBackground; label: string }[] = [
   { value: 'transparent', label: 'Checker' },
 ]
 
-// detail > 0 = pointer click; detail === 0 = keyboard (Space/Enter) — don't blur those
 function blurOnPointer(e: MouseEvent<HTMLButtonElement>) {
   if (e.detail > 0) e.currentTarget.blur()
+}
+
+// Overlay button — floats over the canvas; uses semi-transparent panel bg so it
+// reads on both dark and light workspace backgrounds.
+function OverlayBtn({
+  active,
+  label,
+  title,
+  children,
+  onClick,
+}: {
+  active: boolean
+  label: string
+  title: string
+  children: React.ReactNode
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-pressed={active}
+      title={title}
+      onClick={onClick}
+      className="flex items-center justify-center h-7 px-2 rounded text-[11px] font-medium focus-visible:outline focus-visible:outline-2"
+      style={{
+        background: active ? 'var(--rw-active-bg)' : 'var(--rw-bg-panel)',
+        color: active ? 'var(--rw-active-text)' : 'var(--rw-text-secondary)',
+        border: `1px solid ${active ? 'var(--rw-active-border)' : 'var(--rw-border-default)'}`,
+        outlineColor: 'var(--rw-focus)',
+        opacity: 0.92,
+      }}
+      onMouseEnter={(e) => {
+        if (!active) e.currentTarget.style.background = 'var(--rw-bg-control)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = active ? 'var(--rw-active-bg)' : 'var(--rw-bg-panel)'
+      }}
+    >
+      {children}
+    </button>
+  )
 }
 
 export default function ViewControls() {
@@ -65,72 +106,52 @@ export default function ViewControls() {
       data-testid="view-controls"
     >
       {/* Grid toggle */}
-      <button
-        type="button"
-        aria-label="Toggle grid"
-        aria-pressed={gridVisible}
+      <OverlayBtn
+        active={gridVisible}
+        label="Toggle grid"
         title={gridVisible ? 'Hide grid' : 'Show grid'}
         onClick={(e) => {
           setGridVisible(!gridVisible)
           blurOnPointer(e)
         }}
-        className={[
-          'flex items-center justify-center w-7 h-7 rounded text-xs',
-          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
-          gridVisible
-            ? 'bg-violet-600/40 text-violet-300'
-            : 'bg-neutral-800/80 text-neutral-400 hover:bg-neutral-700/80 hover:text-neutral-200',
-        ].join(' ')}
       >
         <GridIcon />
-      </button>
+      </OverlayBtn>
 
       {/* Guides toggle */}
-      <button
-        type="button"
-        aria-label="Toggle guides"
-        aria-pressed={guidesVisible}
+      <OverlayBtn
+        active={guidesVisible}
+        label="Toggle guides"
         title={guidesVisible ? 'Hide guides' : 'Show guides'}
         onClick={(e) => {
           setGuidesVisible(!guidesVisible)
           blurOnPointer(e)
         }}
-        className={[
-          'flex items-center justify-center w-7 h-7 rounded text-xs',
-          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
-          guidesVisible
-            ? 'bg-violet-600/40 text-violet-300'
-            : 'bg-neutral-800/80 text-neutral-400 hover:bg-neutral-700/80 hover:text-neutral-200',
-        ].join(' ')}
       >
         <GuidesIcon />
-      </button>
+      </OverlayBtn>
 
       {/* Separator */}
-      <span aria-hidden="true" className="w-px h-4 bg-neutral-700 mx-0.5" />
+      <span
+        aria-hidden="true"
+        className="w-px h-4 mx-0.5"
+        style={{ background: 'var(--rw-border-default)' }}
+      />
 
-      {/* Background selector */}
+      {/* Preview background selector — viewport/preview controls only */}
       {BG_OPTIONS.map(({ value, label }) => (
-        <button
+        <OverlayBtn
           key={value}
-          type="button"
-          aria-label={`Preview background: ${label}`}
-          aria-pressed={previewBackground === value}
+          active={previewBackground === value}
+          label={`Preview background: ${label}`}
           title={`${label} background`}
           onClick={(e) => {
             setPreviewBackground(value)
             blurOnPointer(e)
           }}
-          className={[
-            'flex items-center justify-center h-7 px-2 rounded text-[11px] font-medium',
-            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500',
-            previewBackground === value
-              ? 'bg-violet-600/40 text-violet-300'
-              : 'bg-neutral-800/80 text-neutral-400 hover:bg-neutral-700/80 hover:text-neutral-200',
-          ].join(' ')}
         >
           {label}
-        </button>
+        </OverlayBtn>
       ))}
     </div>
   )

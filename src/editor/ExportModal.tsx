@@ -123,7 +123,7 @@ export default function ExportModal() {
                 className={[
                   'px-3 py-1 text-[13px] rounded border transition-colors',
                   preset === p
-                    ? 'bg-violet-600 border-violet-500 text-white'
+                    ? 'bg-[var(--rw-active-bg)] border-[var(--rw-active-border)] text-[var(--rw-text-primary)]'
                     : 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:border-neutral-600',
                 ].join(' ')}
               >
@@ -136,7 +136,7 @@ export default function ExportModal() {
               className={[
                 'px-3 py-1 text-[13px] rounded border transition-colors',
                 preset === 'custom'
-                  ? 'bg-violet-600 border-violet-500 text-white'
+                  ? 'bg-[var(--rw-active-bg)] border-[var(--rw-active-border)] text-[var(--rw-text-primary)]'
                   : 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:border-neutral-600',
               ].join(' ')}
             >
@@ -155,7 +155,7 @@ export default function ExportModal() {
                 aria-label="Custom resolution in pixels"
                 className={[
                   'w-full px-2.5 py-1.5 text-[13px] rounded bg-neutral-800 border text-neutral-200',
-                  'placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-violet-500',
+                  'placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-[var(--rw-focus)]',
                   resolutionError ? 'border-red-600' : 'border-neutral-700',
                 ].join(' ')}
               />
@@ -184,7 +184,7 @@ export default function ExportModal() {
               className={[
                 'px-3 py-1 text-[13px] rounded border transition-colors',
                 bgType === 'transparent'
-                  ? 'bg-violet-600 border-violet-500 text-white'
+                  ? 'bg-[var(--rw-active-bg)] border-[var(--rw-active-border)] text-[var(--rw-text-primary)]'
                   : 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:border-neutral-600',
               ].join(' ')}
             >
@@ -196,7 +196,7 @@ export default function ExportModal() {
               className={[
                 'px-3 py-1 text-[13px] rounded border transition-colors',
                 bgType === 'color'
-                  ? 'bg-violet-600 border-violet-500 text-white'
+                  ? 'bg-[var(--rw-active-bg)] border-[var(--rw-active-border)] text-[var(--rw-text-primary)]'
                   : 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:border-neutral-600',
               ].join(' ')}
             >
@@ -229,7 +229,7 @@ export default function ExportModal() {
               value={marginPercent}
               onChange={(e) => setMarginPercent(Number(e.target.value))}
               aria-label="Export margin percentage"
-              className="flex-1 accent-violet-500"
+              className="flex-1 accent-neutral-400"
             />
             <span className="text-[13px] text-neutral-300 w-8 text-right tabular-nums">
               {marginPercent}%
@@ -246,7 +246,7 @@ export default function ExportModal() {
                 type="checkbox"
                 checked={exportSelected}
                 onChange={(e) => setExportSelected(e.target.checked)}
-                className="accent-violet-500 w-3.5 h-3.5"
+                className="accent-neutral-400 w-3.5 h-3.5"
               />
               <span className="text-[13px] text-neutral-200">
                 Export selected layer only
@@ -264,7 +264,7 @@ export default function ExportModal() {
             type="button"
             onClick={close}
             disabled={isExporting}
-            className="px-3 py-1.5 text-[13px] rounded text-neutral-300 hover:bg-neutral-800 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
+            className="px-3 py-1.5 text-[13px] rounded text-neutral-300 hover:bg-neutral-800 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]"
           >
             Cancel
           </button>
@@ -272,7 +272,7 @@ export default function ExportModal() {
             type="button"
             onClick={() => void handleExport()}
             disabled={!canExport}
-            className="px-4 py-1.5 text-[13px] rounded bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
+            className="px-4 py-1.5 text-[13px] rounded bg-[var(--rw-text-primary)] text-[var(--rw-bg-panel)] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]"
           >
             {isExporting ? 'Exporting…' : 'Export PNG'}
           </button>
