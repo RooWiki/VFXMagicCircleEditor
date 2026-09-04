@@ -14,6 +14,7 @@ import ConfirmDialog from './editor/ConfirmDialog'
 import EditorShell from './editor/EditorShell'
 import ExportModal from './editor/ExportModal'
 import GeneratorModal from './editor/GeneratorModal'
+import HelpPanel from './editor/HelpPanel'
 import NotificationBar from './editor/NotificationBar'
 import TemplateGallery from './editor/TemplateGallery'
 
@@ -67,6 +68,7 @@ export default function App() {
       <ConfirmDialog />
       <ExportModal />
       <GeneratorModal />
+      <HelpPanel />
       <TemplateGallery />
       <NotificationBar />
     </>

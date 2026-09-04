@@ -28,7 +28,7 @@
 | 14    | Basic Animation Preview                                 | **COMPLETED** |
 | 15    | Polish, Testing, Portfolio Documentation and Deployment | PENDING       |
 | 15A   | → RooWiki UI System + Light/Dark + Editor Layout        | **COMPLETED** |
-| 15B   | → QA, UX Polish and Accessibility                       | PENDING       |
+| 15B   | → QA, UX Polish and Accessibility                       | **COMPLETED** |
 | 15C   | → Branding and Product Identity                         | PENDING       |
 | 15D   | → README and Portfolio Documentation                    | PENDING       |
 | 15E   | → Deployment                                            | PENDING       |
@@ -1004,7 +1004,7 @@ Implemented in commit `5c57a1c6860b8be21d641c2b567fd66027ab88e2`.
 
 ### Phase 15B — QA, UX Polish and Accessibility
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 #### Scope
 

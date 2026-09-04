@@ -32,6 +32,16 @@ if (typeof globalThis.ResizeObserver === 'undefined') {
   }
 }
 
+// jsdom does not implement URL.createObjectURL / revokeObjectURL.
+// Provide no-op stubs so tests that import browser-export code don't crash
+// on setup. Tests that need specific behavior should override these with vi.fn().
+if (typeof URL.createObjectURL === 'undefined') {
+  URL.createObjectURL = () => 'blob:stub-url'
+}
+if (typeof URL.revokeObjectURL === 'undefined') {
+  URL.revokeObjectURL = () => {}
+}
+
 // jsdom may not expose PointerEvent globally. Extend MouseEvent so that
 // dispatchEvent(new PointerEvent(...)) works in unit tests.
 if (typeof globalThis.PointerEvent === 'undefined') {

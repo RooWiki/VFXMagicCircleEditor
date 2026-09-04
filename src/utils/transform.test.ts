@@ -332,6 +332,16 @@ describe('calcScaleTransform', () => {
     expect(r1.scaleX).not.toBeCloseTo(r1.scaleY)
     expect(r2.scaleX).toBeCloseTo(r2.scaleY) // start ratio = 1:1
   })
+
+  it('Shift constraint takes Y-dominant branch when fracY > fracX', () => {
+    // startLocal = (100,100), currentWorld = (150,200):
+    //   raw scaleX = 150/100 = 1.5  → fracX = 1.5
+    //   raw scaleY = 200/100 = 2.0  → fracY = 2.0
+    // fracY > fracX → else branch: scaleX = scaleY * aspectRatio(1) = 2
+    const r = calcScaleTransform(0, 0, 0, 1, 1, 100, 100, 150, 200, true)
+    expect(r.scaleX).toBeCloseTo(2)
+    expect(r.scaleY).toBeCloseTo(2)
+  })
 })
 
 // ─── cornerLocalPosition ─────────────────────────────────────────────────────

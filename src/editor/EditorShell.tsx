@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { downloadProject } from '../persistence/projectIO'
 import { useAnimationStore } from '../store/animation'
 import { useEditorStore } from '../store/editor'
+import { useHelpPanelStore } from '../store/helpPanel'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
@@ -21,6 +22,13 @@ export default function EditorShell() {
       const key = e.key.toLowerCase()
       const isEditable = isEditableElement(document.activeElement)
       const isRenaming = !!document.querySelector('[data-testid="layer-rename-input"]')
+
+      // ── ?: Open keyboard shortcuts ──────────────────────────────────────────
+      if (e.key === '?' && !isEditable && !isRenaming) {
+        e.preventDefault()
+        useHelpPanelStore.getState().open()
+        return
+      }
 
       // ── Ctrl+S: Save / Download ─────────────────────────────────────────────
       if (ctrl && key === 's' && !isEditable) {

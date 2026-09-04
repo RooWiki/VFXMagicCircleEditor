@@ -4,6 +4,7 @@ import { downloadProject, newProject, openProject } from '../persistence/project
 import { useAnimationStore } from '../store/animation'
 import { useHistoryStore, selectCanUndo, selectCanRedo } from '../store/history'
 import { useExportModalStore } from '../store/exportModal'
+import { useHelpPanelStore } from '../store/helpPanel'
 import { useProjectStore } from '../store/project'
 import { useTemplateGalleryStore } from '../store/templateGalleryStore'
 import { useThemeStore } from '../store/themeStore'
@@ -86,6 +87,7 @@ export default function TopBar() {
   const resetAnimation = useAnimationStore((s) => s.reset)
   const theme = useThemeStore((s) => s.theme)
   const toggleTheme = useThemeStore((s) => s.toggleTheme)
+  const openHelp = useHelpPanelStore((s) => s.open)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -192,6 +194,41 @@ export default function TopBar() {
       <TopBarButton label="Export" title="Export PNG" onClick={openExportModal} />
 
       <Divider />
+
+      {/* Help */}
+      <button
+        type="button"
+        aria-label="Keyboard shortcuts"
+        title="Keyboard shortcuts (?)"
+        onClick={(e) => {
+          openHelp()
+          if (e.detail > 0) e.currentTarget.blur()
+        }}
+        className="flex items-center justify-center w-8 h-8 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--rw-focus)]"
+        style={{ color: 'var(--rw-text-secondary)' }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'var(--rw-bg-control)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = ''
+        }}
+      >
+        <svg
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          width="15"
+          height="15"
+          aria-hidden="true"
+        >
+          <circle cx="8" cy="8" r="6.5" />
+          <path d="M6.2 6a2 2 0 0 1 3.8.8c0 1.2-1.8 1.8-1.8 2.8" />
+          <circle cx="8" cy="12" r="0.6" fill="currentColor" stroke="none" />
+        </svg>
+      </button>
 
       {/* Theme toggle */}
       <button
