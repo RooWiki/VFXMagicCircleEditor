@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { useThemeStore } from './themeStore'
+import { useEditorStore } from './editor'
 import { useProjectStore } from './project'
+import { useThemeStore } from './themeStore'
 import { createDefaultProject } from '../utils/factories'
 
 // ─── Reset ────────────────────────────────────────────────────────────────────
@@ -10,6 +11,7 @@ beforeEach(() => {
   document.documentElement.removeAttribute('data-theme')
   useThemeStore.setState({ theme: 'dark' })
   useProjectStore.setState({ project: createDefaultProject() })
+  useEditorStore.setState({ previewBackground: 'dark' })
 })
 
 // ─── Initial state ────────────────────────────────────────────────────────────
@@ -87,5 +89,40 @@ describe('themeStore — project store isolation', () => {
     const before = useProjectStore.getState().project
     useThemeStore.getState().toggleTheme()
     expect(useProjectStore.getState().project).toBe(before)
+  })
+})
+
+// ─── Isolation — previewBackground not affected ────────────────────────────────
+
+describe('themeStore — previewBackground independence', () => {
+  it('setTheme does not change previewBackground', () => {
+    useEditorStore.setState({ previewBackground: 'dark' })
+    useThemeStore.getState().setTheme('light')
+    expect(useEditorStore.getState().previewBackground).toBe('dark')
+  })
+
+  it('toggleTheme does not change previewBackground', () => {
+    useEditorStore.setState({ previewBackground: 'light' })
+    useThemeStore.getState().toggleTheme()
+    expect(useEditorStore.getState().previewBackground).toBe('light')
+  })
+
+  it('setPreviewBackground does not change theme', () => {
+    useThemeStore.getState().setTheme('dark')
+    useEditorStore.getState().setPreviewBackground('light')
+    expect(useThemeStore.getState().theme).toBe('dark')
+  })
+
+  it('all six theme+preview combinations are independently settable', () => {
+    const themes = ['dark', 'light'] as const
+    const previews = ['dark', 'light', 'transparent'] as const
+    for (const theme of themes) {
+      for (const preview of previews) {
+        useThemeStore.getState().setTheme(theme)
+        useEditorStore.getState().setPreviewBackground(preview)
+        expect(useThemeStore.getState().theme).toBe(theme)
+        expect(useEditorStore.getState().previewBackground).toBe(preview)
+      }
+    }
   })
 })

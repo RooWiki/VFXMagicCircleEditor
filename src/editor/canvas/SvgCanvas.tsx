@@ -23,18 +23,24 @@ function cursorForState(
 
 // ─── background helpers ───────────────────────────────────────────────────────
 
+// Keep in sync with --rw-bg-preview-* and --rw-grid-* tokens in index.css.
+// Preview colors are theme-independent — the artboard fill does not change
+// when the application theme switches.
+const PREVIEW_DARK_COLOR = '#1c1c1e'
+const PREVIEW_LIGHT_COLOR = '#d1d1d6'
+
 function artboardFill(bg: PreviewBackground, checkerId: string): string {
   if (bg === 'transparent') return `url(#${checkerId})`
-  if (bg === 'light') return '#e8e8e8'
-  return '#1a1a1e'
+  if (bg === 'light') return PREVIEW_LIGHT_COLOR
+  return PREVIEW_DARK_COLOR
 }
 
 function gridMinorStroke(bg: PreviewBackground): string {
-  return bg === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)'
+  return bg === 'light' ? '#c7c7cc' : '#363636'
 }
 
 function gridMajorStroke(bg: PreviewBackground): string {
-  return bg === 'light' ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.18)'
+  return bg === 'light' ? '#aeaeb2' : '#484848'
 }
 
 function guideStroke(bg: PreviewBackground): string {

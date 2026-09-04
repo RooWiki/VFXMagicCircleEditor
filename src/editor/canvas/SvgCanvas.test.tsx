@@ -2,6 +2,7 @@ import { act, cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useEditorStore } from '../../store/editor'
 import { useProjectStore } from '../../store/project'
+import { useThemeStore } from '../../store/themeStore'
 import { useViewportStore } from '../../store/viewport'
 import { createDefaultProject, createRingLayer } from '../../utils/factories'
 import SvgCanvas from './SvgCanvas'
@@ -124,6 +125,24 @@ describe('preview backgrounds', () => {
     render(<SvgCanvas />)
     const bg = screen.getByTestId('artboard-background')
     expect(bg.getAttribute('fill')).toMatch(/^url\(#/)
+  })
+
+  it('dark preview fill is the exact RooWiki viewport-bg color', () => {
+    useEditorStore.setState({ previewBackground: 'dark' })
+    render(<SvgCanvas />)
+    expect(screen.getByTestId('artboard-background').getAttribute('fill')).toBe('#1c1c1e')
+  })
+
+  it('light preview fill is the exact RooWiki viewport-bg color', () => {
+    useEditorStore.setState({ previewBackground: 'light' })
+    render(<SvgCanvas />)
+    expect(screen.getByTestId('artboard-background').getAttribute('fill')).toBe('#d1d1d6')
+  })
+
+  it('changing previewBackground does not affect the theme store', () => {
+    useThemeStore.setState({ theme: 'dark' })
+    useEditorStore.getState().setPreviewBackground('light')
+    expect(useThemeStore.getState().theme).toBe('dark')
   })
 })
 

@@ -27,6 +27,12 @@
 | 13    | Templates                                               | **COMPLETED** |
 | 14    | Basic Animation Preview                                 | **COMPLETED** |
 | 15    | Polish, Testing, Portfolio Documentation and Deployment | PENDING       |
+| 15A   | → RooWiki UI System + Light/Dark + Editor Layout        | **COMPLETED** |
+| 15B   | → QA, UX Polish and Accessibility                       | PENDING       |
+| 15C   | → Branding and Product Identity                         | PENDING       |
+| 15D   | → README and Portfolio Documentation                    | PENDING       |
+| 15E   | → Deployment                                            | PENDING       |
+| 15F   | → Final Portfolio Assets                                | PENDING       |
 
 ---
 
@@ -959,64 +965,138 @@ Implement non-destructive animation preview: continuous rotation and scale pulsi
 
 **Status: PENDING**
 
-### Objective
-
-Reach production quality: resolve all known bugs, complete the test suite, write portfolio documentation, and deploy the application to a public URL.
+Phase 15 becomes **COMPLETED** only after all of the following subphases are completed: 15A, 15B, 15C, 15D, 15E, 15F.
 
 ### Dependencies
 
 - Phase 14 completed.
 
-### Main Implementation Tasks
-
-- Audit and fix all known UI bugs and edge cases.
-- Complete Playwright E2E test suite for all critical user flows defined in [ARCHITECTURE.md § 15.2](ARCHITECTURE.md#152-e2e-tests-playwright).
-- Reach ≥ 90% unit test coverage on all utility modules.
-- Implement a help or keyboard shortcut reference panel.
-- Add tooltips to all toolbar buttons and inspector controls.
-- Verify color contrast meets WCAG AA for all text elements.
-- Create a favicon and application title.
-- Finalize the working title or replace it with a final product name.
-- Write a `README.md` for the GitHub repository with a description, screenshot, link to the live demo, and technology stack.
-- Write portfolio documentation (separate from this document) describing the technical decisions, challenges and Unreal Engine integration.
-- Configure a deployment target (e.g., Cloudflare Pages, Vercel or Netlify) and set up continuous deployment from the main branch.
-- Produce a final exported magic-circle PNG asset and create an Unreal Engine 5 VFX using it.
-- Record a portfolio video or prepare a live demo.
-
-### Explicit Exclusions
+### Explicit Exclusions (apply to all subphases)
 
 - No cloud accounts, cloud storage or real-time collaboration (future features).
 - No mobile-optimized layout (future feature).
 - No additional layer types beyond Ring and Radial-Lines unless added in a separate pre-polish phase.
 
-### Acceptance Criteria
+---
 
-- All E2E tests pass in Chrome, Firefox and Safari.
+### Phase 15A — RooWiki UI System + Light/Dark + Editor Layout
+
+**Status: COMPLETED**
+
+Implemented in commit `5c57a1c6860b8be21d641c2b567fd66027ab88e2`.
+
+#### Scope
+
+- RooWiki visual system and `--rw-*` semantic token palette.
+- Light / Dark application themes and theme toggle.
+- Theme persistence across sessions.
+- Editor layout: ToolRail → Layers Panel → Workspace (single 2D canvas) → Right Sidebar (Inspector / Animation).
+- Compact desktop proportions and UI visual consistency across all panels.
+
+#### Acceptance Criteria
+
+- Light and Dark themes toggle correctly and persist on reload.
+- All panels use the RooWiki `--rw-*` design tokens consistently.
+- Editor layout matches the ToolRail → Layers → Workspace → Inspector / Animation structure.
+- No regressions in any previously completed phase.
+
+---
+
+### Phase 15B — QA, UX Polish and Accessibility
+
+**Status: PENDING**
+
+#### Scope
+
+- Audit and fix all known UI bugs and edge cases.
+- Complete the Playwright E2E test suite for all critical user flows defined in [ARCHITECTURE.md § 15.2](ARCHITECTURE.md#152-e2e-tests-playwright).
+- Reach ≥ 90% unit test coverage on all utility modules.
+- Implement a help or keyboard shortcut reference panel visible in the application.
+- Add tooltips to all toolbar buttons and inspector controls.
+- Verify color contrast meets WCAG AA for all text elements.
+- Responsive and accessibility polish where already implied by the final-polish phase.
+
+#### Acceptance Criteria
+
+- All Playwright E2E tests listed in ARCHITECTURE.md § 15.2 pass.
 - Unit test coverage ≥ 90% on utility modules.
-- The application deploys to a public URL accessible without authentication.
-- `README.md` exists on the GitHub repository.
+- No test regressions from any previous phase.
 - The keyboard shortcut reference is visible in the application.
 - No TypeScript errors in strict mode.
 - No console errors on normal user flows.
-- A portfolio artifact (video, screenshots, Unreal Engine scene) exists.
 
-### Required Automated Tests
+#### Required Automated Tests
 
 - All Playwright E2E tests listed in ARCHITECTURE.md § 15.2 pass.
 - No test regressions from any previous phase.
 
-### Required Manual Tests
+#### Required Manual Tests
 
 - Complete a full design session: blank canvas → add Ring + Radial Lines → edit all properties → reorder → export PNG at 2048 × 2048 → download project → reload → reopen project → verify all layers intact.
 - Open the application in Chrome, Firefox and Safari. No critical visual differences.
 - Test at 1280 × 800 viewport. Layout does not overflow.
-- Verify the exported PNG asset renders correctly as a texture in Unreal Engine 5.
 
-### Expected Deliverables
+---
 
-- Deployed application at a public URL.
-- Complete test suite with all tests passing.
-- `README.md` in the repository.
-- Portfolio documentation.
-- At least one Unreal Engine 5 VFX using an exported asset.
-- Portfolio video or demo recording.
+### Phase 15C — Branding and Product Identity
+
+**Status: PENDING**
+
+#### Scope
+
+- Create a favicon and set the browser application title.
+- Finalize the working title or replace it with a final product name.
+
+#### Acceptance Criteria
+
+- A favicon is visible in the browser tab.
+- The browser tab title reflects the final product name.
+- The in-application header or title reflects the final product name.
+
+---
+
+### Phase 15D — README and Portfolio Documentation
+
+**Status: PENDING**
+
+#### Scope
+
+- Write `README.md` for the GitHub repository with a description, screenshot, link to the live demo, and technology stack.
+- Write portfolio documentation (separate from this document) describing the technical decisions, challenges and Unreal Engine integration.
+
+#### Acceptance Criteria
+
+- `README.md` exists on the GitHub repository.
+- Portfolio documentation covers the key technical decisions and challenges.
+
+---
+
+### Phase 15E — Deployment
+
+**Status: PENDING**
+
+#### Scope
+
+- Configure a deployment target (e.g., Cloudflare Pages, Vercel or Netlify) and set up continuous deployment from the main branch.
+
+#### Acceptance Criteria
+
+- The application deploys to a public URL accessible without authentication.
+- Continuous deployment triggers automatically on push to the main branch.
+
+---
+
+### Phase 15F — Final Portfolio Assets
+
+**Status: PENDING**
+
+#### Scope
+
+- Produce a final exported magic-circle PNG asset using the application's export pipeline.
+- Create an Unreal Engine 5 VFX using that exported asset.
+- Record a portfolio video or prepare a live demo.
+
+#### Acceptance Criteria
+
+- A portfolio artifact (video, screenshots, Unreal Engine scene) exists.
+- The exported PNG asset renders correctly as a texture in Unreal Engine 5.

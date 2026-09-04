@@ -7,44 +7,75 @@ body,
   overflow: hidden;
 }
 
-/* ── RooWiki design tokens — iOS/iPadOS system gray palette ───────────────── */
+/* ── RooWiki design tokens ─────────────────────────────────────────────────────
+   Source of truth: RooWiki/shadermesh src/styles/theme.css
+   Semantic --rw-* names map to RooWiki --ui-* and --viewport-* values exactly.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Preview surface colors are theme-independent — Dark/Light/Checker refer to
+   the artboard fill, not the application chrome. Defined in :root so they stay
+   constant across theme switches and do not affect the app chrome. */
+:root {
+  --rw-bg-preview-dark: #1c1c1e;
+  --rw-bg-preview-light: #d1d1d6;
+}
 
 html[data-theme='dark'] {
-  --rw-bg-app: #1c1c1e;
-  --rw-bg-panel: #2c2c2e;
-  --rw-bg-raised: #3a3a3c;
-  --rw-bg-control: #3a3a3c;
-  --rw-bg-control-hover: #48484a;
-  --rw-border-subtle: #3a3a3c;
-  --rw-border-default: #48484a;
+  /* surfaces — darkest to lightest */
+  --rw-bg-app: #141416;
+  --rw-bg-panel: #1c1c1e;
+  --rw-bg-raised: #2c2c2e;
+  --rw-bg-control: #2c2c2e;
+  --rw-bg-control-hover: #3a3a3c;
+  --rw-bg-scene: #2c2c2e;
+
+  /* borders */
+  --rw-border-subtle: #2c2c2e;
+  --rw-border-default: #3a3a3c;
+
+  /* text */
   --rw-text-primary: #f2f2f7;
-  --rw-text-secondary: #aeaeb2;
+  --rw-text-secondary: #8e8e93;
   --rw-text-tertiary: #636366;
   --rw-text-disabled: #48484a;
-  /* neutral focus ring — visible on dark, no saturated color */
-  --rw-focus: #aeaeb2;
-  /* neutral active — used for selected states */
+
+  /* interaction */
+  --rw-focus: #8e8e93;
   --rw-active-bg: #3a3a3c;
-  --rw-active-border: #636366;
+  --rw-active-border: #8e8e93;
   --rw-active-text: #f2f2f7;
+
+  /* viewport grid */
+  --rw-grid-main: #484848;
+  --rw-grid-sub: #363636;
 }
 
 html[data-theme='light'] {
+  /* surfaces */
   --rw-bg-app: #f2f2f7;
   --rw-bg-panel: #ffffff;
-  --rw-bg-raised: #f2f2f7;
+  --rw-bg-raised: #e5e5ea;
   --rw-bg-control: #e5e5ea;
   --rw-bg-control-hover: #d1d1d6;
-  --rw-border-subtle: #e5e5ea;
+  --rw-bg-scene: #d1d1d6;
+
+  /* borders */
+  --rw-border-subtle: #d1d1d6;
   --rw-border-default: #c7c7cc;
+
+  /* text */
   --rw-text-primary: #1c1c1e;
   --rw-text-secondary: #636366;
-  --rw-text-tertiary: #aeaeb2;
-  --rw-text-disabled: #c7c7cc;
-  /* neutral focus ring — visible on light, no saturated color */
-  --rw-focus: #48484a;
-  /* neutral active — used for selected states */
-  --rw-active-bg: #e5e5ea;
-  --rw-active-border: #8e8e93;
+  --rw-text-tertiary: #8e8e93;
+  --rw-text-disabled: #aeaeb2;
+
+  /* interaction */
+  --rw-focus: #636366;
+  --rw-active-bg: #d1d1d6;
+  --rw-active-border: #636366;
   --rw-active-text: #1c1c1e;
+
+  /* viewport grid */
+  --rw-grid-main: #aeaeb2;
+  --rw-grid-sub: #c7c7cc;
 }
