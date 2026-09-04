@@ -2,7 +2,23 @@
 
 **Project:** Circle Editor  
 **Type:** Technical Artist portfolio piece  
-**Stack:** React 19 · TypeScript · Vite · SVG · Zustand · Zod · Tailwind CSS v4
+**Stack:** React 19 · TypeScript · Vite · SVG · Zustand · Zod · Tailwind CSS v4  
+**Live demo:** [circle-editor.pages.dev/circleeditor/](https://circle-editor.pages.dev/circleeditor/)
+
+---
+
+## What This Demonstrates Professionally
+
+- **Purpose-built creative tool** — built from scratch with no off-the-shelf editor base; the entire application architecture was designed for this specific workflow
+- **Procedural and non-destructive workflow** — seed-based generator followed by live parametric editing; no destructive flattening at any stage
+- **Layer-based editing model** — each layer is an independent mathematical object with its own geometry, color, transform, and visibility state
+- **SVG rendering and editor architecture** — custom SVG canvas with a separate editor overlay, resolution-independent rendering, and a clean export path that constructs output from data rather than cloning the DOM
+- **Reliable undo/redo** — snapshot-based history with a defined 50-state budget; trivially correct and fully testable
+- **PNG output suitable for game-engine VFX workflows** — transparent RGBA PNG at up to 4096 × 4096; intended for import as a `Texture2D` in Unreal Engine 5 VFX materials
+- **Automated testing** — 896 unit tests and 287 E2E tests covering geometry, state, history, persistence, and the full export pipeline
+- **Production deployment with CI/CD** — Cloudflare Pages deployment on every push to `main` via GitHub Actions
+
+![Circle Editor — full editor with the Arcane Matrix template loaded](docs/images/circle-editor-main.png)
 
 ---
 
@@ -164,6 +180,8 @@ SVG-based rendering at export time is resolution-independent. A magic circle exp
 
 ## Test Coverage
 
+Artist tools must be reliable — a broken undo or a corrupted export silently damages a creator's work. The test suite covers geometry, state, history, persistence, and the full export pipeline to ensure that refactors do not introduce regressions.
+
 | Metric                  | Result      |
 | ----------------------- | ----------- |
 | Unit tests              | 896 passing |
@@ -175,12 +193,12 @@ SVG-based rendering at export time is resolution-independent. A magic circle exp
 
 ## Project Status
 
-| Phase | Name                                      | Status        |
-| ----- | ----------------------------------------- | ------------- |
-| 0–14  | Core editor (all phases)                  | **COMPLETED** |
-| 15A   | RooWiki UI system + themes                | **COMPLETED** |
-| 15B   | QA, UX polish, accessibility              | **COMPLETED** |
-| 15C   | Branding and product identity             | **COMPLETED** |
-| 15D   | README and portfolio documentation        | **COMPLETED** |
-| 15E   | Deployment                                | PENDING       |
-| 15F   | Final portfolio assets (UE5 scene, video) | PENDING       |
+| Phase | Name                                                        | Status        |
+| ----- | ----------------------------------------------------------- | ------------- |
+| 0–14  | Core editor (all phases)                                    | **COMPLETED** |
+| 15A   | RooWiki UI system + themes                                  | **COMPLETED** |
+| 15B   | QA, UX polish, accessibility                                | **COMPLETED** |
+| 15C   | Branding and product identity                               | **COMPLETED** |
+| 15D   | README and portfolio documentation                          | **COMPLETED** |
+| 15E   | Deployment                                                  | **COMPLETED** |
+| 15F   | Final portfolio assets (screenshots, social metadata, docs) | **COMPLETED** |

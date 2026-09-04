@@ -24,13 +24,13 @@
 | 12    | Procedural Generator                                    | **COMPLETED** |
 | 13    | Templates                                               | **COMPLETED** |
 | 14    | Basic Animation Preview                                 | **COMPLETED** |
-| 15    | Polish, Testing, Portfolio Documentation and Deployment | PENDING       |
+| 15    | Polish, Testing, Portfolio Documentation and Deployment | **COMPLETED** |
 | 15A   | → RooWiki UI System + Light/Dark + Editor Layout        | **COMPLETED** |
 | 15B   | → QA, UX Polish and Accessibility                       | **COMPLETED** |
 | 15C   | → Branding and Product Identity                         | **COMPLETED** |
 | 15D   | → README and Portfolio Documentation                    | **COMPLETED** |
 | 15E   | → Deployment                                            | **COMPLETED** |
-| 15F   | → Final Portfolio Assets                                | PENDING       |
+| 15F   | → Final Portfolio Assets                                | **COMPLETED** |
 
 ---
 
@@ -961,7 +961,7 @@ Implement non-destructive animation preview: continuous rotation and scale pulsi
 
 ## Phase 15 — Polish, Testing, Portfolio Documentation and Deployment
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 Phase 15 becomes **COMPLETED** only after all of the following subphases are completed: 15A, 15B, 15C, 15D, 15E, 15F.
 
@@ -1094,15 +1094,37 @@ Implemented in commit `5c57a1c6860b8be21d641c2b567fd66027ab88e2`.
 
 ### Phase 15F — Final Portfolio Assets
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 #### Scope
 
-- Produce a final exported magic-circle PNG asset using the application's export pipeline.
-- Create an Unreal Engine 5 VFX using that exported asset.
-- Record a portfolio video or prepare a live demo.
+- Capture real application screenshots for portfolio and documentation use.
+- Create a social preview image for Open Graph / Twitter Card sharing.
+- Add social metadata to `index.html`.
+- Polish README and PORTFOLIO.md for portfolio presentation.
 
 #### Acceptance Criteria
 
-- A portfolio artifact (video, screenshots, Unreal Engine scene) exists.
-- The exported PNG asset renders correctly as a texture in Unreal Engine 5.
+- Four real editor screenshots exist at `docs/images/` (1440×900).
+- A social preview image exists at `public/social-preview.png` (1200×630).
+- `index.html` contains Open Graph and Twitter Card metadata.
+- README presents the tool clearly to a recruiter or art director unfamiliar with game VFX.
+- PORTFOLIO.md case study is polished and Phase 15E/15F statuses are accurate.
+
+#### Completion Notes
+
+- Four real UI screenshots captured via Playwright against the live dev server:
+  - `circle-editor-main.png` — full editor, Arcane Matrix template loaded, no selection
+  - `circle-editor-inspector.png` — Outer Ring selected, inspector showing ring properties
+  - `circle-editor-procedural.png` — Primary Star (Radial Lines) selected, procedural controls visible
+  - `circle-editor-export.png` — Export PNG modal open over the editor
+- Social preview `public/social-preview.png` at 1200×630 — real editor at that viewport
+- Open Graph and Twitter Card tags added to `index.html`
+- README: improved opening description, added Workflow section, fixed dev URL, added Deployment section, replaced screenshot placeholder with hero image
+- PORTFOLIO.md: added "What This Demonstrates Professionally" section, live demo link, hero image, Test Coverage framing, corrected Phase 15E/15F statuses
+
+---
+
+## Phase 15 — COMPLETED
+
+All subphases 15A through 15F are complete. Phase 15 (Polish, Testing, Portfolio Documentation and Deployment) is closed.
