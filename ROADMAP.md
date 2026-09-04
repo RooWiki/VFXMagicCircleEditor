@@ -28,7 +28,7 @@
 | 15A   | → RooWiki UI System + Light/Dark + Editor Layout        | **COMPLETED** |
 | 15B   | → QA, UX Polish and Accessibility                       | **COMPLETED** |
 | 15C   | → Branding and Product Identity                         | **COMPLETED** |
-| 15D   | → README and Portfolio Documentation                    | PENDING       |
+| 15D   | → README and Portfolio Documentation                    | **COMPLETED** |
 | 15E   | → Deployment                                            | PENDING       |
 | 15F   | → Final Portfolio Assets                                | PENDING       |
 
@@ -1055,7 +1055,7 @@ Implemented in commit `5c57a1c6860b8be21d641c2b567fd66027ab88e2`.
 
 ### Phase 15D — README and Portfolio Documentation
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 #### Scope
 
