@@ -32,12 +32,12 @@ async function selectLayer(page: Parameters<typeof test>[1]['page'], name: strin
 // ─── Empty state ──────────────────────────────────────────────────────────────
 
 test('layers panel shows empty state with no layers', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByText('No layers yet')).toBeVisible()
 })
 
 test('empty state disappears after adding a ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await expect(page.getByText('No layers yet')).not.toBeVisible()
 })
@@ -45,7 +45,7 @@ test('empty state disappears after adding a ring', async ({ page }) => {
 // ─── Action bar ───────────────────────────────────────────────────────────────
 
 test('Duplicate button is disabled with no selection', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   // click blank area to deselect
   await page.getByRole('main', { name: 'Canvas workspace' }).click({ position: { x: 50, y: 50 } })
@@ -54,7 +54,7 @@ test('Duplicate button is disabled with no selection', async ({ page }) => {
 })
 
 test('Delete button is disabled with no selection', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('main', { name: 'Canvas workspace' }).click({ position: { x: 50, y: 50 } })
   await page.waitForTimeout(50)
@@ -62,7 +62,7 @@ test('Delete button is disabled with no selection', async ({ page }) => {
 })
 
 test('Center button is disabled with no selection', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('main', { name: 'Canvas workspace' }).click({ position: { x: 50, y: 50 } })
   await page.waitForTimeout(50)
@@ -70,7 +70,7 @@ test('Center button is disabled with no selection', async ({ page }) => {
 })
 
 test('action buttons become enabled when a layer is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const name = (await getLayerNames(page))[0]
   await selectLayer(page, name)
@@ -84,7 +84,7 @@ test('action buttons become enabled when a layer is selected', async ({ page }) 
 // ─── Delete via action bar ────────────────────────────────────────────────────
 
 test('clicking Delete removes the selected layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const name = (await getLayerNames(page))[0]
   await selectLayer(page, name)
@@ -94,7 +94,7 @@ test('clicking Delete removes the selected layer', async ({ page }) => {
 })
 
 test('delete shows empty state when last layer removed', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const name = (await getLayerNames(page))[0]
   await selectLayer(page, name)
@@ -103,7 +103,7 @@ test('delete shows empty state when last layer removed', async ({ page }) => {
 })
 
 test('Delete button removes only the selected layer when multiple exist', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   expect(await getLayerCount(page)).toBe(2)
@@ -117,7 +117,7 @@ test('Delete button removes only the selected layer when multiple exist', async 
 // ─── Delete via keyboard ──────────────────────────────────────────────────────
 
 test('Delete key removes the selected layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const name = (await getLayerNames(page))[0]
   await selectLayer(page, name)
@@ -127,7 +127,7 @@ test('Delete key removes the selected layer', async ({ page }) => {
 })
 
 test('Delete key with no selection is a no-op', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('main', { name: 'Canvas workspace' }).click({ position: { x: 50, y: 50 } })
   await page.waitForTimeout(50)
@@ -139,7 +139,7 @@ test('Delete key with no selection is a no-op', async ({ page }) => {
 // ─── Duplicate ────────────────────────────────────────────────────────────────
 
 test('clicking Duplicate adds a layer with Copy of prefix', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await selectLayer(page, names[0])
@@ -151,7 +151,7 @@ test('clicking Duplicate adds a layer with Copy of prefix', async ({ page }) => 
 })
 
 test('duplicate selects the new layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await selectLayer(page, names[0])
@@ -167,7 +167,7 @@ test('duplicate selects the new layer', async ({ page }) => {
 // ─── Inline rename ────────────────────────────────────────────────────────────
 
 test('double-clicking a layer name shows a rename input', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page.getByRole('button', { name: `Select layer ${names[0]}` }).dblclick()
@@ -176,7 +176,7 @@ test('double-clicking a layer name shows a rename input', async ({ page }) => {
 })
 
 test('rename input is pre-filled with the current name', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page.getByRole('button', { name: `Select layer ${names[0]}` }).dblclick()
@@ -186,7 +186,7 @@ test('rename input is pre-filled with the current name', async ({ page }) => {
 })
 
 test('Enter commits the rename', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page.getByRole('button', { name: `Select layer ${names[0]}` }).dblclick()
@@ -201,7 +201,7 @@ test('Enter commits the rename', async ({ page }) => {
 })
 
 test('Escape cancels rename without saving', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   const original = names[0]
@@ -217,7 +217,7 @@ test('Escape cancels rename without saving', async ({ page }) => {
 })
 
 test('Delete key during rename does not delete the layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page
@@ -240,7 +240,7 @@ test('Delete key during rename does not delete the layer', async ({ page }) => {
 // ─── Center on canvas ─────────────────────────────────────────────────────────
 
 test('Center resets layer position to 0,0', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await selectLayer(page, names[0])
@@ -253,7 +253,7 @@ test('Center resets layer position to 0,0', async ({ page }) => {
 // ─── Layer visibility ─────────────────────────────────────────────────────────
 
 test('clicking eye icon hides the layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page.getByRole('button', { name: `Hide ${names[0]}` }).click()
@@ -265,7 +265,7 @@ test('clicking eye icon hides the layer', async ({ page }) => {
 })
 
 test('clicking eye icon again shows the layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page.getByRole('button', { name: `Hide ${names[0]}` }).click()
@@ -281,7 +281,7 @@ test('clicking eye icon again shows the layer', async ({ page }) => {
 // ─── Layer lock ───────────────────────────────────────────────────────────────
 
 test('clicking lock icon locks the layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page.getByRole('button', { name: `Lock ${names[0]}` }).click()
@@ -290,7 +290,7 @@ test('clicking lock icon locks the layer', async ({ page }) => {
 })
 
 test('clicking lock icon again unlocks the layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await page.getByRole('button', { name: `Lock ${names[0]}` }).click()
@@ -303,14 +303,14 @@ test('clicking lock icon again unlocks the layer', async ({ page }) => {
 // ─── Layer ordering ───────────────────────────────────────────────────────────
 
 test('adding two rings shows both in layers panel', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   expect(await getLayerCount(page)).toBe(2)
 })
 
 test('most recently added ring appears at top of layers panel', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   // SVG artwork group: [0] = bottom layer, [last] = top (newest)
@@ -331,7 +331,7 @@ test('most recently added ring appears at top of layers panel', async ({ page })
 // ─── Canvas stacking ─────────────────────────────────────────────────────────
 
 test('SVG artwork group contains an element for each visible layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   const artworkCount = await page.evaluate(
@@ -343,7 +343,7 @@ test('SVG artwork group contains an element for each visible layer', async ({ pa
 // ─── Selection sync ───────────────────────────────────────────────────────────
 
 test('clicking a layer name in panel selects it', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   const names = await getLayerNames(page)
@@ -352,7 +352,7 @@ test('clicking a layer name in panel selects it', async ({ page }) => {
 })
 
 test('deleting selected layer removes selection overlay', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const names = await getLayerNames(page)
   await selectLayer(page, names[0])
@@ -366,7 +366,7 @@ test('deleting selected layer removes selection overlay', async ({ page }) => {
 // afterward (for canvas panning) does not fire the button again.
 
 test('pointer-click Ring create + Space does not create extra rings', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Add Ring' }).click()
   await page.waitForTimeout(50)
   expect(await getLayerCount(page)).toBe(1)
@@ -380,7 +380,7 @@ test('pointer-click Ring create + Space does not create extra rings', async ({ p
 })
 
 test('pointer-click Radial Lines create + Space does not create extra layers', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Add Radial Lines' }).click()
   await page.waitForTimeout(50)
   expect(await getLayerCount(page)).toBe(1)
@@ -394,7 +394,7 @@ test('pointer-click Radial Lines create + Space does not create extra layers', a
 })
 
 test('repeated pointer clicks on Ring create still produce multiple rings', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Add Ring' }).click()
   await page.waitForTimeout(50)
   await page.getByRole('button', { name: 'Add Ring' }).click()
@@ -405,7 +405,7 @@ test('repeated pointer clicks on Ring create still produce multiple rings', asyn
 })
 
 test('keyboard-focused Ring button activated by Space still creates a ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   // Programmatic focus simulates Tab navigation to the button
   await page.getByRole('button', { name: 'Add Ring' }).focus()
   await page.keyboard.press('Space')

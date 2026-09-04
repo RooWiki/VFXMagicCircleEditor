@@ -3,13 +3,13 @@ import { expect, test } from '@playwright/test'
 test.use({ viewport: { width: 1440, height: 900 } })
 
 test('application loads with editor shell visible', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page).toHaveTitle(/Circle Editor/)
   await expect(page.getByText('Circle Editor').first()).toBeVisible()
 })
 
 test('top bar is visible with all controls', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   const header = page.getByRole('banner')
   await expect(header).toBeVisible()
   await expect(header.getByText('Circle Editor')).toBeVisible()
@@ -21,7 +21,7 @@ test('top bar is visible with all controls', async ({ page }) => {
 test('Phase 11 toolbar actions: file/export enabled, Undo/Redo disabled on fresh load', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto('')
   // Phase 10: New, Open, Save are implemented and enabled
   await expect(page.getByRole('button', { name: 'New' })).not.toBeDisabled()
   await expect(page.getByRole('button', { name: 'Open' })).not.toBeDisabled()
@@ -34,35 +34,35 @@ test('Phase 11 toolbar actions: file/export enabled, Undo/Redo disabled on fresh
 })
 
 test('tool rail is visible', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('navigation', { name: 'Tools' })).toBeVisible()
 })
 
 test('canvas workspace is visible', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('main', { name: 'Canvas workspace' })).toBeVisible()
 })
 
 test('right sidebar is visible with tabs', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('complementary', { name: 'Inspector and Animation' })).toBeVisible()
   await expect(page.getByRole('tab', { name: 'Inspector' })).toBeVisible()
   await expect(page.getByRole('tab', { name: 'Animation' })).toBeVisible()
 })
 
 test('layers panel is always visible as standalone sidebar', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('complementary', { name: 'Layers' })).toBeVisible()
   await expect(page.getByText('No layers yet')).toBeVisible()
 })
 
 test('status bar is visible', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('contentinfo')).toBeVisible()
 })
 
 test('switching between Inspector and Animation tabs works', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   // Inspector tab is selected by default
   await expect(page.getByRole('tab', { name: 'Inspector' })).toHaveAttribute(
     'aria-selected',
@@ -84,14 +84,14 @@ test('no console errors on load', async ({ page }) => {
   page.on('console', (msg) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })
-  await page.goto('/')
+  await page.goto('')
   await page.waitForLoadState('networkidle')
   expect(errors).toHaveLength(0)
 })
 
 test('no unexpected horizontal scrolling at 1280x720', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
-  await page.goto('/')
+  await page.goto('')
   const hasHorizontalOverflow = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth
   )
@@ -100,7 +100,7 @@ test('no unexpected horizontal scrolling at 1280x720', async ({ page }) => {
 
 test('no unexpected horizontal scrolling at 1920x1080', async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 })
-  await page.goto('/')
+  await page.goto('')
   const hasHorizontalOverflow = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth
   )
@@ -109,7 +109,7 @@ test('no unexpected horizontal scrolling at 1920x1080', async ({ page }) => {
 
 test('shell regions meet minimum dimensions at 1440x900', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/')
+  await page.goto('')
 
   const topBarBox = await page.getByRole('banner').boundingBox()
   const toolRailBox = await page.getByRole('navigation', { name: 'Tools' }).boundingBox()
@@ -133,7 +133,7 @@ test('shell regions meet minimum dimensions at 1440x900', async ({ page }) => {
 
 test('shell regions do not overlap at 1440x900', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/')
+  await page.goto('')
 
   const topBarBox = await page.getByRole('banner').boundingBox()
   const workspaceBox = await page.getByRole('main', { name: 'Canvas workspace' }).boundingBox()
@@ -151,7 +151,7 @@ test('shell regions do not overlap at 1440x900', async ({ page }) => {
 
 test('no unexpected vertical scrolling at 1440x900', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/')
+  await page.goto('')
   const hasVerticalOverflow = await page.evaluate(
     () => document.documentElement.scrollHeight > window.innerHeight
   )

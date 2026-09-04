@@ -9,7 +9,7 @@ test('application loads without console errors', async ({ page }) => {
   page.on('console', (msg) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })
-  await page.goto('/')
+  await page.goto('')
   await page.waitForLoadState('networkidle')
   expect(errors).toHaveLength(0)
 })
@@ -17,12 +17,12 @@ test('application loads without console errors', async ({ page }) => {
 // ─── SVG viewport existence ────────────────────────────────────────────────
 
 test('SVG viewport element exists', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByTestId('svg-viewport')).toBeVisible()
 })
 
 test('SVG viewBox has four finite numeric values', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   const svg = page.getByTestId('svg-viewport')
   const vb = await svg.getAttribute('viewBox')
   expect(vb).toBeTruthy()
@@ -34,17 +34,17 @@ test('SVG viewBox has four finite numeric values', async ({ page }) => {
 // ─── initial artboard fit ──────────────────────────────────────────────────
 
 test('artboard background is visible after initial fit-to-view', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByTestId('artboard-background')).toBeVisible()
 })
 
 test('artboard border is visible after initial fit-to-view', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByTestId('artboard-border')).toBeVisible()
 })
 
 test('artboard fits within workspace bounds', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   const workspaceBox = await page.getByRole('main', { name: 'Canvas workspace' }).boundingBox()
   const artboardBox = await page.getByTestId('artboard-border').boundingBox()
@@ -63,7 +63,7 @@ test('artboard fits within workspace bounds', async ({ page }) => {
 // ─── wheel zoom ────────────────────────────────────────────────────────────
 
 test('wheel zoom changes the viewBox and status percentage', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   const svg = page.getByTestId('svg-viewport')
   const zoomLabel = page.getByLabel('Zoom level')
@@ -88,7 +88,7 @@ test('wheel zoom changes the viewBox and status percentage', async ({ page }) =>
 })
 
 test('body does not scroll while zooming', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   const scrollBefore = await page.evaluate(() => window.scrollY)
   await page.mouse.move(720, 450)
   await page.mouse.wheel(0, -500)
@@ -98,7 +98,7 @@ test('body does not scroll while zooming', async ({ page }) => {
 })
 
 test('zoom around pointer keeps the logical point approximately anchored', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   const svg = page.getByTestId('svg-viewport')
 
@@ -148,7 +148,7 @@ test('zoom around pointer keeps the logical point approximately anchored', async
 // ─── middle-mouse panning ──────────────────────────────────────────────────
 
 test('middle-mouse drag changes the viewBox center', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   const svg = page.getByTestId('svg-viewport')
   const viewBoxBefore = await svg.getAttribute('viewBox')
@@ -165,7 +165,7 @@ test('middle-mouse drag changes the viewBox center', async ({ page }) => {
 })
 
 test('body does not scroll while middle-mouse panning', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   const scrollBefore = await page.evaluate(() => window.scrollY)
   await page.mouse.move(720, 450)
   await page.mouse.down({ button: 'middle' })
@@ -179,7 +179,7 @@ test('body does not scroll while middle-mouse panning', async ({ page }) => {
 // ─── hand tool panning ─────────────────────────────────────────────────────
 
 test('Hand-tool primary drag pans the canvas', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   // Activate hand tool
   await page.getByRole('button', { name: 'Pan' }).click()
@@ -200,7 +200,7 @@ test('Hand-tool primary drag pans the canvas', async ({ page }) => {
 // ─── Space + drag panning ──────────────────────────────────────────────────
 
 test('Space + primary drag pans the canvas', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   // Focus workspace first
   await page.getByTestId('svg-viewport').click()
@@ -223,7 +223,7 @@ test('Space + primary drag pans the canvas', async ({ page }) => {
 // ─── Fit View ─────────────────────────────────────────────────────────────
 
 test('Fit View restores the centered artboard after panning', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   // Pan away
   await page.getByRole('button', { name: 'Pan' }).click()
@@ -248,7 +248,7 @@ test('Fit View restores the centered artboard after panning', async ({ page }) =
 // ─── grid and guides ──────────────────────────────────────────────────────
 
 test('Grid toggle shows and hides the grid overlay', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   // Grid is off by default
   await expect(page.getByTestId('grid-overlay')).not.toBeVisible()
@@ -263,7 +263,7 @@ test('Grid toggle shows and hides the grid overlay', async ({ page }) => {
 })
 
 test('Guide toggle shows and hides the guides overlay', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   await expect(page.getByTestId('guides-overlay')).not.toBeVisible()
 
@@ -277,14 +277,14 @@ test('Guide toggle shows and hides the guides overlay', async ({ page }) => {
 // ─── preview background ────────────────────────────────────────────────────
 
 test('Preview background buttons are visible', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Preview background: Dark' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Preview background: Light' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Preview background: Checker' })).toBeVisible()
 })
 
 test('Switching to light background changes artboard fill', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   const artboard = page.getByTestId('artboard-background')
   const fillBefore = await artboard.getAttribute('fill')
@@ -296,7 +296,7 @@ test('Switching to light background changes artboard fill', async ({ page }) => 
 })
 
 test('Switching to transparent background sets checkerboard fill', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Preview background: Checker' }).click()
   const fill = await page.getByTestId('artboard-background').getAttribute('fill')
   expect(fill).toMatch(/^url\(#/)
@@ -305,7 +305,7 @@ test('Switching to transparent background sets checkerboard fill', async ({ page
 // ─── layout integrity ─────────────────────────────────────────────────────
 
 test('existing layout regions do not overlap', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   const topBarBox = await page.getByRole('banner').boundingBox()
   const workspaceBox = await page.getByRole('main', { name: 'Canvas workspace' }).boundingBox()
   const statusBarBox = await page.getByRole('contentinfo').boundingBox()
@@ -319,7 +319,7 @@ test('existing layout regions do not overlap', async ({ page }) => {
 })
 
 test('inspector and animation tabs work with SVG viewport active', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('tab', { name: 'Inspector' })).toHaveAttribute(
     'aria-selected',
     'true'
@@ -335,14 +335,14 @@ test('inspector and animation tabs work with SVG viewport active', async ({ page
 // ─── Radial Lines is now enabled (Phase 9) ────────────────────────────────
 
 test('Radial Lines tool button is enabled', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 // ─── Add Ring, Hand and Fit View are enabled ──────────────────────────────
 
 test('Add Ring, Hand tool and Fit View buttons are enabled', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Add Ring' })).not.toBeDisabled()
   await expect(page.getByRole('button', { name: 'Pan' })).not.toBeDisabled()
   await expect(page.getByRole('button', { name: 'Fit View' })).not.toBeDisabled()

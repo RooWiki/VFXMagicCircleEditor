@@ -69,8 +69,8 @@ describe('TEMPLATES registry', () => {
     expect(template.id).toBeTruthy()
     expect(template.name).toBeTruthy()
     expect(template.description).toBeTruthy()
-    expect(template.file).toMatch(/^\/templates\//)
-    expect(template.thumbnail).toMatch(/^\/templates\/thumbnails\//)
+    expect(template.file).toMatch(/\/templates\/[^/]+\.mce\.json$/)
+    expect(template.thumbnail).toMatch(/\/templates\/thumbnails\/[^/]+\.png$/)
   })
 
   it('all template IDs are unique', () => {

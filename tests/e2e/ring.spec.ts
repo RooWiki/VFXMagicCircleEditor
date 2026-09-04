@@ -39,13 +39,13 @@ test('application loads without console errors', async ({ page }) => {
   page.on('console', (msg) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })
-  await page.goto('/')
+  await page.goto('')
   await page.waitForLoadState('networkidle')
   expect(errors).toHaveLength(0)
 })
 
 test('initial project has no ring artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   const count = await page.evaluate(
     () => document.querySelector('[data-testid="artwork-group"]')?.children.length ?? -1
   )
@@ -55,12 +55,12 @@ test('initial project has no ring artwork', async ({ page }) => {
 // ─── Add Ring ─────────────────────────────────────────────────────────────────
 
 test('Add Ring button is enabled', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Add Ring' })).not.toBeDisabled()
 })
 
 test('clicking Add Ring creates a ring in the SVG artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const count = await page.evaluate(
     () => document.querySelector('[data-testid="artwork-group"]')?.children.length ?? 0
@@ -69,7 +69,7 @@ test('clicking Add Ring creates a ring in the SVG artwork', async ({ page }) => 
 })
 
 test('ring appears as a circle element in the SVG', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   expect(id).not.toBeNull()
@@ -80,13 +80,13 @@ test('ring appears as a circle element in the SVG', async ({ page }) => {
 // ─── Layers panel ─────────────────────────────────────────────────────────────
 
 test('ring appears in the Layers panel after adding', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await expect(page.getByRole('button', { name: 'Select layer Ring' })).toBeVisible()
 })
 
 test('layer count changes after adding a ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   const before = await page.getByLabel('Layer count').textContent()
   await addRing(page)
   const after = await page.getByLabel('Layer count').textContent()
@@ -97,7 +97,7 @@ test('layer count changes after adding a ring', async ({ page }) => {
 // ─── Selection ────────────────────────────────────────────────────────────────
 
 test('selecting a ring through the Layers panel shows ring properties', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Click the ring entry in the Layers panel to select it
@@ -112,7 +112,7 @@ test('selecting a ring through the Layers panel shows ring properties', async ({
 })
 
 test('ring is auto-selected after adding', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Properties should show ring inspector (ring auto-selected on add)
@@ -123,7 +123,7 @@ test('ring is auto-selected after adding', async ({ page }) => {
 // ─── Properties inspector ─────────────────────────────────────────────────────
 
 test('Radius control updates the rendered SVG circle radius', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
   await expect(page.getByTestId('ring-inspector')).toBeVisible()
@@ -142,7 +142,7 @@ test('Radius control updates the rendered SVG circle radius', async ({ page }) =
 })
 
 test('Thickness control updates the SVG stroke-width', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
 
@@ -160,7 +160,7 @@ test('Thickness control updates the SVG stroke-width', async ({ page }) => {
 })
 
 test('Color control updates the SVG circle stroke', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
 
@@ -178,7 +178,7 @@ test('Color control updates the SVG circle stroke', async ({ page }) => {
 })
 
 test('Opacity slider updates the layer group opacity', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
 
@@ -197,7 +197,7 @@ test('Opacity slider updates the layer group opacity', async ({ page }) => {
 })
 
 test('X position updates the ring transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
 
@@ -222,7 +222,7 @@ test('X position updates the ring transform', async ({ page }) => {
 })
 
 test('Y position updates the ring transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
 
@@ -241,7 +241,7 @@ test('Y position updates the ring transform', async ({ page }) => {
 })
 
 test('Rotation updates the ring transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
 
@@ -259,7 +259,7 @@ test('Rotation updates the ring transform', async ({ page }) => {
 })
 
 test('Scale X updates the ring transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('tab', { name: 'Inspector' }).click()
 
@@ -279,7 +279,7 @@ test('Scale X updates the ring transform', async ({ page }) => {
 // ─── Visibility ──────────────────────────────────────────────────────────────
 
 test('hiding a ring removes it from the SVG artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   const id = await getRingId(page)
@@ -297,7 +297,7 @@ test('hiding a ring removes it from the SVG artwork', async ({ page }) => {
 })
 
 test('showing a ring restores it in the SVG artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Hide it
@@ -317,7 +317,7 @@ test('showing a ring restores it in the SVG artwork', async ({ page }) => {
 })
 
 test('hidden ring still appears in the Layers panel', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   await page.getByLabel(/^Hide/).first().click()
@@ -330,7 +330,7 @@ test('hidden ring still appears in the Layers panel', async ({ page }) => {
 // ─── Multiple rings ───────────────────────────────────────────────────────────
 
 test('adding a second ring works independently', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
 
@@ -341,7 +341,7 @@ test('adding a second ring works independently', async ({ page }) => {
 })
 
 test('editing one ring does not mutate the other', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
 
@@ -369,7 +369,7 @@ test('editing one ring does not mutate the other', async ({ page }) => {
 })
 
 test('SVG layer order follows project layer order', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
 
@@ -385,7 +385,7 @@ test('SVG layer order follows project layer order', async ({ page }) => {
 // ─── Phase 4 viewport integrity with artwork present ─────────────────────────
 
 test('wheel zoom still works with ring artwork present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   const svg = page.getByTestId('svg-viewport')
@@ -400,7 +400,7 @@ test('wheel zoom still works with ring artwork present', async ({ page }) => {
 })
 
 test('pan still works with ring artwork present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   const svg = page.getByTestId('svg-viewport')
@@ -417,7 +417,7 @@ test('pan still works with ring artwork present', async ({ page }) => {
 })
 
 test('Fit View still works with ring artwork present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Pan away first
@@ -439,7 +439,7 @@ test('Fit View still works with ring artwork present', async ({ page }) => {
 // ─── Grid/guides/background controls still work ───────────────────────────────
 
 test('grid toggle still works with ring present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   await expect(page.getByTestId('grid-overlay')).not.toBeVisible()
@@ -452,7 +452,7 @@ test('grid toggle still works with ring present', async ({ page }) => {
 // ─── No canvas interaction (Phase 6 boundary) ─────────────────────────────────
 
 test('ring cannot be dragged on the canvas (no transform handles)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   const id = await getRingId(page)
@@ -478,7 +478,7 @@ test('ring cannot be dragged on the canvas (no transform handles)', async ({ pag
 })
 
 test('adding a ring auto-selects it showing the selection overlay', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Phase 6: ring is auto-selected on add — selection overlay is present
@@ -491,14 +491,14 @@ test('adding a ring auto-selects it showing the selection overlay', async ({ pag
 // ─── Radial Lines is now enabled (Phase 9) ────────────────────────────────────
 
 test('Radial Lines tool button is enabled in Phase 9', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 // ─── Layout integrity ─────────────────────────────────────────────────────────
 
 test('adding rings does not cause unexpected layout overflow', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
 

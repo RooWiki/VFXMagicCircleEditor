@@ -127,12 +127,12 @@ function undoBtn(page: Parameters<typeof test>[1]['page']) {
 // ─── A. CREATION ──────────────────────────────────────────────────────────────
 
 test('Add Radial Lines button is enabled', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 test('clicking Add Radial Lines creates a layer in the SVG artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const count = await page.evaluate(
     () => document.querySelector('[data-testid="artwork-group"]')?.children.length ?? 0
@@ -141,27 +141,27 @@ test('clicking Add Radial Lines creates a layer in the SVG artwork', async ({ pa
 })
 
 test('Radial Lines layer appears in the Layers panel', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const names = await getLayerNames(page)
   expect(names).toContain('Radial Lines')
 })
 
 test('Radial Lines layer is auto-selected after adding', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await expect(page.getByTestId('selection-overlay')).toBeVisible()
 })
 
 test('Radial Lines inspector appears when layer is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   await expect(page.getByTestId('radial-lines-inspector')).toBeVisible()
 })
 
 test('SVG contains line elements after adding Radial Lines', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
   expect(id).not.toBeNull()
@@ -173,7 +173,7 @@ test('SVG contains line elements after adding Radial Lines', async ({ page }) =>
 })
 
 test('Undo removes the Radial Lines layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   expect(await getLayerCount(page)).toBe(1)
   await undoBtn(page).click()
@@ -184,7 +184,7 @@ test('Undo removes the Radial Lines layer', async ({ page }) => {
 // ─── B. INSPECTOR ─────────────────────────────────────────────────────────────
 
 test('inspector shows Count, Inner Radius, Outer Radius, Start Angle fields', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   await expect(page.getByRole('spinbutton', { name: 'Count' })).toBeVisible()
@@ -194,7 +194,7 @@ test('inspector shows Count, Inner Radius, Outer Radius, Start Angle fields', as
 })
 
 test('editing Count changes the number of radial lines in the SVG', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -215,7 +215,7 @@ test('editing Count changes the number of radial lines in the SVG', async ({ pag
 })
 
 test('editing Inner Radius updates the SVG line start coordinates', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -241,7 +241,7 @@ test('editing Inner Radius updates the SVG line start coordinates', async ({ pag
 })
 
 test('editing Outer Radius updates the SVG line end coordinates', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -267,7 +267,7 @@ test('editing Outer Radius updates the SVG line end coordinates', async ({ page 
 })
 
 test('editing Start Angle rotates the first line', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -294,7 +294,7 @@ test('editing Start Angle rotates the first line', async ({ page }) => {
 })
 
 test('editing Thickness changes the stroke-width in SVG', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -319,7 +319,7 @@ test('editing Thickness changes the stroke-width in SVG', async ({ page }) => {
 })
 
 test('Opacity slider updates layer group opacity', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -336,7 +336,7 @@ test('Opacity slider updates layer group opacity', async ({ page }) => {
 })
 
 test('Count change is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -360,7 +360,7 @@ test('Count change is undoable', async ({ page }) => {
 })
 
 test('Count change is redoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -386,7 +386,7 @@ test('Count change is redoable', async ({ page }) => {
 // ─── C. CANVAS TRANSFORMS ─────────────────────────────────────────────────────
 
 test('X inspector field updates the SVG transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -401,7 +401,7 @@ test('X inspector field updates the SVG transform', async ({ page }) => {
 })
 
 test('Y inspector field updates the SVG transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -416,7 +416,7 @@ test('Y inspector field updates the SVG transform', async ({ page }) => {
 })
 
 test('Rotation field updates the SVG transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -431,7 +431,7 @@ test('Rotation field updates the SVG transform', async ({ page }) => {
 })
 
 test('Scale X field updates the SVG transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
   const id = await getRLId(page)
@@ -446,7 +446,7 @@ test('Scale X field updates the SVG transform', async ({ page }) => {
 })
 
 test('move via canvas drag changes the transform', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
   const transformBefore = await getSvgTransform(page, id!)
@@ -465,7 +465,7 @@ test('move via canvas drag changes the transform', async ({ page }) => {
 })
 
 test('move is undoable via Ctrl+Z', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
   const transformBefore = await getSvgTransform(page, id!)
@@ -486,7 +486,7 @@ test('move is undoable via Ctrl+Z', async ({ page }) => {
 })
 
 test('move is redoable via Ctrl+Y', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
 
@@ -509,13 +509,13 @@ test('move is redoable via Ctrl+Y', async ({ page }) => {
 })
 
 test('rotation handle exists when Radial Lines is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await expect(page.locator('[data-testid="rotation-handle"]')).toBeVisible()
 })
 
 test('rotate gesture changes Rotation inspector value', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -538,7 +538,7 @@ test('rotate gesture changes Rotation inspector value', async ({ page }) => {
 })
 
 test('rotate is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -563,13 +563,13 @@ test('rotate is undoable', async ({ page }) => {
 })
 
 test('scale handle exists when Radial Lines is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await expect(page.locator('[data-testid="scale-handle-se"]')).toBeVisible()
 })
 
 test('scale handle drag changes Scale X/Y inspector values', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -594,7 +594,7 @@ test('scale handle drag changes Scale X/Y inspector values', async ({ page }) =>
 })
 
 test('scale is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -623,7 +623,7 @@ test('scale is undoable', async ({ page }) => {
 // ─── D. PRECISION ─────────────────────────────────────────────────────────────
 
 test('ArrowRight nudges Radial Lines X by 1', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -640,7 +640,7 @@ test('ArrowRight nudges Radial Lines X by 1', async ({ page }) => {
 })
 
 test('Shift+ArrowRight nudges Radial Lines X by 10', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -657,7 +657,7 @@ test('Shift+ArrowRight nudges Radial Lines X by 10', async ({ page }) => {
 })
 
 test('nudge is undoable with Ctrl+Z', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -675,7 +675,7 @@ test('nudge is undoable with Ctrl+Z', async ({ page }) => {
 })
 
 test('Center button resets position to 0,0', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -698,7 +698,7 @@ test('Center button resets position to 0,0', async ({ page }) => {
 })
 
 test('Center is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -723,7 +723,7 @@ test('Center is undoable', async ({ page }) => {
 // ─── E. LAYER MANAGEMENT ──────────────────────────────────────────────────────
 
 test('Duplicate creates an independent copy', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -736,7 +736,7 @@ test('Duplicate creates an independent copy', async ({ page }) => {
 })
 
 test('Rename updates the layer name in the Layers panel', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
 
@@ -754,7 +754,7 @@ test('Rename updates the layer name in the Layers panel', async ({ page }) => {
 })
 
 test('visibility toggle hides the Radial Lines artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
 
@@ -769,7 +769,7 @@ test('visibility toggle hides the Radial Lines artwork', async ({ page }) => {
 })
 
 test('showing the hidden layer restores artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
 
@@ -786,7 +786,7 @@ test('showing the hidden layer restores artwork', async ({ page }) => {
 })
 
 test('lock prevents transform via inspector', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -808,7 +808,7 @@ test('lock prevents transform via inspector', async ({ page }) => {
 })
 
 test('Delete removes the Radial Lines layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -818,7 +818,7 @@ test('Delete removes the Radial Lines layer', async ({ page }) => {
 })
 
 test('Delete is undoable — Undo restores the layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   expect(await getLayerCount(page)).toBe(1)
   const [name] = await getLayerNames(page)
@@ -835,7 +835,7 @@ test('Delete is undoable — Undo restores the layer', async ({ page }) => {
 // ─── F. MIXED LAYERS ──────────────────────────────────────────────────────────
 
 test('Ring and Radial Lines both appear in artwork group', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRL(page)
 
@@ -846,7 +846,7 @@ test('Ring and Radial Lines both appear in artwork group', async ({ page }) => {
 })
 
 test('Tab cycles between Ring and Radial Lines', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRL(page)
 
@@ -859,7 +859,7 @@ test('Tab cycles between Ring and Radial Lines', async ({ page }) => {
 })
 
 test('SVG layer order changes after reorder via layers panel', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRL(page)
 
@@ -896,7 +896,7 @@ test('SVG layer order changes after reorder via layers panel', async ({ page }) 
 // ─── G. SHORTCUTS / HISTORY ───────────────────────────────────────────────────
 
 test('Ctrl+D duplicates Radial Lines layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -908,7 +908,7 @@ test('Ctrl+D duplicates Radial Lines layer', async ({ page }) => {
 })
 
 test('Delete key removes selected Radial Lines layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -920,7 +920,7 @@ test('Delete key removes selected Radial Lines layer', async ({ page }) => {
 })
 
 test('Ctrl+Z undoes Radial Lines addition', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   expect(await getLayerCount(page)).toBe(1)
 
@@ -931,7 +931,7 @@ test('Ctrl+Z undoes Radial Lines addition', async ({ page }) => {
 })
 
 test('Ctrl+Shift+Z redoes after undo', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
 
   await page.keyboard.press('Control+z')
@@ -944,7 +944,7 @@ test('Ctrl+Shift+Z redoes after undo', async ({ page }) => {
 })
 
 test('Ctrl+Y redoes after undo', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
 
   await page.keyboard.press('Control+z')
@@ -956,7 +956,7 @@ test('Ctrl+Y redoes after undo', async ({ page }) => {
 })
 
 test('Delete key inside inspector field does not delete layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -971,7 +971,7 @@ test('Delete key inside inspector field does not delete layer', async ({ page })
 // ─── H. VIEWPORT ──────────────────────────────────────────────────────────────
 
 test('Ctrl+0 Fit View remains functional with Radial Lines present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
 
   await page.keyboard.press('Control+0')
@@ -983,7 +983,7 @@ test('Ctrl+0 Fit View remains functional with Radial Lines present', async ({ pa
 })
 
 test('wheel zoom works with Radial Lines present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
 
   const svg = page.getByTestId('svg-viewport')
@@ -1000,7 +1000,7 @@ test('wheel zoom works with Radial Lines present', async ({ page }) => {
 // ─── I. REGRESSION ────────────────────────────────────────────────────────────
 
 test('Ring layer still works after adding Radial Lines', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRL(page)
 
@@ -1020,7 +1020,7 @@ test('no console errors during Radial Lines workflow', async ({ page }) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })
 
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   await openProperties(page)
 
@@ -1040,7 +1040,7 @@ test('no console errors during Radial Lines workflow', async ({ page }) => {
 // ─── J. ARTWORK DRAG (line hit-target, not overlay move-target) ───────────────
 
 test('drag directly on radial line artwork moves the layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
   const transformBefore = await getSvgTransform(page, id!)
@@ -1062,7 +1062,7 @@ test('drag directly on radial line artwork moves the layer', async ({ page }) =>
 })
 
 test('Ctrl+Z undoes artwork drag and restores original position', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
   const transformBefore = await getSvgTransform(page, id!)
@@ -1084,7 +1084,7 @@ test('Ctrl+Z undoes artwork drag and restores original position', async ({ page 
 })
 
 test('Ctrl+Y redoes artwork drag and restores dragged position', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRL(page)
   const id = await getRLId(page)
 

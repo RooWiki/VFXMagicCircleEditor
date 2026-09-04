@@ -45,36 +45,36 @@ function redoBtn(page: Parameters<typeof test>[1]['page']) {
 // ─── Toolbar disabled states ───────────────────────────────────────────────────
 
 test('Undo button is disabled on fresh load', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(undoBtn(page)).toBeDisabled()
 })
 
 test('Redo button is disabled on fresh load', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(redoBtn(page)).toBeDisabled()
 })
 
 test('Undo button becomes enabled after adding a ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await expect(undoBtn(page)).toBeEnabled()
 })
 
 test('Redo button remains disabled after adding a ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await expect(redoBtn(page)).toBeDisabled()
 })
 
 test('Redo button becomes enabled after undo', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await undoBtn(page).click()
   await expect(redoBtn(page)).toBeEnabled()
 })
 
 test('Undo button becomes disabled after undoing all actions', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await undoBtn(page).click()
   await expect(undoBtn(page)).toBeDisabled()
@@ -83,7 +83,7 @@ test('Undo button becomes disabled after undoing all actions', async ({ page }) 
 // ─── Add ring undo/redo ────────────────────────────────────────────────────────
 
 test('Ctrl+Z undoes ring addition', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   expect(await getLayerCount(page)).toBe(1)
   await page.keyboard.press('Control+z')
@@ -92,7 +92,7 @@ test('Ctrl+Z undoes ring addition', async ({ page }) => {
 })
 
 test('Ctrl+Shift+Z redoes ring addition after undo', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.keyboard.press('Control+z')
   await page.waitForTimeout(50)
@@ -103,7 +103,7 @@ test('Ctrl+Shift+Z redoes ring addition after undo', async ({ page }) => {
 })
 
 test('Ctrl+Y redoes ring addition after undo', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.keyboard.press('Control+z')
   await page.waitForTimeout(50)
@@ -113,7 +113,7 @@ test('Ctrl+Y redoes ring addition after undo', async ({ page }) => {
 })
 
 test('toolbar Undo button click undoes ring addition', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await undoBtn(page).click()
   await page.waitForTimeout(50)
@@ -121,7 +121,7 @@ test('toolbar Undo button click undoes ring addition', async ({ page }) => {
 })
 
 test('toolbar Redo button click redoes ring addition', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await undoBtn(page).click()
   await page.waitForTimeout(50)
@@ -133,7 +133,7 @@ test('toolbar Redo button click redoes ring addition', async ({ page }) => {
 // ─── Ctrl+D history ────────────────────────────────────────────────────────────
 
 test('Ctrl+D duplicate is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -146,7 +146,7 @@ test('Ctrl+D duplicate is undoable', async ({ page }) => {
 })
 
 test('Ctrl+D with no selection is a no-op', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   // Deselect by clicking empty area
   await page.getByRole('main', { name: 'Canvas workspace' }).click({ position: { x: 10, y: 10 } })
@@ -159,7 +159,7 @@ test('Ctrl+D with no selection is a no-op', async ({ page }) => {
 // ─── Delete / Backspace ────────────────────────────────────────────────────────
 
 test('Delete key removes selected layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -169,7 +169,7 @@ test('Delete key removes selected layer', async ({ page }) => {
 })
 
 test('Delete is undoable via Ctrl+Z', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -181,7 +181,7 @@ test('Delete is undoable via Ctrl+Z', async ({ page }) => {
 })
 
 test('Backspace key removes selected layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -193,7 +193,7 @@ test('Backspace key removes selected layer', async ({ page }) => {
 // ─── Rename undo/redo ─────────────────────────────────────────────────────────
 
 test('rename is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [originalName] = await getLayerNames(page)
   await page.getByRole('button', { name: `Select layer ${originalName}` }).dblclick()
@@ -211,7 +211,7 @@ test('rename is undoable', async ({ page }) => {
 // ─── Visibility / Lock undo/redo ──────────────────────────────────────────────
 
 test('visibility hide is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await page.getByRole('button', { name: `Hide ${name}` }).click()
@@ -222,7 +222,7 @@ test('visibility hide is undoable', async ({ page }) => {
 })
 
 test('lock is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await page.getByRole('button', { name: `Lock ${name}` }).click()
@@ -235,7 +235,7 @@ test('lock is undoable', async ({ page }) => {
 // ─── Center undo/redo ─────────────────────────────────────────────────────────
 
 test('center action is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -266,7 +266,7 @@ test('center action is undoable', async ({ page }) => {
 // ─── Arrow nudge ──────────────────────────────────────────────────────────────
 
 test('ArrowRight nudges X by 1', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -283,7 +283,7 @@ test('ArrowRight nudges X by 1', async ({ page }) => {
 })
 
 test('Shift+ArrowRight nudges X by 10', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -300,7 +300,7 @@ test('Shift+ArrowRight nudges X by 10', async ({ page }) => {
 })
 
 test('nudge is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -319,7 +319,7 @@ test('nudge is undoable', async ({ page }) => {
 })
 
 test('locked layer cannot be nudged', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -341,7 +341,7 @@ test('locked layer cannot be nudged', async ({ page }) => {
 // ─── Inspector history ────────────────────────────────────────────────────────
 
 test('inspector radius change is undoable', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -363,7 +363,7 @@ test('inspector radius change is undoable', async ({ page }) => {
 test('typing multiple characters in inspector creates one history entry per blur', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -399,7 +399,7 @@ test('typing multiple characters in inspector creates one history entry per blur
 // ─── Branch truncation ────────────────────────────────────────────────────────
 
 test('undo then new action truncates redo branch', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   // Two rings; undo removes second
@@ -421,7 +421,7 @@ test('undo then new action truncates redo branch', async ({ page }) => {
 // ─── Tab cycling ──────────────────────────────────────────────────────────────
 
 test('Tab selects a layer when nothing is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   // Deselect
   await page.getByRole('main', { name: 'Canvas workspace' }).click({ position: { x: 10, y: 10 } })
@@ -437,7 +437,7 @@ test('Tab selects a layer when nothing is selected', async ({ page }) => {
 })
 
 test('Tab cycles to a different layer when two rings exist', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   // Select the first layer (auto-selected on second add)
@@ -454,7 +454,7 @@ test('Tab cycles to a different layer when two rings exist', async ({ page }) =>
 })
 
 test('Tab wraps back to a layer after passing last', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   // With one ring, Tab should keep it selected (no other layer to go to → wraps to same)
   const beforeId = await page.getByTestId('selection-overlay').getAttribute('data-layer-id')
@@ -469,7 +469,7 @@ test('Tab wraps back to a layer after passing last', async ({ page }) => {
 })
 
 test('Shift+Tab moves back to a different layer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
   const beforeId = await page.getByTestId('selection-overlay').getAttribute('data-layer-id')
@@ -483,7 +483,7 @@ test('Shift+Tab moves back to a different layer', async ({ page }) => {
 })
 
 test('Tab with no layers is a safe no-op', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.keyboard.press('Tab')
   await expect(page.getByText('No layers yet')).toBeVisible()
 })
@@ -491,7 +491,7 @@ test('Tab with no layers is a safe no-op', async ({ page }) => {
 // ─── Ctrl+0 ───────────────────────────────────────────────────────────────────
 
 test('Ctrl+0 fits the canvas to view without error', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.keyboard.press('Control+0')
   await page.waitForTimeout(100)
   const zoomLabel = page.getByLabel('Zoom level')
@@ -503,7 +503,7 @@ test('Ctrl+0 fits the canvas to view without error', async ({ page }) => {
 // ─── Guard: shortcuts ignored in inspector ────────────────────────────────────
 
 test('Ctrl+Z while typing in inspector does not undo project', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -522,7 +522,7 @@ test('Ctrl+Z while typing in inspector does not undo project', async ({ page }) 
 })
 
 test('Arrow keys do not nudge while inspector input is focused', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)
@@ -547,7 +547,7 @@ test('Arrow keys do not nudge while inspector input is focused', async ({ page }
 // ─── Guard: shortcuts ignored in rename ───────────────────────────────────────
 
 test('Delete does not delete layer while rename input is focused', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await page
@@ -568,7 +568,7 @@ test('Delete does not delete layer while rename input is focused', async ({ page
 // ─── Radial Lines is now enabled (Phase 9) ────────────────────────────────────
 
 test('Radial Lines tool is enabled in Phase 9', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
@@ -580,7 +580,7 @@ test('no console errors during undo/redo workflow', async ({ page }) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })
 
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const [name] = await getLayerNames(page)
   await selectLayerByName(page, name)

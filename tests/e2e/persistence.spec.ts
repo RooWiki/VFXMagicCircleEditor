@@ -6,7 +6,7 @@ test.use({ viewport: { width: 1440, height: 900 } })
 // ─── ARCHITECTURE.md § 15.2: Download + re-upload restores layers ─────────────
 
 test('downloading and re-uploading a project restores the original layers', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   // 1. Add a ring layer
   await page.getByRole('button', { name: 'Add Ring' }).click()
@@ -56,7 +56,7 @@ test('downloading and re-uploading a project restores the original layers', asyn
 })
 
 test('saving project produces a valid .mce.json file', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   await page.getByRole('button', { name: 'Add Ring' }).click()
   await page.waitForTimeout(50)
@@ -79,7 +79,7 @@ test('saving project produces a valid .mce.json file', async ({ page }) => {
 })
 
 test('downloading triggers a file download event', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
 
   let downloadFired = false
   page.on('download', () => {

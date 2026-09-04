@@ -29,6 +29,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Create root redirects
+        run: printf '/circleeditor/* /circleeditor/index.html 200\n' > dist/_redirects
+
       - name: Deploy to Cloudflare Pages
         run: npx wrangler pages deploy dist --project-name=circle-editor --branch=main
         env:

@@ -63,13 +63,13 @@ test('application loads without console errors', async ({ page }) => {
   page.on('console', (msg) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })
-  await page.goto('/')
+  await page.goto('')
   await page.waitForTimeout(200)
   expect(errors).toHaveLength(0)
 })
 
 test('Add Ring still works in Phase 6', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   expect(id).not.toBeNull()
@@ -78,7 +78,7 @@ test('Add Ring still works in Phase 6', async ({ page }) => {
 // ─── Canvas selection ─────────────────────────────────────────────────────────
 
 test('clicking Ring on canvas selects it (selection overlay appears)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
@@ -86,7 +86,7 @@ test('clicking Ring on canvas selects it (selection overlay appears)', async ({ 
 })
 
 test('Properties panel reflects canvas selection', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
@@ -95,7 +95,7 @@ test('Properties panel reflects canvas selection', async ({ page }) => {
 })
 
 test('clicking empty artboard deselects', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
@@ -113,7 +113,7 @@ test('clicking empty artboard deselects', async ({ page }) => {
 })
 
 test('selecting from Layers panel shows canvas overlay', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Click the select layer button in the Layers panel (not on canvas)
@@ -126,7 +126,7 @@ test('selecting from Layers panel shows canvas overlay', async ({ page }) => {
 // ─── Move ─────────────────────────────────────────────────────────────────────
 
 test('dragging Ring moves it — transform changes', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   const transformBefore = await getSvgTransform(page, id!)
@@ -147,7 +147,7 @@ test('dragging Ring moves it — transform changes', async ({ page }) => {
 })
 
 test('X/Y inspector values update after move', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await goToProperties(page)
@@ -170,7 +170,7 @@ test('X/Y inspector values update after move', async ({ page }) => {
 })
 
 test('move works correctly after viewport zoom', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -201,7 +201,7 @@ test('move works correctly after viewport zoom', async ({ page }) => {
 })
 
 test('move works correctly after viewport pan', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -237,7 +237,7 @@ test('move works correctly after viewport pan', async ({ page }) => {
 // ─── Rotation ─────────────────────────────────────────────────────────────────
 
 test('rotation handle exists in DOM when ring is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
@@ -245,7 +245,7 @@ test('rotation handle exists in DOM when ring is selected', async ({ page }) => 
 })
 
 test('Rotation inspector value updates after rotation gesture', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await goToProperties(page)
@@ -278,7 +278,7 @@ test('Rotation inspector value updates after rotation gesture', async ({ page })
 // ─── Scale ────────────────────────────────────────────────────────────────────
 
 test('scale handle (SE) exists when ring is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
@@ -286,7 +286,7 @@ test('scale handle (SE) exists when ring is selected', async ({ page }) => {
 })
 
 test('scale handle drag changes Scale X and Y inspector values', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await goToProperties(page)
@@ -319,7 +319,7 @@ test('scale handle drag changes Scale X and Y inspector values', async ({ page }
 })
 
 test('Shift-held scale preserves aspect ratio', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -352,7 +352,7 @@ test('Shift-held scale preserves aspect ratio', async ({ page }) => {
 // ─── Multiple rings ───────────────────────────────────────────────────────────
 
 test('two rings can be independently selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
 
@@ -365,7 +365,7 @@ test('two rings can be independently selected', async ({ page }) => {
 })
 
 test('moving one ring does not affect another', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await addRing(page)
 
@@ -399,7 +399,7 @@ test('moving one ring does not affect another', async ({ page }) => {
 // ─── Hidden / Locked layers ───────────────────────────────────────────────────
 
 test('hidden ring cannot be selected from canvas (no overlay)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Hide the ring via Layers panel
@@ -418,7 +418,7 @@ test('hidden ring cannot be selected from canvas (no overlay)', async ({ page })
 })
 
 test('locked ring cannot be manipulated from canvas (no handles)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Ring is auto-selected on add. Lock it via the visible Layers panel lock button.
@@ -435,7 +435,7 @@ test('locked ring cannot be manipulated from canvas (no handles)', async ({ page
 // ─── Navigation tools don't interfere ────────────────────────────────────────
 
 test('Hand tool drag pans rather than moving Ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -463,7 +463,7 @@ test('Hand tool drag pans rather than moving Ring', async ({ page }) => {
 })
 
 test('Space + primary drag pans rather than moving Ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -490,7 +490,7 @@ test('Space + primary drag pans rather than moving Ring', async ({ page }) => {
 })
 
 test('middle-mouse drag pans rather than moving Ring', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -513,7 +513,7 @@ test('middle-mouse drag pans rather than moving Ring', async ({ page }) => {
 })
 
 test('wheel zoom still works over artwork', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   const statusBefore = await page.getByLabel('Zoom level').textContent()
@@ -530,7 +530,7 @@ test('wheel zoom still works over artwork', async ({ page }) => {
 })
 
 test('Fit View still works with artwork present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Pan and zoom first
@@ -550,7 +550,7 @@ test('Fit View still works with artwork present', async ({ page }) => {
 // ─── Phase 5 integrity ────────────────────────────────────────────────────────
 
 test('Grid/guides/background controls still work with ring present', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Grid toggle
@@ -561,7 +561,7 @@ test('Grid/guides/background controls still work with ring present', async ({ pa
 })
 
 test('Inspector-based Phase 5 editing still works', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -584,7 +584,7 @@ test('Inspector-based Phase 5 editing still works', async ({ page }) => {
 // ─── Pointer cancellation ─────────────────────────────────────────────────────
 
 test('no stuck state after pointer cancel (Escape key)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
 
@@ -615,7 +615,7 @@ test('no stuck state after pointer cancel (Escape key)', async ({ page }) => {
 // ─── Selection UI integrity ───────────────────────────────────────────────────
 
 test('no selection UI in artwork group (overlay is separate)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
@@ -629,12 +629,12 @@ test('no selection UI in artwork group (overlay is separate)', async ({ page }) 
 })
 
 test('Radial Lines tool is enabled (Phase 9)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Add Radial Lines' })).not.toBeDisabled()
 })
 
 test('no later-phase UI appears unexpectedly', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   const id = await getRingId(page)
   await clickRingOnCanvas(page, id!)
@@ -649,7 +649,7 @@ test('no later-phase UI appears unexpectedly', async ({ page }) => {
 })
 
 test('body and layout remain stable with selection active', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.setViewportSize({ width: 1440, height: 900 })
   await addRing(page)
   const id = await getRingId(page)

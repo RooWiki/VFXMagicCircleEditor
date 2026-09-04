@@ -16,33 +16,33 @@ async function openAnimationPanel(page: Parameters<typeof test>[1]['page']) {
 // ─── Play / Pause / Reset controls ────────────────────────────────────────────
 
 test('Play button is visible and enabled', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Play' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Play' })).not.toBeDisabled()
 })
 
 test('Reset button is visible and enabled', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Reset' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Reset' })).not.toBeDisabled()
 })
 
 test('clicking Play changes button label to Pause', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Play' }).click()
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Play' })).not.toBeVisible()
 })
 
 test('clicking Pause after Play restores Play button', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Play' }).click()
   await page.getByRole('button', { name: 'Pause' }).click()
   await expect(page.getByRole('button', { name: 'Play' })).toBeVisible()
 })
 
 test('Reset button stops playback', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Play' }).click()
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
   await page.getByRole('button', { name: 'Reset' }).click()
@@ -52,13 +52,13 @@ test('Reset button stops playback', async ({ page }) => {
 // ─── Animation panel ──────────────────────────────────────────────────────────
 
 test('animation panel is not shown when no layer is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await openAnimationPanel(page)
   await expect(page.getByTestId('animation-panel')).not.toBeVisible()
 })
 
 test('animation panel appears when a layer is selected', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page
     .getByRole('button', { name: /Select layer/ })
@@ -69,7 +69,7 @@ test('animation panel appears when a layer is selected', async ({ page }) => {
 })
 
 test('animation panel shows Spin Speed, Pulse Speed, Pulse Amplitude fields', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page
     .getByRole('button', { name: /Select layer/ })
@@ -82,7 +82,7 @@ test('animation panel shows Spin Speed, Pulse Speed, Pulse Amplitude fields', as
 })
 
 test('animation panel defaults: spin speed is 0', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page
     .getByRole('button', { name: /Select layer/ })
@@ -93,7 +93,7 @@ test('animation panel defaults: spin speed is 0', async ({ page }) => {
 })
 
 test('animation panel defaults: pulse speed is 0', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page
     .getByRole('button', { name: /Select layer/ })
@@ -104,7 +104,7 @@ test('animation panel defaults: pulse speed is 0', async ({ page }) => {
 })
 
 test('animation panel defaults: pulse amplitude is 0', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page
     .getByRole('button', { name: /Select layer/ })
@@ -117,7 +117,7 @@ test('animation panel defaults: pulse amplitude is 0', async ({ page }) => {
 // ─── Animation does not affect SVG base transform ─────────────────────────────
 
 test('base transform in project store is unchanged after animation plays', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
 
   // Record initial transform in the SVG artwork
@@ -150,7 +150,7 @@ test('base transform in project store is unchanged after animation plays', async
 // ─── Rotation animates the SVG transform ──────────────────────────────────────
 
 test('setting spin speed and playing causes animated transform change', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page
     .getByRole('button', { name: /Select layer/ })
@@ -187,7 +187,7 @@ test('setting spin speed and playing causes animated transform change', async ({
 // ─── Project replacement resets animation ─────────────────────────────────────
 
 test('New Project stops and clears animation', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Play' }).click()
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
 
@@ -203,7 +203,7 @@ test('no console errors during animation play/pause/reset flow', async ({ page }
     if (msg.type() === 'error') errors.push(msg.text())
   })
 
-  await page.goto('/')
+  await page.goto('')
   await addRing(page)
   await page.getByRole('button', { name: 'Play' }).click()
   await page.waitForTimeout(200)

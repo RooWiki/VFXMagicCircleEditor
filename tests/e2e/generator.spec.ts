@@ -3,23 +3,23 @@ import { expect, test } from '@playwright/test'
 test.use({ viewport: { width: 1440, height: 900 } })
 
 test('Generate button is visible in the tool rail', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Generate' })).toBeVisible()
 })
 
 test('Generate button is enabled on fresh load', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await expect(page.getByRole('button', { name: 'Generate' })).not.toBeDisabled()
 })
 
 test('clicking Generate opens the generator modal', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByRole('dialog', { name: 'Procedural Generator' })).toBeVisible()
 })
 
 test('generator modal contains Generate and Regenerate buttons', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   const dialog = page.getByRole('dialog', { name: 'Procedural Generator' })
   await expect(dialog.getByRole('button', { name: 'Generate', exact: true })).toBeVisible()
@@ -27,19 +27,19 @@ test('generator modal contains Generate and Regenerate buttons', async ({ page }
 })
 
 test('generator modal contains a seed input', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByLabel('Generation seed')).toBeVisible()
 })
 
 test('generator modal contains Cancel button', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible()
 })
 
 test('Cancel closes the generator modal', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByRole('dialog', { name: 'Procedural Generator' })).toBeVisible()
   await page.getByRole('button', { name: 'Cancel' }).click()
@@ -47,7 +47,7 @@ test('Cancel closes the generator modal', async ({ page }) => {
 })
 
 test('backdrop click closes the generator modal', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByRole('dialog', { name: 'Procedural Generator' })).toBeVisible()
   await page.mouse.click(50, 50)
@@ -55,7 +55,7 @@ test('backdrop click closes the generator modal', async ({ page }) => {
 })
 
 test('close button (×) closes the generator modal', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByRole('dialog', { name: 'Procedural Generator' })).toBeVisible()
   await page.getByRole('button', { name: 'Close generator' }).click()
@@ -63,7 +63,7 @@ test('close button (×) closes the generator modal', async ({ page }) => {
 })
 
 test('Generate replaces project layers and they appear in the layer panel', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   const dialog = page.getByRole('dialog', { name: 'Procedural Generator' })
   await dialog.getByRole('button', { name: 'Generate', exact: true }).click()
@@ -74,7 +74,7 @@ test('Generate replaces project layers and they appear in the layer panel', asyn
 })
 
 test('Regenerate changes the seed value', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   const seedInput = page.getByLabel('Generation seed')
   const beforeSeed = await seedInput.inputValue()
@@ -90,7 +90,7 @@ test('Regenerate changes the seed value', async ({ page }) => {
 })
 
 test('locking the seed preserves it across Regenerate', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   const seedInput = page.getByLabel('Generation seed')
   const beforeSeed = await seedInput.inputValue()
@@ -107,7 +107,7 @@ test('locking the seed preserves it across Regenerate', async ({ page }) => {
 })
 
 test('generator modal has complexity buttons', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByRole('button', { name: 'low', exact: true })).toBeVisible()
   await expect(page.getByRole('button', { name: 'medium', exact: true })).toBeVisible()
@@ -119,7 +119,7 @@ test('no console errors when opening and closing generator modal', async ({ page
   page.on('console', (msg) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })
-  await page.goto('/')
+  await page.goto('')
   await page.getByRole('button', { name: 'Generate' }).click()
   await page.getByRole('button', { name: 'Cancel' }).click()
   expect(errors).toHaveLength(0)
