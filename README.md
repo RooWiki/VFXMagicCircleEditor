@@ -7,7 +7,7 @@ built for export as transparent game-engine textures (Unreal Engine 5 and equiva
 
 ## Live Demo
 
-_Live demo available after deployment — link will be added here._
+**[circle-editor.pages.dev/circleeditor/](https://circle-editor.pages.dev/circleeditor/)**
 
 ## Screenshot
 
