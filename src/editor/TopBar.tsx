@@ -134,7 +134,7 @@ export default function TopBar() {
         className="text-[13px] font-medium whitespace-nowrap"
         style={{ color: 'var(--rw-text-secondary)' }}
       >
-        Magic Circle Editor
+        Circle Editor
       </span>
 
       <span

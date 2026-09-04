@@ -1,6 +1,4 @@
-# Magic Circle Editor — Architecture
-
-> **Working title only.** "Magic Circle Editor" is a temporary project name.
+# Circle Editor — Architecture
 
 **Document version:** 0.1.0 — Phase 0  
 **See also:** [PROJECT_SPEC.md](PROJECT_SPEC.md) | [PROJECT_FORMAT.md](PROJECT_FORMAT.md) | [ROADMAP.md](ROADMAP.md)

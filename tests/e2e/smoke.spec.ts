@@ -4,15 +4,15 @@ test.use({ viewport: { width: 1440, height: 900 } })
 
 test('application loads with editor shell visible', async ({ page }) => {
   await page.goto('/')
-  await expect(page).toHaveTitle(/Magic Circle Editor/)
-  await expect(page.getByText('Magic Circle Editor').first()).toBeVisible()
+  await expect(page).toHaveTitle(/Circle Editor/)
+  await expect(page.getByText('Circle Editor').first()).toBeVisible()
 })
 
 test('top bar is visible with all controls', async ({ page }) => {
   await page.goto('/')
   const header = page.getByRole('banner')
   await expect(header).toBeVisible()
-  await expect(header.getByText('Magic Circle Editor')).toBeVisible()
+  await expect(header.getByText('Circle Editor')).toBeVisible()
   await expect(page.getByRole('button', { name: 'New' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Undo' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Export' })).toBeVisible()

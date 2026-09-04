@@ -1,11 +1,7 @@
-# Magic Circle Editor
-
-> **Working title only.** The final product name is not yet decided.
+# Circle Editor
 
 A browser-based procedural generator and manual editor for creating magic circle visual effects,
 intended for export as game assets (Unreal Engine 5 and equivalents).
-
-This project is in **early development**. Phase 1 (Technical Setup) has been completed.
 
 ---
 

@@ -1,6 +1,4 @@
-# Magic Circle Editor — Development Roadmap
-
-> **Working title only.** "Magic Circle Editor" is a temporary project name.
+# Circle Editor — Development Roadmap
 
 **Document version:** 0.1.0 — Phase 0  
 **See also:** [PROJECT_SPEC.md](PROJECT_SPEC.md) | [ARCHITECTURE.md](ARCHITECTURE.md) | [PROJECT_FORMAT.md](PROJECT_FORMAT.md)
@@ -29,7 +27,7 @@
 | 15    | Polish, Testing, Portfolio Documentation and Deployment | PENDING       |
 | 15A   | → RooWiki UI System + Light/Dark + Editor Layout        | **COMPLETED** |
 | 15B   | → QA, UX Polish and Accessibility                       | **COMPLETED** |
-| 15C   | → Branding and Product Identity                         | PENDING       |
+| 15C   | → Branding and Product Identity                         | **COMPLETED** |
 | 15D   | → README and Portfolio Documentation                    | PENDING       |
 | 15E   | → Deployment                                            | PENDING       |
 | 15F   | → Final Portfolio Assets                                | PENDING       |
@@ -1040,7 +1038,7 @@ Implemented in commit `5c57a1c6860b8be21d641c2b567fd66027ab88e2`.
 
 ### Phase 15C — Branding and Product Identity
 
-**Status: PENDING**
+**Status: COMPLETED**
 
 #### Scope
 

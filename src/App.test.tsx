@@ -10,6 +10,6 @@ describe('App', () => {
 
   it('renders the product name', () => {
     render(<App />)
-    expect(screen.getByText('Magic Circle Editor')).toBeInTheDocument()
+    expect(screen.getByText('Circle Editor')).toBeInTheDocument()
   })
 })

@@ -1,6 +1,4 @@
-# Magic Circle Editor — Project File Format
-
-> **Working title only.** "Magic Circle Editor" is a temporary project name.
+# Circle Editor — Project File Format
 
 **Document version:** 0.1.0 — Phase 0  
 **File extension:** `.mce.json`  

@@ -73,7 +73,7 @@ describe('layout regions', () => {
 describe('top bar', () => {
   it('displays the product name', () => {
     render(<EditorShell />)
-    expect(screen.getByText('Magic Circle Editor')).toBeInTheDocument()
+    expect(screen.getByText('Circle Editor')).toBeInTheDocument()
   })
 
   it('displays the current project name', () => {
