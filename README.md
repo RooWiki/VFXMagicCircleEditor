@@ -26,9 +26,11 @@ layer editor, and exports transparent PNG textures ready to import into Unreal E
 
 ## Features
 
-- **Two layer types** — Ring (circular stroke) and Radial Lines (parametric line array)
+- **Ring styles** — simple circles, concentric rings, divided bands, and arcs; choose Ring style in the inspector. Decorative details extend inward from the outer radius.
+- **Editable artwork** — rings, radial lines, stars (pointed or interlaced), polygons, circular text, SVG symbols and nested groups
+- **Radial patterns** — spokes, clock marks, fans and tilted lines, with adjustable spread, alternating lengths and line ends
 - **Non-destructive editing** — all layers remain live mathematical objects; nothing is flattened
-- **Procedural generator** — seed-based generation of Ring + Radial Lines compositions
+- **Procedural generator** — live preview, Classic / Arcane / Celestial / Mechanical styles, symmetry, seeded variations, canvas fitting, and replace or append workflows
 - **Five templates** — pre-built designs ready to edit
 - **Canvas transform controls** — move, rotate, and scale layers directly by dragging
 - **Animation preview** — per-layer rotation speed and scale pulsing, non-destructive
@@ -119,3 +121,39 @@ Circle Editor is deployed to **Cloudflare Pages** via **GitHub Actions** continu
 - [Project File Format](PROJECT_FORMAT.md)
 - [Development Roadmap](ROADMAP.md)
 - [Portfolio Notes](PORTFOLIO.md)
+
+## Advanced artwork workflow
+
+Use the left toolbar to add a star/polygon, circular text, symbol or group.
+Shift-click layers in the Layers panel, then choose **Group selected layers**.
+Edit a member from the group inspector; changes update every repeated copy.
+Copies, distance, initial angle and orientation control circular repetition.
+
+**Fill and effects** provides solid fill, transparent cutouts, a second outline,
+glow and shadow. A cutout removes artwork beneath it; turn off Solid fill to leave
+a transparent opening in the PNG. Effects and cutouts are included in PNG export.
+SVG import accepts vector geometry, removes active/external content, and recolors
+the symbol. Convert text to paths before importing.
+
+Choose **Add Ornamental Seal** (✺) for an editable example with circular lettering,
+an interlaced star and five repeated medallions. Select a member to customize it.
+Save/load and undo/redo preserve the new artwork and its settings.
+
+The example is also available as [a project file](public/examples/ornamental-seal.mce.json).
+Open it with **Open** in the editor.
+
+![Advanced artwork example](docs/images/circle-editor-advanced.png)
+
+## Composed procedural designs
+
+Arcane combines interlaced stars, ritual inscriptions and rune seals. Celestial
+uses starbursts, open orbits and lunar/solar motifs. Mechanical uses polygon cores,
+indexed bands and geometric emblems. Complexity adds inner geometry and satellites;
+Inscriptions and Orbit emblems can be switched off independently. Seeds reproduce
+both geometry and ornaments, and all generated parts remain editable. Classic
+retains the simple ring/line generator.
+
+![Arcane procedural composition](docs/images/circle-generator-arcane.png)
+
+Complex group effects use a cached preview during wheel zoom and panning. The sharp
+vector artwork returns after navigation stops; PNG export always uses the vectors.

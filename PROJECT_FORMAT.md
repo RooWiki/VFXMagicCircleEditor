@@ -534,3 +534,34 @@ The following is the minimal valid project file representing an empty canvas.
 ```
 
 An empty `layers` array is valid. The application renders an empty canvas and allows the user to start adding layers immediately.
+
+## Ring decoration extension
+
+Ring layers may include these optional fields. Older projects without them retain a simple circle.
+
+| Field          | Values / default                                       |
+| -------------- | ------------------------------------------------------ |
+| `style`        | `simple` (default), `concentric`, `divided`, `arc`     |
+| `ringCount`    | Integer 2–20; default 3                                |
+| `spacing`      | Positive distance between concentric rings; default 12 |
+| `bandWidth`    | Positive inward band width; default 20                 |
+| `divisions`    | Integer 1–360; default 48                              |
+| `dividerWidth` | Positive separator thickness; default 2                |
+| `startAngle`   | Clockwise degrees from top; default 0                  |
+| `sweepAngle`   | Arc span 1–360 degrees; default 270                    |
+
+The radius remains the outer circle radius. Rendering limits concentric spacing to
+`radius / ringCount` and band width to `radius * 0.95`, preserving positive inner
+radii when resizing. Editor and PNG export use the same geometry. Switching styles
+retains the other styles' settings. Older editor releases render only the base circle.
+
+## Radial pattern extension
+
+Radial Lines accept optional `sweepAngle` (1–360°, default 360), `twistAngle`
+(−180–180°, default 0), `majorEvery` (integer 1–360, default 1), `minorLength`
+(0.01–1, default 0.5), and `lineCap` (`round`, `butt`, `square`; default `round`).
+Partial spreads include both endpoints when count > 1; full circles omit the
+duplicate endpoint. Tilt offsets outer endpoints clockwise relative to inner
+endpoints. Every Nth line, starting with the first, retains full length; other
+lines are shortened along their segment, anchored at the outer endpoint.
+Legacy layers keep their original appearance. Preview and export share geometry.

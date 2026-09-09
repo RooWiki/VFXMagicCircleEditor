@@ -1,4 +1,7 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { stackRadius } from '../../utils/layerTree'
+import { buildCutouts, cutoutMask } from '../../utils/artwork'
+import ExtendedLayerRenderer from './ExtendedLayerRenderer'
+import { useCallback, useEffect, useId, useRef, useState, useMemo } from 'react'
 import { VIEWPORT_WHEEL_SENSITIVITY } from '../../constants'
 import { useEditorStore, type ActiveTool, type PreviewBackground } from '../../store/editor'
 import { useProjectStore } from '../../store/project'
@@ -83,11 +86,67 @@ export default function SvgCanvas() {
   const panStateRef = useRef<PanState | null>(null)
   const spaceHeldRef = useRef(false)
 
+  const [isPanning, setIsPanning] = useState(false)
+  const [isZooming, setIsZooming] = useState(false)
+  const zoomEndRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  useEffect(() => () => clearTimeout(zoomEndRef.current), [])
+  const navigating = isPanning || isZooming
+
+  const artworkLayers = useMemo(
+    () =>
+      layers.map((layer, index) => {
+        if (!layer.visible) return null
+        const extended =
+          !['ring', 'radial-lines'].includes(layer.type) ||
+          (layer.fill && layer.fill !== 'none') ||
+          layer.knockout ||
+          layer.outlineWidth ||
+          layer.glowBlur ||
+          layer.shadowBlur ||
+          layer.shadowX ||
+          layer.shadowY
+        const artwork = extended ? (
+          <ExtendedLayerRenderer
+            navigating={navigating}
+            key={layer.id}
+            layer={layer}
+            spaceHeldRef={spaceHeldRef}
+            svgRef={svgRef}
+          />
+        ) : layer.type === 'ring' ? (
+          <RingLayerRenderer key={layer.id} layer={layer} spaceHeldRef={spaceHeldRef} />
+        ) : layer.type === 'radial-lines' ? (
+          <RadialLinesLayerRenderer
+            key={layer.id}
+            layer={layer}
+            spaceHeldRef={spaceHeldRef}
+            svgRef={svgRef}
+          />
+        ) : null
+        const cuts = layers
+          .slice(index + 1)
+          .map((upper, n) => buildCutouts(upper, `canvas-cut-${index}-${n}`))
+          .join('')
+        if (!cuts) return artwork
+        const maskId = `canvas-mask-${index}`
+        return (
+          <g key={layer.id}>
+            <defs
+              dangerouslySetInnerHTML={{
+                __html: cutoutMask(maskId, cuts, stackRadius(layers.slice(0, index + 1))),
+              }}
+            />
+            <g mask={`url(#${maskId})`}>{artwork}</g>
+          </g>
+        )
+      }),
+    [layers, navigating]
+  )
+
   // Track whether any artwork gesture is active (for cursor)
   const [isGesturing, setIsGesturing] = useState(false)
 
   // React-managed state for cursor-relevant flags
-  const [isPanning, setIsPanning] = useState(false)
   const [isSpaceHeld, setIsSpaceHeld] = useState(false)
   const hasInitialFitRef = useRef(false)
 
@@ -141,6 +200,9 @@ export default function SvgCanvas() {
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault()
+      setIsZooming(true)
+      clearTimeout(zoomEndRef.current)
+      zoomEndRef.current = setTimeout(() => setIsZooming(false), 180)
       const rect = svg.getBoundingClientRect()
       const screenX = e.clientX - rect.left
       const screenY = e.clientY - rect.top
@@ -403,22 +465,7 @@ export default function SvgCanvas() {
 
         {/* ── Artwork group — renders project layers in bottom-to-top order */}
         <g data-testid="artwork-group" id="artwork">
-          {layers.map((layer) => {
-            if (layer.type === 'ring') {
-              return <RingLayerRenderer key={layer.id} layer={layer} spaceHeldRef={spaceHeldRef} />
-            }
-            if (layer.type === 'radial-lines') {
-              return (
-                <RadialLinesLayerRenderer
-                  key={layer.id}
-                  layer={layer}
-                  spaceHeldRef={spaceHeldRef}
-                  svgRef={svgRef}
-                />
-              )
-            }
-            return null
-          })}
+          {artworkLayers}
         </g>
 
         {/* ── Selection overlay — above artwork, not part of artwork ─────── */}

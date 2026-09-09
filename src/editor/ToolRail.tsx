@@ -1,10 +1,18 @@
+import { createOrnamentalSeal } from '../utils/ornamentalSeal'
 import type { ReactNode } from 'react'
 import { useEditorStore, type ActiveTool } from '../store/editor'
 import { useGeneratorStore } from '../store/generatorStore'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import { useViewportStore } from '../store/viewport'
-import { createRadialLinesLayer, createRingLayer } from '../utils/factories'
+import {
+  createRadialLinesLayer,
+  createRingLayer,
+  createShapeLayer,
+  createTextLayer,
+  createSymbolLayer,
+  createGroupLayer,
+} from '../utils/factories'
 
 interface ToolButtonProps {
   label: string
@@ -184,7 +192,7 @@ export default function ToolRail() {
   return (
     <nav
       aria-label="Tools"
-      className="flex flex-col w-14 shrink-0 border-r py-1.5"
+      className="flex flex-col w-14 shrink-0 border-r py-1.5 overflow-y-auto"
       style={{
         background: 'var(--rw-bg-panel)',
         borderColor: 'var(--rw-border-default)',
@@ -211,6 +219,26 @@ export default function ToolRail() {
         icon={<RadialLinesIcon />}
         onClick={handleAddRadialLines}
       />
+      {[
+        ['Add Star / Polygon', '☆', () => createShapeLayer()],
+        ['Add Circular Text', 'T', createTextLayer],
+        ['Add Symbol', '☽', createSymbolLayer],
+        ['Add Group', '⊞', () => createGroupLayer([])],
+        ['Add Ornamental Seal', '✺', createOrnamentalSeal],
+      ].map(([label, icon, factory]) => (
+        <ToolButton
+          key={String(label)}
+          label={String(label)}
+          title={String(label)}
+          icon={<span className="text-xl">{String(icon)}</span>}
+          onClick={() => {
+            const layer = (factory as () => import('../types/layer').Layer)()
+            addLayer(layer)
+            selectLayer(layer.id)
+            useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+          }}
+        />
+      ))}
       <ToolButton
         label="Generate"
         title="Procedural Generator"

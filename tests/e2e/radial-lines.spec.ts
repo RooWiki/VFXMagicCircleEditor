@@ -798,11 +798,9 @@ test('lock prevents transform via inspector', async ({ page }) => {
   await page.waitForTimeout(30)
 
   await openProperties(page)
-  await page.getByRole('spinbutton', { name: 'X', exact: true }).fill('999')
-  await page.getByRole('spinbutton', { name: 'X', exact: true }).press('Tab')
-  await page.waitForTimeout(50)
+  await expect(page.getByRole('spinbutton', { name: 'X', exact: true })).toBeDisabled()
 
-  // Store rejects the change for a locked layer — SVG transform is unchanged
+  // Locked artwork cannot be edited from the inspector.
   const transformAfter = await getSvgTransform(page, id!)
   expect(transformAfter).toBe(transformBefore)
 })
@@ -1106,4 +1104,28 @@ test('Ctrl+Y redoes artwork drag and restores dragged position', async ({ page }
 
   const transformAfterRedo = await getSvgTransform(page, id!)
   expect(transformAfterRedo).toBe(transformAfterDrag)
+})
+
+test('pattern presets, line ends and persistence work together', async ({ page }) => {
+  await page.goto('')
+  await addRL(page)
+  const artwork = page.locator('[data-testid^="radial-lines-layer-"]').first()
+  await page.getByRole('button', { name: 'Clock marks', exact: true }).click()
+  await expect(artwork.locator('line')).toHaveCount(120)
+  await expect(page.getByLabel('Minor length', { exact: true })).toHaveValue('40')
+  await page.getByRole('button', { name: 'Fan', exact: true }).click()
+  await expect(page.getByLabel('Spread angle', { exact: true })).toHaveValue('120')
+  await page.getByRole('button', { name: 'Twisted', exact: true }).click()
+  await expect(page.getByLabel('Line tilt', { exact: true })).toHaveValue('30')
+  await page.getByLabel('Line ends', { exact: true }).selectOption('butt')
+  await expect(artwork.locator('line').first()).toHaveAttribute('stroke-linecap', 'butt')
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        Object.values(localStorage).some((value) => value.includes('"lineCap":"butt"'))
+      )
+    )
+    .toBe(true)
+  await page.reload()
+  await expect(artwork.locator('line').first()).toHaveAttribute('stroke-linecap', 'butt')
 })

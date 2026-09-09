@@ -1,6 +1,5 @@
-import type { RadialLinesLayer, RingLayer, Layer } from '../types/layer'
 import type { ProjectFile } from '../types/project'
-import { computeRadialLines } from './geometry'
+import { buildArtworkStack, xml } from './artwork'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -21,44 +20,6 @@ export function validateResolution(value: unknown): string | null {
   if (value <= 0) return 'Resolution must be greater than 0.'
   if (value > 4096) return 'Resolution must not exceed 4096.'
   return null
-}
-
-// ─── Transform string ─────────────────────────────────────────────────────────
-
-function transformAttr(layer: Layer): string {
-  const { x, y, rotation, scaleX, scaleY } = layer.transform
-  return `translate(${x}, ${y}) rotate(${rotation}) scale(${scaleX}, ${scaleY})`
-}
-
-// ─── Per-layer SVG builders ───────────────────────────────────────────────────
-
-function buildRingGroup(layer: RingLayer): string {
-  const tf = transformAttr(layer)
-  // Only the visual circle — no hit-area, no editor attributes
-  const circle =
-    `<circle cx="0" cy="0" r="${layer.radius}" ` +
-    `fill="none" stroke="${layer.color}" stroke-width="${layer.strokeWidth}" />`
-  return `<g transform="${tf}" opacity="${layer.opacity}">${circle}</g>`
-}
-
-function buildRadialLinesGroup(layer: RadialLinesLayer): string {
-  const tf = transformAttr(layer)
-  const segments = computeRadialLines(layer)
-  // Only visual lines — no hit-area lines, no editor attributes
-  const lines = segments
-    .map(
-      (seg) =>
-        `<line x1="${seg.x1}" y1="${seg.y1}" x2="${seg.x2}" y2="${seg.y2}" ` +
-        `stroke="${layer.color}" stroke-width="${layer.strokeWidth}" stroke-linecap="round" />`
-    )
-    .join('')
-  return `<g transform="${tf}" opacity="${layer.opacity}">${lines}</g>`
-}
-
-function buildLayerGroup(layer: Layer): string {
-  if (layer.type === 'ring') return buildRingGroup(layer)
-  if (layer.type === 'radial-lines') return buildRadialLinesGroup(layer)
-  return ''
 }
 
 // ─── Main export builder ──────────────────────────────────────────────────────
@@ -97,14 +58,11 @@ export function buildExportSvgString(project: ProjectFile, options: ExportOption
   // Background rect must be the FIRST element in the root artwork group.
   if (backgroundColor !== null) {
     parts.push(
-      `<rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="${backgroundColor}" />`
+      `<rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="${xml(backgroundColor)}" />`
     )
   }
 
-  // Layers in array order (bottom-to-top render order matches project array).
-  for (const layer of layers) {
-    parts.push(buildLayerGroup(layer))
-  }
+  parts.push(buildArtworkStack(layers))
 
   const artwork = `<g>${parts.join('')}</g>`
 

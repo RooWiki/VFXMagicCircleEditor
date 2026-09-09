@@ -1,0 +1,398 @@
+{
+  "__magic_circle__": true,
+  "version": "1.0.0",
+  "meta": {
+    "title": "Untitled",
+    "created": "2026-09-09T15:32:18.682Z",
+    "modified": "2026-09-09T15:32:19.369Z"
+  },
+  "canvas": {
+    "width": 1000,
+    "height": 1000
+  },
+  "layers": [
+    {
+      "id": "346ce20b-6f67-4883-a40f-7c0e3ec4a9bb",
+      "name": "Ornamental Seal",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1
+      },
+      "type": "group",
+      "children": [
+        {
+          "id": "c31a1c5c-1379-4f7c-962d-8c525c39e35d",
+          "radius": 350,
+          "strokeWidth": 5,
+          "color": "#a51e2b",
+          "type": "ring",
+          "name": "Ring",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "id": "b1b1010d-8535-422e-88f2-97099a88cc63",
+          "radius": 314,
+          "strokeWidth": 2,
+          "color": "#a51e2b",
+          "type": "ring",
+          "name": "Ring",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "id": "931dfff2-85fe-40fc-8f80-9e707f67f67d",
+          "radius": 280,
+          "strokeWidth": 2,
+          "color": "#a51e2b",
+          "type": "ring",
+          "name": "Ring",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "id": "f18bf418-0b07-4139-adcd-32a6de8d8509",
+          "name": "Outer pentagon",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "type": "shape",
+          "shape": "polygon",
+          "points": 5,
+          "radius": 300,
+          "innerRadius": 100,
+          "strokeWidth": 3,
+          "color": "#a51e2b",
+          "fill": "none"
+        },
+        {
+          "id": "245698b4-46e7-435e-80be-ee32a6d807d8",
+          "name": "Inner star",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "type": "shape",
+          "shape": "star",
+          "points": 7,
+          "radius": 230,
+          "innerRadius": 100,
+          "strokeWidth": 3,
+          "color": "#a51e2b",
+          "fill": "none",
+          "starMode": "interlaced",
+          "skip": 2
+        },
+        {
+          "id": "d2c7c16f-b84e-45a7-b1de-79e4ef5a0294",
+          "radius": 245,
+          "strokeWidth": 3,
+          "color": "#a51e2b",
+          "type": "ring",
+          "name": "Ring",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "id": "6dc9c4c2-0e31-443e-98f8-99603955eae1",
+          "radius": 204,
+          "strokeWidth": 3,
+          "color": "#a51e2b",
+          "type": "ring",
+          "name": "Ring",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "id": "49f2c872-19d5-4941-a9f8-77f83a16cf2b",
+          "name": "Circular Text",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "type": "circular-text",
+          "text": "SOL • LUNA • STELLA • AETHER • SOL • LUNA • STELLA • AETHER •",
+          "radius": 293,
+          "fontSize": 20,
+          "fontFamily": "serif",
+          "letterSpacing": 1.5,
+          "startAngle": 0,
+          "direction": "clockwise",
+          "color": "#a51e2b",
+          "strokeWidth": 0,
+          "fitToCircle": true
+        },
+        {
+          "id": "f0e5905c-ab14-40bd-91b1-f8046fc40eee",
+          "name": "Circular Text",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "type": "circular-text",
+          "text": "LUX ET UMBRA • ORBIS ARCANA • LUX ET UMBRA • ORBIS ARCANA •",
+          "radius": 216,
+          "fontSize": 17,
+          "fontFamily": "serif",
+          "letterSpacing": 1.5,
+          "startAngle": 0,
+          "direction": "clockwise",
+          "color": "#a51e2b",
+          "strokeWidth": 0,
+          "fitToCircle": true
+        },
+        {
+          "id": "12909465-57b4-421d-a7bc-6e5b1341277a",
+          "radius": 80,
+          "strokeWidth": 3,
+          "color": "#a51e2b",
+          "type": "ring",
+          "name": "Ring",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "knockout": true
+        },
+        {
+          "id": "300e9fa8-9e27-45c0-ad20-0029249cec68",
+          "radius": 67,
+          "strokeWidth": 2,
+          "color": "#a51e2b",
+          "type": "ring",
+          "name": "Ring",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "id": "6c9a07ad-c0d3-4e76-b61a-86a8173fb7f0",
+          "name": "Center sun",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "type": "symbol",
+          "symbol": "sun",
+          "radius": 44,
+          "strokeWidth": 2,
+          "color": "#a51e2b",
+          "fill": "none"
+        },
+        {
+          "id": "2a5692d2-ba05-46c0-8540-0469957a882c",
+          "name": "Five medallions",
+          "visible": true,
+          "locked": false,
+          "opacity": 1,
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "type": "group",
+          "children": [
+            {
+              "id": "57007ce5-f2e2-4085-8042-a1644bd1ef17",
+              "radius": 49,
+              "strokeWidth": 3,
+              "color": "#a51e2b",
+              "type": "ring",
+              "name": "Ring",
+              "visible": true,
+              "locked": false,
+              "opacity": 1,
+              "transform": {
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "scaleX": 1,
+                "scaleY": 1
+              },
+              "knockout": true
+            },
+            {
+              "id": "4196b70b-7cdd-4850-9321-d984460b7afe",
+              "radius": 42,
+              "strokeWidth": 1.5,
+              "color": "#a51e2b",
+              "type": "ring",
+              "name": "Ring",
+              "visible": true,
+              "locked": false,
+              "opacity": 1,
+              "transform": {
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "scaleX": 1,
+                "scaleY": 1
+              }
+            },
+            {
+              "id": "8a3c6f67-0e72-45d9-9251-24c7ec3f6d9e",
+              "radius": 34,
+              "strokeWidth": 2,
+              "color": "#a51e2b",
+              "type": "ring",
+              "name": "Ring",
+              "visible": true,
+              "locked": false,
+              "opacity": 1,
+              "transform": {
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "scaleX": 1,
+                "scaleY": 1
+              }
+            },
+            {
+              "id": "dc186722-3c82-4175-a848-14c2204cbf00",
+              "name": "Symbol",
+              "visible": true,
+              "locked": false,
+              "opacity": 1,
+              "transform": {
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "scaleX": 1,
+                "scaleY": 1
+              },
+              "type": "symbol",
+              "symbol": "rune",
+              "radius": 23,
+              "strokeWidth": 2,
+              "color": "#a51e2b",
+              "fill": "none"
+            },
+            {
+              "id": "a569b22d-4766-46ce-94a2-16f298ac5221",
+              "radius": 6,
+              "strokeWidth": 1.5,
+              "color": "#a51e2b",
+              "type": "ring",
+              "name": "Ring",
+              "visible": true,
+              "locked": false,
+              "opacity": 1,
+              "transform": {
+                "x": 0,
+                "y": -49,
+                "rotation": 0,
+                "scaleX": 1,
+                "scaleY": 1
+              }
+            }
+          ],
+          "repeatCount": 5,
+          "repeatRadius": 350,
+          "startAngle": 0,
+          "orientation": "upright"
+        }
+      ],
+      "repeatCount": 1,
+      "repeatRadius": 300,
+      "startAngle": 0,
+      "orientation": "upright",
+      "outlineWidth": 0.8,
+      "outlineColor": "#540511",
+      "shadowBlur": 3,
+      "shadowY": 3,
+      "shadowColor": "#25060b"
+    }
+  ]
+}

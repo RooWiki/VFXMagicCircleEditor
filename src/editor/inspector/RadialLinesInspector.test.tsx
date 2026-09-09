@@ -274,3 +274,18 @@ describe('RadialLinesInspector — history grouping', () => {
     expect(useHistoryStore.getState().snapshots).toHaveLength(1)
   })
 })
+
+it('applies a clock pattern as one undoable edit', async () => {
+  const user = userEvent.setup()
+  setupWithRL()
+  useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+  await user.click(screen.getByRole('button', { name: 'Clock marks' }))
+  expect(useProjectStore.getState().project.layers[0]).toMatchObject({
+    count: 60,
+    majorEvery: 5,
+    minorLength: 0.4,
+  })
+  useHistoryStore.getState().undo()
+  expect(useProjectStore.getState().project.layers[0]).toMatchObject({ count: 8 })
+  expect(useProjectStore.getState().project.layers[0]).not.toHaveProperty('majorEvery')
+})

@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5173/circleeditor/',
+    baseURL: 'http://localhost:5179/circleeditor/',
     trace: 'on-first-retry',
   },
   projects: [
@@ -18,8 +18,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173/circleeditor/',
-    reuseExistingServer: !process.env.CI,
+    command: 'npm run dev -- --port 5179 --strictPort',
+    url: 'http://localhost:5179/circleeditor/',
+    reuseExistingServer: false,
   },
 })

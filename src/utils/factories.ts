@@ -1,6 +1,15 @@
 import { DEFAULT_CANVAS_HEIGHT, DEFAULT_CANVAS_WIDTH } from '../constants'
 import type { CanvasConfig, ProjectFile, ProjectMeta } from '../types/project'
-import type { RadialLinesLayer, RingLayer, Transform } from '../types/layer'
+import type {
+  RadialLinesLayer,
+  RingLayer,
+  Transform,
+  ShapeLayer,
+  TextLayer,
+  SymbolLayer,
+  GroupLayer,
+  Layer,
+} from '../types/layer'
 import { generateId } from './id'
 
 const defaultTransform = (): Transform => ({
@@ -17,6 +26,7 @@ export const createRingLayer = (
   const { transform: transformOverride, ...props } = overrides
   return {
     id: generateId(),
+    ...props,
     type: 'ring',
     name: props.name ?? 'Ring',
     visible: props.visible ?? true,
@@ -35,6 +45,7 @@ export const createRadialLinesLayer = (
   const { transform: transformOverride, ...props } = overrides
   return {
     id: generateId(),
+    ...overrides,
     type: 'radial-lines',
     name: props.name ?? 'Radial Lines',
     visible: props.visible ?? true,
@@ -69,3 +80,54 @@ export const createDefaultProject = (): ProjectFile => {
     layers: [],
   }
 }
+
+const base = (name: string) => ({
+  id: generateId(),
+  name,
+  visible: true,
+  locked: false,
+  opacity: 1,
+  transform: defaultTransform(),
+})
+export const createShapeLayer = (shape: 'star' | 'polygon' = 'star'): ShapeLayer => ({
+  ...base(shape === 'star' ? 'Star' : 'Polygon'),
+  type: 'shape',
+  shape,
+  points: 5,
+  radius: 220,
+  innerRadius: 100,
+  strokeWidth: 4,
+  color: '#ffffff',
+  fill: 'none',
+})
+export const createTextLayer = (): TextLayer => ({
+  ...base('Circular Text'),
+  type: 'circular-text',
+  text: 'SOL • LUNA • STELLA • SOL • LUNA • STELLA •',
+  radius: 270,
+  fontSize: 30,
+  fontFamily: 'serif',
+  letterSpacing: 2,
+  startAngle: 0,
+  direction: 'clockwise',
+  color: '#ffffff',
+  strokeWidth: 0,
+})
+export const createSymbolLayer = (): SymbolLayer => ({
+  ...base('Symbol'),
+  type: 'symbol',
+  symbol: 'rune',
+  radius: 50,
+  strokeWidth: 3,
+  color: '#ffffff',
+  fill: 'none',
+})
+export const createGroupLayer = (children: Layer[]): GroupLayer => ({
+  ...base('Group'),
+  type: 'group',
+  children,
+  repeatCount: 1,
+  repeatRadius: 300,
+  startAngle: 0,
+  orientation: 'upright',
+})

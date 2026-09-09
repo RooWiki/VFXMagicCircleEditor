@@ -66,6 +66,7 @@ export function useArtworkMoveGesture(
     (e: React.PointerEvent) => {
       const world = getWorldPos(e.clientX, e.clientY)
       if (!world) return
+      useHistoryStore.getState().commitInspectorEdit()
       try {
         ;(e.currentTarget as Element).setPointerCapture(e.pointerId)
       } catch {

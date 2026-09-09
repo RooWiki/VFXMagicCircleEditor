@@ -4,6 +4,7 @@ import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
 import { useViewportStore } from '../../store/viewport'
 import { computeAnimatedTransform, useAnimationStore } from '../../store/animation'
+import { layerRadius } from '../../utils/layerTree'
 import type { Layer, Transform } from '../../types/layer'
 import { screenToWorld } from '../../utils/viewport'
 import {
@@ -29,8 +30,7 @@ function transformsEqual(a: Transform, b: Transform): boolean {
 // ─── Layer radius helper ──────────────────────────────────────────────────────
 
 function getLayerRadius(layer: Layer): number {
-  if (layer.type === 'ring') return layer.radius
-  return layer.outerRadius
+  return layerRadius(layer)
 }
 
 // ─── Handle geometry constants ────────────────────────────────────────────────
@@ -139,6 +139,7 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
 
       e.stopPropagation()
       e.preventDefault()
+      useHistoryStore.getState().commitInspectorEdit()
 
       const svg = svgRef.current
       if (!svg) return
@@ -166,6 +167,7 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
 
       e.stopPropagation()
       e.preventDefault()
+      useHistoryStore.getState().commitInspectorEdit()
 
       const svg = svgRef.current
       if (!svg) return
@@ -196,6 +198,7 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
 
       e.stopPropagation()
       e.preventDefault()
+      useHistoryStore.getState().commitInspectorEdit()
 
       const svg = svgRef.current
       if (!svg) return
@@ -358,7 +361,7 @@ export default function SelectionOverlay({ layer, svgRef, spaceHeldRef }: Overla
             r={r}
             fill="transparent"
             stroke="transparent"
-            strokeWidth={Math.max(layer.strokeWidth, 12)}
+            strokeWidth={Math.max('strokeWidth' in layer ? layer.strokeWidth : 0, 12)}
             style={{ pointerEvents: 'visibleStroke', cursor: 'move' }}
             onPointerDown={handleRingPointerDown}
             onPointerMove={handlePointerMove}

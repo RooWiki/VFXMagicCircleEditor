@@ -151,8 +151,7 @@ describe('updateRingLayer', () => {
     accept({ innerRadius: 100 })
     // @ts-expect-error 'outerRadius' does not exist in RingArtworkPatch
     accept({ outerRadius: 200 })
-    // @ts-expect-error 'startAngle' does not exist in RingArtworkPatch
-    accept({ startAngle: 45 })
+    expect(accept({ startAngle: 45 })).toEqual({ startAngle: 45 })
     expect(accept({ radius: 300, strokeWidth: 4, color: '#fff', opacity: 1 })).toBeDefined()
   })
 })

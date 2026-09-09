@@ -16,6 +16,76 @@ export default function RingInspector({ layer }: Props) {
   const historyBegin = () => useHistoryStore.getState().beginInspectorEdit()
   const historyCommit = () => useHistoryStore.getState().commitInspectorEdit()
 
+  const style = layer.style ?? 'simple'
+  const decorationFields =
+    style === 'concentric'
+      ? [
+          {
+            key: 'ringCount' as const,
+            label: 'Ring count',
+            value: layer.ringCount ?? 3,
+            min: 2,
+            max: 20,
+            step: 1,
+          },
+          {
+            key: 'spacing' as const,
+            label: 'Spacing',
+            value: layer.spacing ?? 12,
+            min: 0.1,
+            step: 1,
+          },
+        ]
+      : style === 'divided'
+        ? [
+            {
+              key: 'bandWidth' as const,
+              label: 'Band width',
+              value: layer.bandWidth ?? 20,
+              min: 0.1,
+              step: 1,
+            },
+            {
+              key: 'divisions' as const,
+              label: 'Divisions',
+              value: layer.divisions ?? 48,
+              min: 1,
+              max: 360,
+              step: 1,
+            },
+            {
+              key: 'dividerWidth' as const,
+              label: 'Divider thickness',
+              value: layer.dividerWidth ?? 2,
+              min: 0.1,
+              step: 0.5,
+            },
+            {
+              key: 'startAngle' as const,
+              label: 'Initial angle',
+              value: layer.startAngle ?? 0,
+              step: 1,
+            },
+          ]
+        : style === 'arc'
+          ? [
+              {
+                key: 'startAngle' as const,
+                label: 'Initial angle',
+                value: layer.startAngle ?? 0,
+                step: 1,
+              },
+              {
+                key: 'sweepAngle' as const,
+                label: 'Arc span',
+                value: layer.sweepAngle ?? 270,
+                min: 1,
+                max: 360,
+                step: 1,
+              },
+            ]
+          : []
+
   return (
     <div className="flex flex-col" data-testid="ring-inspector">
       {/* Layer name */}
@@ -32,6 +102,52 @@ export default function RingInspector({ layer }: Props) {
       <SectionHeading>Ring</SectionHeading>
 
       <div className="flex flex-col gap-2 px-3 pb-3">
+        <label
+          className="flex flex-col gap-1 text-xs"
+          style={{ color: 'var(--rw-text-secondary)' }}
+        >
+          Ring style
+          <select
+            aria-label="Ring style"
+            value={style}
+            className="rounded px-2 py-1.5 text-xs"
+            style={{
+              background: 'var(--rw-bg-control)',
+              color: 'var(--rw-text-primary)',
+              border: '1px solid var(--rw-border-default)',
+            }}
+            onChange={(event) => {
+              historyBegin()
+              updateRingLayer(layer.id, {
+                style: event.target.value as NonNullable<RingLayer['style']>,
+              })
+              historyCommit()
+            }}
+          >
+            <option value="simple">Simple</option>
+            <option value="concentric">Concentric</option>
+            <option value="divided">Divided band</option>
+            <option value="arc">Arc</option>
+          </select>
+        </label>
+        {decorationFields.map(({ key, ...field }) => (
+          <NumericField
+            key={key}
+            {...field}
+            onBeginEdit={historyBegin}
+            onCommitEdit={historyCommit}
+            onChange={(value) => {
+              if ((key === 'ringCount' || key === 'divisions') && !Number.isInteger(value)) return
+              updateRingLayer(layer.id, { [key]: value })
+            }}
+          />
+        ))}
+        {(style === 'concentric' || style === 'divided') && (
+          <p className="text-[10px]" style={{ color: 'var(--rw-text-tertiary)' }}>
+            Details extend inward. Spacing and band width fit automatically inside the radius.
+          </p>
+        )}
+
         <NumericField
           label="Radius"
           value={layer.radius}

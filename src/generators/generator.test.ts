@@ -1,3 +1,4 @@
+import type { Layer } from '../types/layer'
 import { describe, expect, it } from 'vitest'
 import { LayerSchema } from '../schema/project'
 import { DEFAULT_PARAMS, generateCircle } from './generator'
@@ -106,6 +107,8 @@ describe('prngUuid', () => {
 // ─── Generator ────────────────────────────────────────────────────────────────
 
 const SEED = 'test-seed-42'
+const leaves = (layers: Layer[]): Exclude<Layer, { type: 'group' }>[] =>
+  layers.flatMap((layer) => (layer.type === 'group' ? leaves(layer.children) : [layer]))
 
 describe('generateCircle — determinism (ROADMAP required)', () => {
   it('same seed + params produces identical Layer[] on two calls', () => {
@@ -181,8 +184,13 @@ describe('generateCircle — layer counts', () => {
     expect(layers).toHaveLength(0)
   })
 
-  it('total layer count equals ringCount + radialGroupCount', () => {
-    const params = { ...DEFAULT_PARAMS, ringCount: 3, radialGroupCount: 2 }
+  it('classic layer count equals ringCount + radialGroupCount', () => {
+    const params = {
+      ...DEFAULT_PARAMS,
+      designStyle: 'classic' as const,
+      ringCount: 3,
+      radialGroupCount: 2,
+    }
     const layers = generateCircle(params, SEED)
     expect(layers).toHaveLength(5)
   })
@@ -216,21 +224,21 @@ describe('generateCircle — layer properties', () => {
   it('colorPalette colors appear in generated layers', () => {
     const palette = ['#ff0000', '#00ff00', '#0000ff']
     const layers = generateCircle({ ...DEFAULT_PARAMS, colorPalette: palette }, SEED)
-    for (const layer of layers) {
+    for (const layer of leaves(layers)) {
       expect(palette).toContain(layer.color)
     }
   })
 
   it('single-color palette means all layers use that color', () => {
     const layers = generateCircle({ ...DEFAULT_PARAMS, colorPalette: ['#aabbcc'] }, SEED)
-    for (const layer of layers) {
+    for (const layer of leaves(layers)) {
       expect(layer.color).toBe('#aabbcc')
     }
   })
 
   it('empty palette falls back to white (#ffffff)', () => {
     const layers = generateCircle({ ...DEFAULT_PARAMS, colorPalette: [] }, SEED)
-    for (const layer of layers) {
+    for (const layer of leaves(layers)) {
       expect(layer.color).toBe('#ffffff')
     }
   })

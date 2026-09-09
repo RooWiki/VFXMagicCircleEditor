@@ -343,6 +343,22 @@ export default function LayersPanel() {
           disabled={!hasSelection}
           onClick={handleDelete}
         />
+        <ActionBtn
+          icon={<span>⊞</span>}
+          label="Group selected layers"
+          title="Group selected layers (Shift-click names to select several)"
+          disabled={
+            !selectedLayerIds.length ||
+            layers.some((layer) => selectedLayerIds.includes(layer.id) && layer.locked)
+          }
+          onClick={() => {
+            const id = useProjectStore.getState().groupLayers(selectedLayerIds)
+            if (id) {
+              selectLayer(id)
+              useHistoryStore.getState().pushSnapshot(useProjectStore.getState().project)
+            }
+          }}
+        />
         <div className="flex-1" />
         <ActionBtn
           icon={<CenterIcon />}
@@ -363,7 +379,7 @@ export default function LayersPanel() {
       ) : (
         <ol aria-label="Layers" className="flex flex-col py-1 flex-1 overflow-y-auto">
           {displayLayers.map((layer, displayIndex) => {
-            const isSelected = layer.id === selectedId
+            const isSelected = selectedLayerIds.includes(layer.id)
             const isDragging = draggedDisplayIndex === displayIndex
             const isDropTarget =
               dropTargetDisplayIndex === displayIndex && draggedDisplayIndex !== displayIndex
@@ -461,7 +477,14 @@ export default function LayersPanel() {
                     <button
                       type="button"
                       aria-label={`Select layer ${layer.name}`}
-                      onClick={() => selectLayer(layer.id)}
+                      onClick={(event) => {
+                        if (event.shiftKey || event.ctrlKey || event.metaKey) {
+                          const editor = useEditorStore.getState()
+                          if (editor.selectedLayerIds.includes(layer.id))
+                            editor.removeFromSelection(layer.id)
+                          else editor.addToSelection(layer.id)
+                        } else selectLayer(layer.id)
+                      }}
                       onDoubleClick={() => handleStartRename(layer.id, layer.name)}
                       style={{ cursor: 'pointer', outlineColor: 'var(--rw-focus)' }}
                       className="flex-1 flex items-center gap-2 min-w-0 text-left focus-visible:outline focus-visible:outline-2 rounded"

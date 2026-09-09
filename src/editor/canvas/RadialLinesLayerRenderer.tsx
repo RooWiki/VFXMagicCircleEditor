@@ -64,7 +64,7 @@ export default function RadialLinesLayerRenderer({ layer, spaceHeldRef, svgRef }
           y2={seg.y2}
           stroke={layer.color}
           strokeWidth={layer.strokeWidth}
-          strokeLinecap="round"
+          strokeLinecap={layer.lineCap ?? 'round'}
         />
       ))}
       {/* Per-line transparent wider strokes — hit area aligned with actual geometry */}
@@ -77,7 +77,7 @@ export default function RadialLinesLayerRenderer({ layer, spaceHeldRef, svgRef }
           y2={seg.y2}
           stroke="transparent"
           strokeWidth={Math.max(layer.strokeWidth, 12)}
-          strokeLinecap="round"
+          strokeLinecap={layer.lineCap ?? 'round'}
           style={{ pointerEvents: 'visibleStroke' }}
         />
       ))}

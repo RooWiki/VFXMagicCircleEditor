@@ -1,9 +1,17 @@
+import { useMemo, useState } from 'react'
+import { buildExportSvgString } from '../utils/export'
+import { cloneLayer } from '../utils/layerTree'
 import { useAnimationStore } from '../store/animation'
 import { useEditorStore } from '../store/editor'
 import { useGeneratorStore, type LockKey } from '../store/generatorStore'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
-import { generateCircle, type Complexity } from '../generators/generator'
+import {
+  generateCircle,
+  fitGeneratedLayers,
+  type Complexity,
+  type DesignStyle,
+} from '../generators/generator'
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -111,7 +119,7 @@ function NumberInput({
       value={value}
       onChange={(e) => {
         const v = Number(e.target.value)
-        if (!Number.isNaN(v)) onChange(v)
+        if (Number.isFinite(v)) onChange(Math.max(min, Math.min(max, v)))
       }}
       min={min}
       max={max}
@@ -134,17 +142,51 @@ export default function GeneratorModal() {
   const { isOpen, close, seed, setSeed, params, setParams, locks, toggleLock, randomizeUnlocked } =
     useGeneratorStore()
 
+  const project = useProjectStore((state) => state.project)
+  const [applyMode, setApplyMode] = useState<'replace' | 'append'>('replace')
+  const previewLayers = useMemo(
+    () =>
+      isOpen
+        ? fitGeneratedLayers(
+            generateCircle(params, seed),
+            project.canvas.width,
+            project.canvas.height
+          )
+        : [],
+    [isOpen, params, seed, project.canvas.width, project.canvas.height]
+  )
+  const previewUrl = useMemo(() => {
+    if (!isOpen) return ''
+    const svg = buildExportSvgString(
+      { ...project, layers: previewLayers },
+      {
+        widthPx: 360,
+        heightPx: 360,
+        backgroundColor: null,
+        marginPercent: 0,
+        selectedLayerId: null,
+      }
+    )
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+  }, [isOpen, project, previewLayers])
+
   if (!isOpen) return null
 
   const isLocked = (k: LockKey) => locks[k]
 
   function applyGenerate(finalSeed: string, finalParams: typeof params) {
-    const layers = generateCircle(finalParams, finalSeed)
     const current = useProjectStore.getState().project
+    const generated = fitGeneratedLayers(
+      generateCircle(finalParams, finalSeed),
+      current.canvas.width,
+      current.canvas.height
+    )
+    const layers =
+      applyMode === 'append' ? [...current.layers, ...generated.map(cloneLayer)] : generated
     const newProject = { ...current, layers }
     useProjectStore.getState().setProject(newProject)
     useEditorStore.getState().clearSelection()
-    useAnimationStore.getState().clearConfigs()
+    if (applyMode === 'replace') useAnimationStore.getState().clearConfigs()
     useHistoryStore.getState().pushSnapshot(newProject)
   }
 
@@ -190,7 +232,7 @@ export default function GeneratorModal() {
       <div className="absolute inset-0 bg-black/60" onClick={close} aria-hidden="true" />
 
       {/* Panel */}
-      <div className="relative z-10 w-[480px] rounded-lg bg-neutral-900 border border-neutral-700 shadow-2xl p-5 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative z-10 w-[560px] max-w-[95vw] rounded-lg bg-neutral-900 border border-neutral-700 shadow-2xl p-5 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 id="generator-modal-title" className="text-sm font-semibold text-neutral-100">
@@ -205,6 +247,64 @@ export default function GeneratorModal() {
             <CloseIcon />
           </button>
         </div>
+
+        <div className="grid grid-cols-[160px_1fr] gap-4 items-center">
+          <img
+            src={previewUrl}
+            alt="Generated circle preview"
+            className="w-40 h-40 rounded bg-neutral-950 border border-neutral-700"
+          />
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-neutral-300 flex flex-col gap-1">
+              Design style
+              <select
+                aria-label="Design style"
+                value={params.designStyle ?? 'classic'}
+                className="rounded bg-neutral-800 border border-neutral-700 p-1.5"
+                onChange={(event) => setParams({ designStyle: event.target.value as DesignStyle })}
+              >
+                <option value="classic">Classic</option>
+                <option value="arcane">Arcane</option>
+                <option value="celestial">Celestial</option>
+                <option value="mechanical">Mechanical</option>
+              </select>
+            </label>
+            {params.designStyle !== 'classic' && (
+              <label className="text-xs text-neutral-300 flex items-center justify-between">
+                Symmetry
+                <NumberInput
+                  label="Design symmetry"
+                  value={params.symmetry ?? 8}
+                  min={3}
+                  max={24}
+                  disabled={false}
+                  onChange={(value) => setParams({ symmetry: Math.round(value) })}
+                />
+              </label>
+            )}
+            <button
+              type="button"
+              onClick={randomizeUnlocked}
+              className="rounded border border-neutral-600 px-2 py-1.5 text-xs text-neutral-200"
+            >
+              Shuffle preview
+            </button>
+          </div>
+        </div>
+        <p className="text-xs text-neutral-300">
+          {
+            {
+              arcane: 'Interlaced stars, ritual inscriptions and rune seals.',
+              celestial: 'Starbursts, open orbits, moons and solar symbols.',
+              mechanical: 'Polygon cores, indexed bands and geometric emblems.',
+              classic: 'Simple rings and radial line arrays.',
+            }[params.designStyle ?? 'classic']
+          }
+        </p>
+        <p className="text-xs text-neutral-400">
+          Preview updates as you edit. Shuffle respects locks and keeps your style and symmetry.
+          Radial counts follow symmetry when the chosen range permits it.
+        </p>
 
         {/* ── Seed ── */}
         <div>
@@ -474,10 +574,46 @@ export default function GeneratorModal() {
           </div>
         </div>
 
-        {/* ── Preview line ── */}
-        <p className="text-[12px] text-neutral-500">
-          Will generate {params.ringCount} ring{params.ringCount !== 1 ? 's' : ''} and{' '}
-          {params.radialGroupCount} radial group{params.radialGroupCount !== 1 ? 's' : ''}
+        {params.designStyle !== 'classic' && (
+          <div className="flex gap-4 text-xs text-neutral-300">
+            <label className="flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={params.inscriptions !== false}
+                onChange={(event) => setParams({ inscriptions: event.target.checked })}
+              />
+              Inscriptions
+            </label>
+            <label className="flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={params.emblems !== false}
+                onChange={(event) => setParams({ emblems: event.target.checked })}
+              />
+              Orbit emblems
+            </label>
+          </div>
+        )}
+        <p className="text-xs text-neutral-500">
+          {previewLayers.length} editable layers. Complexity adds finer geometry and ornaments.
+        </p>
+
+        <label className="flex items-center justify-between text-xs text-neutral-300">
+          Apply result
+          <select
+            aria-label="Apply result"
+            value={applyMode}
+            onChange={(event) => setApplyMode(event.target.value as 'replace' | 'append')}
+            className="rounded bg-neutral-800 border border-neutral-700 p-1.5"
+          >
+            <option value="replace">Replace current layers</option>
+            <option value="append">Add to current layers</option>
+          </select>
+        </label>
+        <p className="text-xs text-neutral-500">
+          {applyMode === 'replace'
+            ? 'Generate replaces the current layers. You can undo this change.'
+            : 'Generate adds editable layers and keeps your existing artwork.'}
         </p>
 
         {/* ── Actions ── */}

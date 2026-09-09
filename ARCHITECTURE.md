@@ -753,3 +753,21 @@ The dark UI must maintain WCAG AA color contrast ratios for text and interactive
 | Undo history grows too large                            | Very low                     | Low    | 50-entry cap is enforced from the start                                                                                                          |
 | Generator and editor layer models diverge               | Low (after Phase 12)         | High   | Generator contract is defined before implementation; unit test ensures generator output passes project schema validation                         |
 | Animation overwrites base transform by accident         | Medium (implementation risk) | Medium | Animation store writes to its own `animatedTransforms` map; project store write actions are prohibited during playback; enforce via store design |
+
+## Procedural generator: ornamental styles and preview
+
+`GeneratorParams` adds optional `designStyle` and `symmetry`. The default style is
+Arcane; Classic retains the original generator. Ornamental styles use a separate
+seeded random stream, center all layers, and proportionally compress ring spacing
+to avoid coincident outer rings. Complexity also controls ornament density. Radial
+counts use symmetry multiples within the requested range where possible; explicit
+count limits take precedence. Celestial uses arcs, Mechanical uses bands and clock
+marks, and Arcane combines concentric rings with alternating tilted radial groups.
+
+The modal builds a live SVG image using the same export builder and fitted layers
+as Generate. Preview and Shuffle preview never mutate project state. Shuffle keeps
+style and symmetry while respecting existing parameter locks. Generate and Regenerate
+apply one undoable change. Append assigns fresh IDs and preserves existing animation
+configs; Replace clears them. Both fit generated artwork to the current canvas with
+a margin. The seed and generator controls remain session settings; saved artwork
+contains ordinary editable Ring and Radial Lines layers.

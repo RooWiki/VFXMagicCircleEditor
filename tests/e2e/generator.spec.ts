@@ -124,3 +124,30 @@ test('no console errors when opening and closing generator modal', async ({ page
   await page.getByRole('button', { name: 'Cancel' }).click()
   expect(errors).toHaveLength(0)
 })
+
+test('preview is non-destructive and generated layers can be appended repeatedly', async ({
+  page,
+}) => {
+  await page.goto('')
+  await page.getByRole('button', { name: 'Add Ring', exact: true }).click()
+  const artwork = page.locator('[data-testid^="ring-layer-"], [data-testid^="radial-lines-layer-"]')
+  await page.getByRole('button', { name: 'Generate', exact: true }).click()
+  const dialog = page.getByRole('dialog', { name: 'Procedural Generator' })
+  const preview = dialog.getByAltText('Generated circle preview')
+  const original = await preview.getAttribute('src')
+  await dialog.getByLabel('Design style', { exact: true }).selectOption('mechanical')
+  await expect(preview).not.toHaveAttribute('src', original!)
+  await expect(artwork).toHaveCount(1)
+  await dialog.getByLabel('Apply result', { exact: true }).selectOption('append')
+  await dialog.getByRole('button', { name: 'Generate', exact: true }).click()
+  await expect(artwork).toHaveCount(5)
+  await page.getByRole('button', { name: 'Generate', exact: true }).click()
+  await dialog.getByRole('button', { name: 'Generate', exact: true }).click()
+  await expect(artwork).toHaveCount(9)
+  const ids = await artwork.evaluateAll((nodes) =>
+    nodes.map((node) => node.getAttribute('data-layer-id'))
+  )
+  expect(new Set(ids).size).toBe(9)
+  await page.keyboard.press('Control+z')
+  await expect(artwork).toHaveCount(5)
+})

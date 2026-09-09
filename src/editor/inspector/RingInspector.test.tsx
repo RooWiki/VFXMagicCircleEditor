@@ -508,3 +508,25 @@ describe('RingInspector — inspector history bug regression', () => {
     expect(useProjectStore.getState().project.layers[0].transform.x).toBe(0)
   })
 })
+
+describe('Ring styles', () => {
+  it('changes style as one undoable edit', async () => {
+    const user = userEvent.setup()
+    const layer = setupWithRing()
+    useHistoryStore.getState().initHistory(useProjectStore.getState().project)
+    await user.selectOptions(screen.getByLabelText('Ring style'), 'divided')
+    expect(useProjectStore.getState().project.layers[0]).toMatchObject({
+      id: layer.id,
+      style: 'divided',
+    })
+    useHistoryStore.getState().undo()
+    expect(useProjectStore.getState().project.layers[0]).not.toHaveProperty('style')
+  })
+
+  it('shows controls for the selected style', () => {
+    setupWithRing({ style: 'divided' })
+    expect(screen.getByLabelText('Band width')).toBeInTheDocument()
+    expect(screen.getByLabelText('Divisions')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Arc span')).not.toBeInTheDocument()
+  })
+})

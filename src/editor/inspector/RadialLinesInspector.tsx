@@ -16,6 +16,33 @@ export default function RadialLinesInspector({ layer }: Props) {
   const historyBegin = () => useHistoryStore.getState().beginInspectorEdit()
   const historyCommit = () => useHistoryStore.getState().commitInspectorEdit()
 
+  const fields = [
+    {
+      key: 'sweepAngle' as const,
+      label: 'Spread angle',
+      value: layer.sweepAngle ?? 360,
+      min: 1,
+      max: 360,
+      step: 1,
+    },
+    {
+      key: 'twistAngle' as const,
+      label: 'Line tilt',
+      value: layer.twistAngle ?? 0,
+      min: -180,
+      max: 180,
+      step: 1,
+    },
+    {
+      key: 'majorEvery' as const,
+      label: 'Major mark every',
+      value: layer.majorEvery ?? 1,
+      min: 1,
+      max: 360,
+      step: 1,
+    },
+  ]
+
   return (
     <div className="flex flex-col" data-testid="radial-lines-inspector">
       {/* Layer name */}
@@ -32,6 +59,39 @@ export default function RadialLinesInspector({ layer }: Props) {
       <SectionHeading>Radial Lines</SectionHeading>
 
       <div className="flex flex-col gap-2 px-3 pb-3">
+        <div className="flex flex-wrap gap-1" role="group" aria-label="Pattern presets">
+          {(
+            [
+              ['Spokes', { sweepAngle: 360, twistAngle: 0, majorEvery: 1 }],
+              [
+                'Clock marks',
+                { sweepAngle: 360, twistAngle: 0, majorEvery: 5, minorLength: 0.4, count: 60 },
+              ],
+              ['Fan', { sweepAngle: 120, twistAngle: 0, majorEvery: 1 }],
+              ['Twisted', { sweepAngle: 360, twistAngle: 30, majorEvery: 1 }],
+            ] as const
+          ).map(([name, patch]) => (
+            <button
+              key={name}
+              type="button"
+              className="rounded px-2 py-1 text-[10px]"
+              style={{
+                background: 'var(--rw-bg-control)',
+                color: 'var(--rw-text-primary)',
+                border: '1px solid var(--rw-border-default)',
+              }}
+              title={`Apply ${name.toLowerCase()} pattern`}
+              onClick={() => {
+                historyBegin()
+                updateRadialLinesLayer(layer.id, patch)
+                historyCommit()
+              }}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+
         <NumericField
           label="Count"
           value={layer.count}
@@ -46,7 +106,7 @@ export default function RadialLinesInspector({ layer }: Props) {
         <NumericField
           label="Inner Radius"
           value={layer.innerRadius}
-          min={0.1}
+          min={0}
           step={1}
           onBeginEdit={historyBegin}
           onCommitEdit={historyCommit}
@@ -82,6 +142,64 @@ export default function RadialLinesInspector({ layer }: Props) {
           onCommitEdit={historyCommit}
           onChange={(n) => updateRadialLinesLayer(layer.id, { strokeWidth: n })}
         />
+
+        <SectionHeading>Pattern</SectionHeading>
+        {fields.map(({ key, ...field }) => (
+          <NumericField
+            key={key}
+            {...field}
+            onBeginEdit={historyBegin}
+            onCommitEdit={historyCommit}
+            onChange={(value) => {
+              if (key === 'majorEvery' && !Number.isInteger(value)) return
+              updateRadialLinesLayer(layer.id, { [key]: value })
+            }}
+          />
+        ))}
+        {(layer.majorEvery ?? 1) > 1 && (
+          <NumericField
+            label="Minor length"
+            value={(layer.minorLength ?? 0.5) * 100}
+            min={1}
+            max={100}
+            step={1}
+            unit="%"
+            onBeginEdit={historyBegin}
+            onCommitEdit={historyCommit}
+            onChange={(value) => updateRadialLinesLayer(layer.id, { minorLength: value / 100 })}
+          />
+        )}
+        <label
+          className="flex flex-col gap-1 text-xs"
+          style={{ color: 'var(--rw-text-secondary)' }}
+        >
+          Line ends
+          <select
+            aria-label="Line ends"
+            value={layer.lineCap ?? 'round'}
+            className="rounded px-2 py-1.5 text-xs"
+            style={{
+              background: 'var(--rw-bg-control)',
+              color: 'var(--rw-text-primary)',
+              border: '1px solid var(--rw-border-default)',
+            }}
+            onChange={(event) => {
+              historyBegin()
+              updateRadialLinesLayer(layer.id, {
+                lineCap: event.target.value as NonNullable<RadialLinesLayer['lineCap']>,
+              })
+              historyCommit()
+            }}
+          >
+            <option value="round">Round</option>
+            <option value="butt">Flat</option>
+            <option value="square">Square</option>
+          </select>
+        </label>
+        <p className="text-[10px]" style={{ color: 'var(--rw-text-tertiary)' }}>
+          Spread controls the occupied arc. Tilt offsets the outer ends. Short marks stay on the
+          outer edge.
+        </p>
 
         {/* Color */}
         <label className="flex flex-col gap-0.5">

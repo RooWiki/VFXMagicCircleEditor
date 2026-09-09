@@ -19,15 +19,24 @@ export function computeRadialLines(layer: RadialLinesLayer): LineSegment[] {
   if (count <= 0 || innerRadius >= outerRadius) return []
   const lines: LineSegment[] = []
   for (let i = 0; i < count; i++) {
-    const angleDeg = startAngle + (i * 360) / count
+    const sweep = layer.sweepAngle ?? 360
+    const steps = sweep === 360 ? count : Math.max(1, count - 1)
+    const angleDeg = startAngle + (i * sweep) / steps
     const angleRad = (angleDeg * Math.PI) / 180
     const cosA = Math.cos(angleRad)
     const sinA = Math.sin(angleRad)
+    const outerAngle = angleRad + ((layer.twistAngle ?? 0) * Math.PI) / 180
+    const endX = Math.sin(outerAngle) * outerRadius
+    const endY = -Math.cos(outerAngle) * outerRadius
+    const fraction = i % (layer.majorEvery ?? 1) === 0 ? 1 : (layer.minorLength ?? 0.5)
+    // Short marks stay anchored to the outer edge, including tilted patterns.
+    const startX = endX + (sinA * innerRadius - endX) * fraction
+    const startY = endY + (-cosA * innerRadius - endY) * fraction
     lines.push({
-      x1: sinA * innerRadius,
-      y1: -cosA * innerRadius,
-      x2: sinA * outerRadius,
-      y2: -cosA * outerRadius,
+      x1: fraction === 1 ? sinA * innerRadius : startX,
+      y1: fraction === 1 ? -cosA * innerRadius : startY,
+      x2: endX,
+      y2: endY,
     })
   }
   return lines

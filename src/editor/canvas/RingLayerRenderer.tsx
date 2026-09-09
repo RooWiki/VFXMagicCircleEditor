@@ -1,5 +1,6 @@
 import { useEditorStore } from '../../store/editor'
 import { computeAnimatedTransform, useAnimationStore } from '../../store/animation'
+import { computeRingShapes } from '../../utils/ringGeometry'
 import type { RingLayer } from '../../types/layer'
 
 interface Props {
@@ -39,25 +40,28 @@ export default function RingLayerRenderer({ layer, spaceHeldRef }: Props) {
       style={{ pointerEvents: layer.visible && !layer.locked ? 'auto' : 'none' }}
       onPointerDown={handlePointerDown}
     >
-      <circle
-        cx="0"
-        cy="0"
-        r={layer.radius}
-        fill="none"
-        stroke={layer.color}
-        strokeWidth={layer.strokeWidth}
-        style={{ pointerEvents: 'visibleStroke' }}
-      />
-      {/* Wider transparent hit ring for easier clicking */}
-      <circle
-        cx="0"
-        cy="0"
-        r={layer.radius}
-        fill="none"
-        stroke="transparent"
-        strokeWidth={Math.max(layer.strokeWidth, 12)}
-        style={{ pointerEvents: 'visibleStroke' }}
-      />
+      {computeRingShapes(layer).map((shape, index) => {
+        const attrs = shape.kind === 'circle' ? { cx: 0, cy: 0, r: shape.radius } : { d: shape.d }
+        const Tag = shape.kind === 'circle' ? 'circle' : 'path'
+        return (
+          <g key={index}>
+            <Tag
+              {...attrs}
+              fill="none"
+              stroke={layer.color}
+              strokeWidth={shape.width}
+              style={{ pointerEvents: 'visibleStroke' }}
+            />
+            <Tag
+              {...attrs}
+              fill="none"
+              stroke="transparent"
+              strokeWidth={Math.max(shape.width, 12)}
+              style={{ pointerEvents: 'visibleStroke' }}
+            />
+          </g>
+        )
+      })}
     </g>
   )
 }

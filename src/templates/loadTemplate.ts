@@ -6,7 +6,7 @@ import { useEditorStore } from '../store/editor'
 import { useHistoryStore } from '../store/history'
 import { useProjectStore } from '../store/project'
 import type { Layer } from '../types/layer'
-import { generateId } from '../utils/id'
+import { cloneLayer } from '../utils/layerTree'
 import type { TemplateDefinition } from './templates'
 
 function needsConfirmation(layerCount: number, isDirty: boolean): boolean {
@@ -44,10 +44,7 @@ export async function loadTemplate(
 
   const now = new Date().toISOString()
 
-  const freshLayers: Layer[] = result.project.layers.map((layer) => ({
-    ...layer,
-    id: generateId(),
-  }))
+  const freshLayers: Layer[] = result.project.layers.map(cloneLayer)
 
   const project = {
     ...result.project,
