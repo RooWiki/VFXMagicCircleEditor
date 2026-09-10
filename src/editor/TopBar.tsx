@@ -123,14 +123,14 @@ export default function TopBar() {
       {/* Brand */}
       <img
         src={theme === 'dark' ? `${import.meta.env.BASE_URL}logo-dark.png` : `${import.meta.env.BASE_URL}logo-light.png`}
-        alt="Roowiki"
+        alt="RooWiki"
         style={{ width: 22, height: 22, borderRadius: 4, objectFit: 'cover' }}
       />
       <span
         className="text-[13px] font-semibold whitespace-nowrap mr-1"
         style={{ color: 'var(--rw-text-primary)' }}
       >
-        Roowiki
+        RooWiki
       </span>
       <span aria-hidden="true" className="text-[13px]" style={{ color: 'var(--rw-text-tertiary)' }}>
         |
