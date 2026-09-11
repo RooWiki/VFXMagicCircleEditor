@@ -114,10 +114,10 @@ export function addMagicComposition(layers: Layer[], params: GeneratorParams, se
 
   const coreMotif =
     style === 'celestial'
-      ? pick<SymbolLayer['symbol']>(['moon', 'sun'])
+      ? pick<SymbolLayer['symbol']>(['moon', 'sun', 'eclipse', 'spiral', 'infinity', 'eye'])
       : style === 'mechanical'
-        ? 'diamond'
-        : pick<SymbolLayer['symbol']>(['rune', 'sun', 'cross'])
+        ? pick<SymbolLayer['symbol']>(['diamond', 'crystal', 'hourglass', 'hexagram', 'lightning'])
+        : pick<SymbolLayer['symbol']>(['rune', 'sun', 'cross', 'pentagram', 'eye', 'spiral', 'trident', 'infinity', 'hexagram'])
   layers.push(symbol(radius * 0.135, coreMotif))
 
   if (params.inscriptions !== false && detail > 1) {
@@ -151,10 +151,10 @@ export function addMagicComposition(layers: Layer[], params: GeneratorParams, se
     const emblemRadius = Math.min(radius * 0.095, radius * Math.sin(Math.PI / count) * 0.35)
     const motif =
       style === 'celestial'
-        ? pick<SymbolLayer['symbol']>(['moon', 'diamond'])
+        ? pick<SymbolLayer['symbol']>(['moon', 'diamond', 'crystal', 'eye', 'infinity', 'eclipse'])
         : style === 'mechanical'
-          ? 'diamond'
-          : pick<SymbolLayer['symbol']>(['rune', 'cross', 'diamond'])
+          ? pick<SymbolLayer['symbol']>(['diamond', 'crystal', 'hexagram', 'lightning', 'hourglass'])
+          : pick<SymbolLayer['symbol']>(['rune', 'cross', 'diamond', 'pentagram', 'eye', 'fire', 'water', 'air', 'earth', 'trident'])
     const children: Layer[] = [
       { ...ring(emblemRadius), knockout: true },
       symbol(emblemRadius * 0.57, motif),
@@ -175,7 +175,17 @@ export function addMagicComposition(layers: Layer[], params: GeneratorParams, se
     const group: GroupLayer = {
       ...base('Inner satellites'),
       type: 'group',
-      children: [symbol(radius * 0.035, style === 'celestial' ? 'sun' : 'diamond', fine)],
+      children: [
+        symbol(
+          radius * 0.035,
+          style === 'celestial'
+            ? pick<SymbolLayer['symbol']>(['sun', 'moon', 'spiral', 'eclipse'])
+            : style === 'mechanical'
+              ? pick<SymbolLayer['symbol']>(['diamond', 'crystal', 'hexagram'])
+              : pick<SymbolLayer['symbol']>(['diamond', 'rune', 'eye', 'cross', 'fire', 'water', 'air', 'earth']),
+          fine
+        ),
+      ],
       repeatCount: symmetry,
       repeatRadius: radius * 0.68,
       startAngle: 180 / symmetry,
