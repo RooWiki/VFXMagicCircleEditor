@@ -1,0 +1,121 @@
+{
+  "__magic_circle__": true,
+  "version": "1.0.0",
+  "meta": {
+    "title": "Dragon's Eye",
+    "created": "2026-01-01T00:00:00.000Z",
+    "modified": "2026-01-01T00:00:00.000Z"
+  },
+  "canvas": { "width": 1000, "height": 1000 },
+  "layers": [
+    {
+      "id": "aa000001-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "ring",
+      "name": "Outer Frame",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 420,
+      "strokeWidth": 4,
+      "color": "#ef4444",
+      "style": "divided",
+      "divisions": 12,
+      "dividerWidth": 2
+    },
+    {
+      "id": "aa000002-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "ring",
+      "name": "Guard Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.85,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 370,
+      "strokeWidth": 2,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "aa000003-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "radial-lines",
+      "name": "Primary Star",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.9,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 8,
+      "innerRadius": 80,
+      "outerRadius": 360,
+      "startAngle": 0,
+      "strokeWidth": 2,
+      "color": "#ef4444"
+    },
+    {
+      "id": "aa000004-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "radial-lines",
+      "name": "Secondary Star",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.55,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 8,
+      "innerRadius": 80,
+      "outerRadius": 280,
+      "startAngle": 22.5,
+      "strokeWidth": 1.5,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "aa000005-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "radial-lines",
+      "name": "Outer Ticks",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.7,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 24,
+      "innerRadius": 400,
+      "outerRadius": 415,
+      "startAngle": 0,
+      "strokeWidth": 2,
+      "color": "#fbbf24"
+    },
+    {
+      "id": "aa000006-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "ring",
+      "name": "Mid Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 190,
+      "strokeWidth": 3,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "aa000007-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "symbol",
+      "name": "Eye",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "symbol": "eye",
+      "radius": 65,
+      "strokeWidth": 3,
+      "color": "#fbbf24"
+    },
+    {
+      "id": "aa000008-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "type": "ring",
+      "name": "Inner Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.9,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 100,
+      "strokeWidth": 2,
+      "color": "#ef4444"
+    }
+  ]
+}

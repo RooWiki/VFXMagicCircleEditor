@@ -1,0 +1,121 @@
+{
+  "__magic_circle__": true,
+  "version": "1.0.0",
+  "meta": {
+    "title": "Obsidian Hex",
+    "created": "2026-01-01T00:00:00.000Z",
+    "modified": "2026-01-01T00:00:00.000Z"
+  },
+  "canvas": { "width": 1000, "height": 1000 },
+  "layers": [
+    {
+      "id": "ff000001-ffff-4fff-8fff-ffffffffffff",
+      "type": "ring",
+      "name": "Outer Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 430,
+      "strokeWidth": 2.5,
+      "color": "#10b981"
+    },
+    {
+      "id": "ff000002-ffff-4fff-8fff-ffffffffffff",
+      "type": "radial-lines",
+      "name": "Outer Ticks",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.6,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 24,
+      "innerRadius": 415,
+      "outerRadius": 428,
+      "startAngle": 0,
+      "strokeWidth": 1,
+      "color": "#10b981"
+    },
+    {
+      "id": "ff000003-ffff-4fff-8fff-ffffffffffff",
+      "type": "shape",
+      "name": "Outer Hexagon",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.9,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "shape": "polygon",
+      "points": 6,
+      "radius": 390,
+      "innerRadius": 0,
+      "strokeWidth": 3,
+      "color": "#10b981"
+    },
+    {
+      "id": "ff000004-ffff-4fff-8fff-ffffffffffff",
+      "type": "radial-lines",
+      "name": "Hex Spokes",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.55,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "count": 6,
+      "innerRadius": 100,
+      "outerRadius": 380,
+      "startAngle": 0,
+      "strokeWidth": 1.5,
+      "color": "#a855f7"
+    },
+    {
+      "id": "ff000005-ffff-4fff-8fff-ffffffffffff",
+      "type": "ring",
+      "name": "Mid Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.85,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 230,
+      "strokeWidth": 2,
+      "color": "#a855f7"
+    },
+    {
+      "id": "ff000006-ffff-4fff-8fff-ffffffffffff",
+      "type": "shape",
+      "name": "Inner Hexagon",
+      "visible": true,
+      "locked": false,
+      "opacity": 0.75,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "shape": "polygon",
+      "points": 6,
+      "radius": 195,
+      "innerRadius": 0,
+      "strokeWidth": 2,
+      "color": "#10b981"
+    },
+    {
+      "id": "ff000007-ffff-4fff-8fff-ffffffffffff",
+      "type": "symbol",
+      "name": "Hexagram",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "symbol": "hexagram",
+      "radius": 100,
+      "strokeWidth": 3,
+      "color": "#a855f7"
+    },
+    {
+      "id": "ff000008-ffff-4fff-8fff-ffffffffffff",
+      "type": "ring",
+      "name": "Core Ring",
+      "visible": true,
+      "locked": false,
+      "opacity": 1.0,
+      "transform": { "x": 0, "y": 0, "rotation": 0, "scaleX": 1, "scaleY": 1 },
+      "radius": 65,
+      "strokeWidth": 2,
+      "color": "#10b981"
+    }
+  ]
+}
