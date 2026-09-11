@@ -2,6 +2,7 @@ import { addMagicComposition } from './composition'
 import { layerRadius } from '../utils/layerTree'
 import type { Layer, RadialLinesLayer, RingLayer } from '../types/layer'
 import { prngUuid, seededRng } from './prng'
+import type { TEXTURE_IDS } from '../utils/textureCatalog'
 
 export type DesignStyle = 'classic' | 'arcane' | 'celestial' | 'mechanical'
 
@@ -22,6 +23,7 @@ export interface GeneratorParams {
   inscriptions?: boolean
   emblems?: boolean
   complexity: Complexity
+  lineTexture?: (typeof TEXTURE_IDS)[number]
 }
 
 export const DEFAULT_PARAMS: GeneratorParams = {
@@ -39,6 +41,7 @@ export const DEFAULT_PARAMS: GeneratorParams = {
   radialLineCountMax: 12,
   colorPalette: ['#ffffff', '#c084fc', '#818cf8'],
   complexity: 'medium',
+  lineTexture: 'solid',
 }
 
 // Always consumes exactly one rng() call — keeps sequence length stable
@@ -83,6 +86,7 @@ export function generateCircle(params: GeneratorParams, seed: string): Layer[] {
     const jitterX = positionJitter > 0 ? (rng() - 0.5) * positionJitter * 2 : 0
     const jitterY = positionJitter > 0 ? (rng() - 0.5) * positionJitter * 2 : 0
 
+    const texture = params.lineTexture && params.lineTexture !== 'solid' ? params.lineTexture : undefined
     const ring: RingLayer = {
       id: prngUuid(rng),
       type: 'ring',
@@ -94,6 +98,7 @@ export function generateCircle(params: GeneratorParams, seed: string): Layer[] {
       strokeWidth,
       color,
       transform: { x: jitterX, y: jitterY, rotation: 0, scaleX: 1, scaleY: 1 },
+      ...(texture ? { lineTexture: texture, textureAmount: 75, textureScale: 6, textureSeed: i } : {}),
     }
     layers.push(ring)
 
@@ -110,6 +115,7 @@ export function generateCircle(params: GeneratorParams, seed: string): Layer[] {
     const startAngle = rng() * 360
     const opacity = opacityVariance > 0 ? Math.max(0.4, 1 - rng() * opacityVariance) : 1
 
+    const radialTexture = params.lineTexture && params.lineTexture !== 'solid' ? params.lineTexture : undefined
     const radial: RadialLinesLayer = {
       id: prngUuid(rng),
       type: 'radial-lines',
@@ -124,6 +130,7 @@ export function generateCircle(params: GeneratorParams, seed: string): Layer[] {
       strokeWidth,
       color,
       transform: { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 },
+      ...(radialTexture ? { lineTexture: radialTexture, textureAmount: 75, textureScale: 6, textureSeed: params.ringCount + i } : {}),
     }
     layers.push(radial)
   }

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { DEFAULT_PARAMS, type Complexity, type GeneratorParams } from '../generators/generator'
 import { createRandomSeed } from '../generators/prng'
+import { TEXTURE_IDS } from '../utils/textureCatalog'
 
 export type LockKey =
   | 'seed'
@@ -11,6 +12,7 @@ export type LockKey =
   | 'radialLineCount'
   | 'colorPalette'
   | 'complexity'
+  | 'lineTexture'
 
 const DEFAULT_LOCKS: Record<LockKey, boolean> = {
   seed: false,
@@ -21,6 +23,7 @@ const DEFAULT_LOCKS: Record<LockKey, boolean> = {
   radialLineCount: false,
   colorPalette: false,
   complexity: false,
+  lineTexture: false,
 }
 
 // Built-in palettes offered when Regenerate randomizes colors
@@ -97,6 +100,9 @@ export const useGeneratorStore = create<GeneratorState & GeneratorActions>((set,
     if (!locks.complexity) {
       const complexities: Complexity[] = ['low', 'medium', 'high']
       paramPatch.complexity = complexities[Math.floor(Math.random() * 3)]
+    }
+    if (!locks.lineTexture) {
+      paramPatch.lineTexture = TEXTURE_IDS[Math.floor(Math.random() * TEXTURE_IDS.length)]
     }
 
     set((s) => ({

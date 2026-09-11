@@ -12,6 +12,7 @@ import {
   type Complexity,
   type DesignStyle,
 } from '../generators/generator'
+import { TEXTURE_IDS, TEXTURE_LABELS } from '../utils/textureCatalog'
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -540,6 +541,43 @@ export default function GeneratorModal() {
               label="color palette"
             />
           </div>
+        </div>
+
+        {/* ── Texture ── */}
+        <div>
+          <SectionLabel>Line Texture</SectionLabel>
+          <div className="flex items-center gap-2">
+            <select
+              aria-label="Line texture"
+              value={params.lineTexture ?? 'solid'}
+              disabled={isLocked('lineTexture')}
+              onChange={(event) =>
+                setParams({
+                  lineTexture: event.target.value as (typeof TEXTURE_IDS)[number],
+                })
+              }
+              className={[
+                'flex-1 rounded bg-neutral-800 border border-neutral-700 p-1.5 text-[13px] text-neutral-200',
+                'focus:outline-none focus:ring-1 focus:ring-[var(--rw-focus)]',
+                'disabled:opacity-40 disabled:cursor-not-allowed',
+              ].join(' ')}
+            >
+              {TEXTURE_IDS.map((id) => (
+                <option key={id} value={id}>
+                  {TEXTURE_LABELS[id]}
+                </option>
+              ))}
+            </select>
+            <LockButton
+              locked={isLocked('lineTexture')}
+              onToggle={() => toggleLock('lineTexture')}
+              label="line texture"
+            />
+          </div>
+          <p className="mt-1.5 text-[11px] text-neutral-500">
+            Applied to all rings and radial lines. Adjust strength and scale per layer after
+            generating.
+          </p>
         </div>
 
         {/* ── Complexity ── */}
