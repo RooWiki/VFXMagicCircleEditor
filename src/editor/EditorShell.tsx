@@ -1,3 +1,4 @@
+import ArtworkPalette from './ArtworkPalette'
 import { useEffect } from 'react'
 import { downloadProject } from '../persistence/projectIO'
 import { useAnimationStore } from '../store/animation'
@@ -171,6 +172,9 @@ export default function EditorShell() {
           </div>
           <div className="flex-1 overflow-y-auto min-h-0" data-testid="panel-layers">
             <LayersPanel />
+          </div>
+          <div className="shrink-0 max-h-[55%] overflow-y-auto" aria-label="Color adjustments">
+            <ArtworkPalette />
           </div>
         </aside>
         <Workspace />

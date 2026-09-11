@@ -1,3 +1,4 @@
+import { thornHeight } from './thornGeometry'
 import type { GroupLayer, Layer } from '../types/layer'
 import { generateId } from './id'
 
@@ -94,6 +95,7 @@ export function artworkRadius(layer: Layer): number {
       : layerRadius(layer) + ('strokeWidth' in layer ? layer.strokeWidth : 0)
   return (
     geometryRadius +
+    thornHeight(layer) +
     (layer.outlineWidth ?? 0) +
     4 * Math.max(layer.glowBlur ?? 0, layer.shadowBlur ?? 0) +
     Math.max(Math.abs(layer.shadowX ?? 0), Math.abs(layer.shadowY ?? 0))

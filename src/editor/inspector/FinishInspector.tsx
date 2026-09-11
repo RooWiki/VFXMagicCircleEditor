@@ -1,3 +1,4 @@
+import ColorField from './ColorField'
 import { commitAction, controlStyle } from './inspectorActions'
 import type { Layer } from '../../types/layer'
 import { useProjectStore } from '../../store/project'
@@ -82,21 +83,13 @@ export function ArtworkColor({
   value: string
 }) {
   return (
-    <label className="flex items-center justify-between text-xs">
-      {label}
-      <input
-        type="color"
-        aria-label={label}
-        value={value}
-        style={controlStyle}
-        className="w-10 h-7 rounded"
-        onFocus={() => useHistoryStore.getState().beginInspectorEdit()}
-        onBlur={() => useHistoryStore.getState().commitInspectorEdit()}
-        onChange={(event) =>
-          useProjectStore.getState().updateLayer(layer.id, { [field]: event.target.value })
-        }
-      />
-    </label>
+    <ColorField
+      label={label}
+      value={value}
+      onBeginEdit={() => useHistoryStore.getState().beginInspectorEdit()}
+      onCommitEdit={() => useHistoryStore.getState().commitInspectorEdit()}
+      onChange={(color) => useProjectStore.getState().updateLayer(layer.id, { [field]: color })}
+    />
   )
 }
 export default function FinishInspector({ layer }: { layer: Layer }) {

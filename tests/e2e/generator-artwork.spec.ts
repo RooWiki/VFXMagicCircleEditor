@@ -6,7 +6,8 @@ test('ornamental zoom reuses artwork and restores sharp vectors after navigation
   page,
 }) => {
   await page.goto('')
-  await page.getByRole('button', { name: 'Add Ornamental Seal', exact: true }).click()
+  await page.locator('input[type="file"]').setInputFiles('public/examples/ornamental-seal.mce.json')
+  await page.getByText('Ornamental Seal', { exact: true }).click()
   const group = page.locator('[data-testid^="group-layer-"]')
   await expect(group).toHaveAttribute('data-preview-ready', 'true')
   const mutations = await page.evaluate(async () => {

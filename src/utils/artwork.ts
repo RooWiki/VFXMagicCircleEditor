@@ -1,3 +1,5 @@
+import { applyLineTexture } from './lineTexture'
+import { EXTRA_SYMBOLS } from './symbolCatalog'
 import type { Layer, ShapeLayer } from '../types/layer'
 import { computeRingShapes } from './ringGeometry'
 import { computeRadialLines } from './geometry'
@@ -99,6 +101,7 @@ function geometry(layer: Layer, prefix: string, silhouette = false): string {
     return `<g color="${color}">${svg.replace('<svg ', `<svg x="${-r}" y="${-r}" width="${r * 2}" height="${r * 2}" stroke-width="${importedWidth}" `)}</g>`
   }
   const paths: Record<string, string> = {
+    ...Object.fromEntries(Object.entries(EXTRA_SYMBOLS).map(([id, symbol]) => [id, symbol.path])),
     rune: 'M 0 -45 L 0 45 M 0 -45 L 28 -15 L 0 10 M 0 -20 L -24 4',
     cross: 'M 0 -45 L 0 45 M -30 -12 L 30 -12',
     diamond: 'M 0 -48 L 30 0 L 0 48 L -30 0 Z',
@@ -111,7 +114,7 @@ function geometry(layer: Layer, prefix: string, silhouette = false): string {
 }
 
 export function buildLayerContent(layer: Layer, prefix: string): string {
-  const content = geometry(layer, prefix)
+  const content = applyLineTexture(layer, geometry(layer, prefix), prefix)
   if (
     !layer.outlineWidth &&
     !layer.glowBlur &&

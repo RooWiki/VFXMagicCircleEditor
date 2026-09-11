@@ -1,3 +1,4 @@
+import ColorField from './ColorField'
 import { useHistoryStore } from '../../store/history'
 import { useProjectStore } from '../../store/project'
 import type { RadialLinesLayer } from '../../types/layer'
@@ -201,58 +202,12 @@ export default function RadialLinesInspector({ layer }: Props) {
           outer edge.
         </p>
 
-        {/* Color */}
-        <label className="flex flex-col gap-0.5">
-          <span
-            className="text-[10px] uppercase tracking-wide"
-            style={{ color: 'var(--rw-text-tertiary)' }}
-          >
-            Color
-          </span>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={layer.color}
-              aria-label="Color"
-              onFocus={historyBegin}
-              onChange={(e) => updateRadialLinesLayer(layer.id, { color: e.target.value })}
-              onBlur={historyCommit}
-              className="w-8 h-7 rounded cursor-pointer p-0.5"
-              style={{
-                background: 'var(--rw-bg-control)',
-                border: '1px solid var(--rw-border-default)',
-              }}
-            />
-            <input
-              type="text"
-              value={layer.color}
-              aria-label="Color hex value"
-              maxLength={7}
-              onFocus={(e) => {
-                historyBegin()
-                e.currentTarget.style.borderColor = 'var(--rw-active-border)'
-              }}
-              onChange={(e) => {
-                const v = e.target.value
-                if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
-                  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
-                    updateRadialLinesLayer(layer.id, { color: v })
-                  }
-                }
-              }}
-              onBlur={(e) => {
-                historyCommit()
-                e.currentTarget.style.borderColor = 'var(--rw-border-default)'
-              }}
-              className="flex-1 rounded px-2 py-1 text-xs font-mono focus:outline-none"
-              style={{
-                background: 'var(--rw-bg-control)',
-                border: '1px solid var(--rw-border-default)',
-                color: 'var(--rw-text-primary)',
-              }}
-            />
-          </div>
-        </label>
+        <ColorField
+          value={layer.color}
+          onBeginEdit={historyBegin}
+          onCommitEdit={historyCommit}
+          onChange={(color) => updateRadialLinesLayer(layer.id, { color })}
+        />
 
         {/* Opacity */}
         <label className="flex flex-col gap-0.5">

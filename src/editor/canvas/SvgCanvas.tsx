@@ -98,6 +98,7 @@ export default function SvgCanvas() {
         if (!layer.visible) return null
         const extended =
           !['ring', 'radial-lines'].includes(layer.type) ||
+          (layer.lineTexture && layer.lineTexture !== 'solid' && layer.textureAmount !== 0) ||
           (layer.fill && layer.fill !== 'none') ||
           layer.knockout ||
           layer.outlineWidth ||

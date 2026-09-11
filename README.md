@@ -135,11 +135,8 @@ a transparent opening in the PNG. Effects and cutouts are included in PNG export
 SVG import accepts vector geometry, removes active/external content, and recolors
 the symbol. Convert text to paths before importing.
 
-Choose **Add Ornamental Seal** (✺) for an editable example with circular lettering,
-an interlaced star and five repeated medallions. Select a member to customize it.
-Save/load and undo/redo preserve the new artwork and its settings.
-
-The example is also available as [a project file](public/examples/ornamental-seal.mce.json).
+An editable example with circular lettering, an interlaced star and five repeated
+medallions is available as [a project file](public/examples/ornamental-seal.mce.json).
 Open it with **Open** in the editor.
 
 ![Advanced artwork example](docs/images/circle-editor-advanced.png)
@@ -157,3 +154,39 @@ retains the simple ring/line generator.
 
 Complex group effects use a cached preview during wheel zoom and panning. The sharp
 vector artwork returns after navigation stops; PNG export always uses the vectors.
+
+### VFX color controls
+
+Open **Color adjustments** below Layers in the left sidebar to apply a color to every unlocked
+layer, including nested groups and their effects. White, Black and Grayscale
+provide quick monochrome conversions; Undo restores the previous palette.
+For a white-on-black mask, choose White, then Export → Background → Color
+with black. Keep the transparent export background for an alpha texture.
+Locked layers retain their colors. Opacity and transparent cutouts are preserved.
+
+Layer stroke, fill, glow, outline and shadow controls include VFX swatches and
+editable hex values (three or six digits, with or without `#`).
+
+**Add Symbol** includes a visual gallery of 14 additional vector sigils: Fire,
+Water, Air, Earth, Mystic eye, Pentagram, Hexagram, Trident, Lightning, Infinity,
+Hourglass, Crystal, Eclipse and Spiral. Choose a thumbnail or use the Symbol
+menu. All symbols support color, transforms, effects, undo and PNG export.
+
+The texture picker includes rendered thumbnails for Solid, Grain, Worn ink,
+Fibers, Hatching, Crosshatch, Dots, Scales, Cracks and **Thorns**. Thorns are
+available on rings (including arcs and decorated rings) and radial lines: they
+add real spikes along the stroke. Strength adjusts spike height, Scale adjusts
+spacing, and Seed varies their shape. Spikes inherit the line color and effects;
+export bounds include their full extent. Other patterns modulate ink transparency.
+
+Directional patterns on rings and radial lines follow the stroke's local direction,
+including arcs, concentric/divided rings and tilted radial lines. Repeats are spaced
+by distance along the stroke, and closed rings fit a whole number of repeats to
+avoid a visible seam. Texture thumbnails use the same rendering as the artwork
+and PNG export. Grain and worn ink remain isotropic surface noise.
+
+The left **Color adjustments** tool includes Hue, Saturation and Lightness.
+Set the sliders and click Apply adjustments to modify the existing palette of
+unlocked layers and effects in one undoable step. The sliders reset after applying.
+Reset clears pending slider values; Undo restores an applied change. Tint and
+monochrome actions are also available in the same panel.

@@ -228,7 +228,8 @@ test('PNG export preserves true cutouts, repeated cutouts, text, imported symbol
 
 test('editable example renders, saves and exports', async ({ page }) => {
   await page.goto('')
-  await page.getByRole('button', { name: 'Add Ornamental Seal', exact: true }).click()
+  await page.locator('input[type="file"]').setInputFiles('public/examples/ornamental-seal.mce.json')
+  await page.getByText('Ornamental Seal', { exact: true }).click()
   await expect(page.locator('textPath')).toHaveCount(2)
   await expect(page.locator('[data-testid^="group-layer-"] polygon')).toHaveCount(1)
   await page.getByRole('button', { name: 'Five medallions', exact: true }).click()

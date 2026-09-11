@@ -1,4 +1,3 @@
-import { createOrnamentalSeal } from '../utils/ornamentalSeal'
 import type { ReactNode } from 'react'
 import { useEditorStore, type ActiveTool } from '../store/editor'
 import { useGeneratorStore } from '../store/generatorStore'
@@ -224,7 +223,6 @@ export default function ToolRail() {
         ['Add Circular Text', 'T', createTextLayer],
         ['Add Symbol', '☽', createSymbolLayer],
         ['Add Group', '⊞', () => createGroupLayer([])],
-        ['Add Ornamental Seal', '✺', createOrnamentalSeal],
       ].map(([label, icon, factory]) => (
         <ToolButton
           key={String(label)}

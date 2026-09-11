@@ -65,7 +65,7 @@ test('Export modal: Transparent background is the default', async ({ page }) => 
 test('Export modal: selecting Color background reveals color picker', async ({ page }) => {
   await page.goto('')
   await page.getByRole('button', { name: 'Export' }).click()
-  await page.getByRole('button', { name: 'Color' }).click()
+  await page.getByRole('button', { name: 'Color', exact: true }).click()
   await expect(page.getByLabel('Background color')).toBeVisible()
 })
 

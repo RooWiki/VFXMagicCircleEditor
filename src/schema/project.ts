@@ -1,3 +1,5 @@
+import { TEXTURE_IDS } from '../utils/textureCatalog'
+import { SYMBOL_IDS } from '../utils/symbolCatalog'
 import { withinLayerBudget } from '../utils/layerTree'
 import { z } from 'zod'
 import { sanitizeSvg } from '../utils/sanitizeSvg'
@@ -15,6 +17,10 @@ export const TransformSchema = z.object({
 })
 
 export const BaseLayerSchema = z.object({
+  lineTexture: z.enum(TEXTURE_IDS).optional(),
+  textureAmount: z.number().finite().min(0).max(100).optional(),
+  textureScale: z.number().finite().min(1).max(80).optional(),
+  textureSeed: z.number().int().min(0).max(9999).optional(),
   fill: z.string().max(50).optional(),
   knockout: z.boolean().optional(),
   outlineWidth: z.number().finite().min(0).max(40).optional(),
@@ -89,7 +95,7 @@ export const TextLayerSchema = BaseLayerSchema.extend({
 })
 export const SymbolLayerSchema = BaseLayerSchema.extend({
   type: z.literal('symbol'),
-  symbol: z.enum(['sun', 'moon', 'cross', 'rune', 'diamond', 'custom']),
+  symbol: z.enum(SYMBOL_IDS),
   customSvg: z
     .string()
     .max(200000)

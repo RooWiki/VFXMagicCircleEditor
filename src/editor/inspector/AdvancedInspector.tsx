@@ -1,3 +1,5 @@
+import TextureInspector from './TextureInspector'
+import { EXTRA_SYMBOLS } from '../../utils/symbolCatalog'
 import { commitAction, controlStyle } from './inspectorActions'
 import { useState } from 'react'
 import type { Layer, GroupLayer, SymbolLayer } from '../../types/layer'
@@ -329,9 +331,50 @@ function AdvancedInspector({
                   ['cross', 'Cross'],
                   ['rune', 'Rune'],
                   ['diamond', 'Diamond'],
+                  ...Object.entries(EXTRA_SYMBOLS).map(([id, symbol]): [string, string] => [
+                    id,
+                    symbol.label,
+                  ]),
                   ...(layer.customSvg ? [['custom', 'Imported SVG'] as [string, string]] : []),
                 ]}
               />
+              <div className="grid grid-cols-4 gap-1" aria-label="Magic symbols">
+                {Object.entries(EXTRA_SYMBOLS).map(([id, symbol]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    title={symbol.label}
+                    aria-label={`Use ${symbol.label} symbol`}
+                    aria-pressed={layer.symbol === id}
+                    className="flex flex-col items-center gap-1 rounded border p-1 text-[9px]"
+                    style={{
+                      borderColor:
+                        layer.symbol === id
+                          ? 'var(--rw-active-border)'
+                          : 'var(--rw-border-default)',
+                      background:
+                        layer.symbol === id ? 'var(--rw-active-bg)' : 'var(--rw-bg-control)',
+                    }}
+                    onClick={() =>
+                      commitAction(() =>
+                        useProjectStore.getState().updateLayer(layer.id, { symbol: id })
+                      )
+                    }
+                  >
+                    <svg width="30" height="30" viewBox="-52 -52 104 104" aria-hidden="true">
+                      <path
+                        d={symbol.path}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    {symbol.label}
+                  </button>
+                ))}
+              </div>
               <SymbolImport layer={layer} />
             </>
           )}
@@ -400,6 +443,7 @@ function GroupLayerInspector({ layer }: { layer: GroupLayer }) {
       style={{ color: 'var(--rw-text-secondary)' }}
     >
       <AdvancedInspector layer={layer} onEdit={setChildId} />
+      <TextureInspector layer={layer} />
       <FinishInspector layer={layer} />
     </fieldset>
   )
@@ -420,6 +464,7 @@ export function LayerInspector({ layer }: { layer: Layer }) {
       ) : (
         <AdvancedInspector layer={layer} />
       )}
+      <TextureInspector layer={layer} />
       <FinishInspector layer={layer} />
     </fieldset>
   )

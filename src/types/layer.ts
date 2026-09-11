@@ -1,3 +1,6 @@
+import type { TEXTURE_IDS } from '../utils/textureCatalog'
+import type { SYMBOL_IDS } from '../utils/symbolCatalog'
+
 export interface Transform {
   x: number
   y: number
@@ -7,6 +10,10 @@ export interface Transform {
 }
 
 export interface LayerFinish {
+  lineTexture?: (typeof TEXTURE_IDS)[number]
+  textureAmount?: number
+  textureScale?: number
+  textureSeed?: number
   fill?: string
   knockout?: boolean
   outlineWidth?: number
@@ -93,7 +100,7 @@ export interface TextLayer extends BaseLayer {
 
 export interface SymbolLayer extends BaseLayer {
   type: 'symbol'
-  symbol: 'sun' | 'moon' | 'cross' | 'rune' | 'diamond' | 'custom'
+  symbol: (typeof SYMBOL_IDS)[number]
   customSvg?: string
   radius: number
   strokeWidth: number
